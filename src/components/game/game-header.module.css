@@ -1,0 +1,18 @@
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The puzzle's date key as a quiet dateline: muted opaque ink, xxs size. */
+.dateKey {
+  color: var(--color-game-ink-muted);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  margin-left: 0.25rem;
+}

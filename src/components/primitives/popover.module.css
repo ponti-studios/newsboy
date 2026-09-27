@@ -1,0 +1,46 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.content {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  z-index: 50;
+  min-width: 12rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-game-paper-border);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
+  box-shadow: var(--shadow-md);
+  padding: calc(var(--spacing) * 3);
+  animation: wl-popover-in 120ms ease;
+}
+
+.alignEnd {
+  right: 0;
+}
+.alignStart {
+  left: 0;
+}
+.alignCenter {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes wl-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+  }
+}

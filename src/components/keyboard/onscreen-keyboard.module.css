@@ -1,0 +1,132 @@
+.keyboardDock {
+  position: fixed;
+  inset-inline: calc(var(--spacing) * 3);
+  bottom: calc(var(--game-safe-bottom) + calc(var(--spacing) * 2));
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  width: auto;
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  border-radius: var(--radius-2xl);
+  background: var(--color-game-ink);
+  padding: calc(var(--spacing) * 2.5);
+  box-shadow: var(--shadow-lg);
+}
+
+.keyboardDock > .keyboard {
+  width: 100%;
+  max-width: 32rem;
+}
+
+.keyboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1.5);
+}
+
+.keyboardRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 0.5);
+}
+
+/* The tabloid skin — formerly the global `.game-key*` rules. */
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--spacing) * 11);
+  border: 2px solid var(--color-game-paper-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
+  box-shadow: var(--shadow-xs);
+  font-weight: 500;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.key:hover:not(:disabled),
+.key:focus-visible {
+  border-color: var(--color-game-ink);
+  background: var(--color-game-bg);
+}
+
+.keyInactive {
+  border-color: var(--color-game-paper-border);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
+}
+
+.keyAction {
+  flex-shrink: 0;
+  border-color: var(--color-game-paper-border);
+  background: var(--color-game-bg);
+  color: var(--color-game-ink);
+  padding-inline: calc(var(--spacing) * 2);
+  font-size: var(--text-sm);
+}
+
+.keyCorrect {
+  border-color: transparent;
+  background: var(--color-game-correct-bg);
+  color: var(--color-game-correct-key-text);
+}
+
+.keyPresent {
+  border-color: transparent;
+  background: var(--color-game-present-bg);
+  color: var(--color-game-present-text);
+}
+
+.keyAbsent {
+  border-color: var(--color-game-absent-border);
+  background: var(--color-game-absent-bg);
+  color: var(--color-game-absent-text);
+}
+
+.keyLetter {
+  min-width: clamp(1.5rem, 8.5vw, 2.5rem);
+  flex: 1;
+  padding: 0;
+  font-size: var(--text-base);
+}
+
+.readOnly {
+  pointer-events: none;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (min-width: 640px) {
+  .keyboardRow {
+    gap: var(--spacing);
+  }
+  .keyLetter {
+    font-size: var(--text-sm);
+  }
+  .keyAction {
+    padding-inline: calc(var(--spacing) * 4);
+    font-size: var(--text-xs);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .keyboardDock {
+    bottom: calc(var(--game-safe-bottom) + var(--spacing));
+    border-radius: var(--radius-xl);
+    padding-block: var(--spacing);
+  }
+
+  .keyboardDock .key {
+    height: 38px;
+  }
+}

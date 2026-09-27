@@ -1,0 +1,128 @@
+{
+  "id": "tech-news",
+  "genre": "technology",
+  "sourceUrl": "https://techcrunch.com/feed/",
+  "capturedAt": "2026-08-12T15:43:22.216Z",
+  "items": [
+    {
+      "title": "After Microsoft threatened legal action, a security researcher publishes a new Windows zero-day bug",
+      "link": "https://techcrunch.com/2026/08/12/after-microsoft-threatened-legal-action-a-security-researcher-publishes-a-new-windows-zero-day-bug/",
+      "pubDate": "Wed, 12 Aug 2026 15:18:55 +0000",
+      "description": "This is the latest zero-day released by security researcher Nightmare Eclipse, despite Microsoft publicly threatening to take legal action against them."
+    },
+    {
+      "title": "Silkroad Innovation Hub’s Road to Battlefield competition continues",
+      "link": "https://techcrunch.com/2026/08/12/silkroad-innovation-hubs-road-to-battlefield-competition-continues/",
+      "pubDate": "Wed, 12 Aug 2026 15:02:00 +0000",
+      "description": "The Road to Battlefield competition is now in its second year, and its purpose is to give founders across Central Eurasia a direct route to Startup Battlefield"
+    },
+    {
+      "title": "Everything announced at Made by Google &#8217;26: Pixel 11, Pixel Watch 5, Pixel Tag, and tons of Gemini features",
+      "link": "https://techcrunch.com/2026/08/12/google-unveils-pixel-11-lineup-new-airtag-rival-and-gemini-features-at-made-by-google-2026/",
+      "pubDate": "Wed, 12 Aug 2026 14:20:33 +0000",
+      "description": "From the Pixel 11 series and a brand new competitor to Apple’s AirTag, here are all the announcements from the Made by Google 2026 event."
+    },
+    {
+      "title": "Google&#8217;s Quick Share adds a tap-to-share mode",
+      "link": "https://techcrunch.com/2026/08/12/googles-quick-share-adds-a-tap-to-share-mode/",
+      "pubDate": "Wed, 12 Aug 2026 14:13:03 +0000",
+      "description": "Google's Quick Share feature is getting a tap-to-share mode for quickly exchanging contacts, photos, videos, and more."
+    },
+    {
+      "title": "Google&#8217;s Pixel 11 lineup offers fewer hardware changes, but much more Gemini",
+      "link": "https://techcrunch.com/2026/08/12/pixel-11-has-few-hardware-changes-and-more-gemini/",
+      "pubDate": "Wed, 12 Aug 2026 14:00:00 +0000",
+      "description": "The Google Pixel 11 series starts $100 costlier than the last year, but offers 256GB base storage."
+    },
+    {
+      "title": "Google unveils the Pixel Watch 5 with a smarter Gemini and advanced health monitoring",
+      "link": "https://techcrunch.com/2026/08/12/google-unveils-the-pixel-watch-5-with-a-smarter-gemini-and-advanced-health-monitoring/",
+      "pubDate": "Wed, 12 Aug 2026 14:00:00 +0000",
+      "description": "The new smartwatch, which starts at $399, can track blood pressure patterns and insulin resistance, as well as deliver personalized help and better sleep tracking."
+    },
+    {
+      "title": "Google takes on AirTag with the new $29 Pixel Tag",
+      "link": "https://techcrunch.com/2026/08/12/google-takes-on-airtag-with-the-new-29-pixel-tag/",
+      "pubDate": "Wed, 12 Aug 2026 14:00:00 +0000",
+      "description": "Google’s new Pixel Tag taps into its Find Hub network to help users track lost keys, bags, and other items."
+    },
+    {
+      "title": "Google&#8217;s new Pixel 11 Pro Fold offers a stronger build and brighter screens",
+      "link": "https://techcrunch.com/2026/08/12/google-launches-the-pixel-11-pro-fold-with-a-stronger-build-and-brighter-screens/",
+      "pubDate": "Wed, 12 Aug 2026 14:00:00 +0000",
+      "description": "The Pixel 11 Pro Fold will cost $1,899"
+    },
+    {
+      "title": "AI code-testing startup Blacksmith&#8217;s valuation jumps almost 10x in less than a year",
+      "link": "https://techcrunch.com/2026/08/12/blacksmiths-valuation-jumps-10x-to-550m-as-ai-coding-fuels-software-validation/",
+      "pubDate": "Wed, 12 Aug 2026 11:00:00 +0000",
+      "description": "Blacksmith says revenue has grown more than tenfold over the past year."
+    },
+    {
+      "title": "Reservoir raises $8M to make water heaters that people — and the grid — will actually want",
+      "link": "https://techcrunch.com/2026/08/12/reservoir-raises-8m-to-make-water-heaters-that-people-and-the-grid-will-actually-want/",
+      "pubDate": "Wed, 12 Aug 2026 10:00:00 +0000",
+      "description": "Reservoir has built an ultra-efficient water heater that can predict hot water demand, store energy, and detect plumbing leaks throughout a home."
+    },
+    {
+      "title": "India&#8217;s Yulu raises $93M as quick-commerce boom fuels e-bike demand",
+      "link": "https://techcrunch.com/2026/08/11/indias-yulu-raises-93m-as-quick-commerce-boom-fuels-e-bike-demand/",
+      "pubDate": "Wed, 12 Aug 2026 04:30:00 +0000",
+      "description": "Yulu aims to have a fleet of 200,000 bikes in the next two years and faster electric two-wheelers, aiming at new logistics use cases."
+    },
+    {
+      "title": "Phoebe Gates and Sophia Kianni reportedly knew Phia was &#8216;cookie stuffing&#8217; for months",
+      "link": "https://techcrunch.com/2026/08/11/phoebe-gates-and-sophia-kianni-reportedly-knew-phia-was-cookie-stuffing-for-months/",
+      "pubDate": "Tue, 11 Aug 2026 21:39:58 +0000",
+      "description": "Phia, the shopping startup co-founded by Phoebe Gates and Sophia Kianni, is once again under fire for its alleged business practices."
+    },
+    {
+      "title": "Accel closes oversubscribed $550M India fund within weeks, 19 months after its last",
+      "link": "https://techcrunch.com/2026/08/11/accel-closes-oversubscribed-550m-india-fund-within-weeks-19-months-after-its-last/",
+      "pubDate": "Tue, 11 Aug 2026 21:39:11 +0000",
+      "description": "The U.S. VC firm still has more than 55% of its previous $650 million India fund available for deployment."
+    },
+    {
+      "title": "Uber surprised robotics company Serve by selling its entire stake",
+      "link": "https://techcrunch.com/2026/08/11/uber-surprised-robotics-company-serve-by-selling-its-entire-stake/",
+      "pubDate": "Tue, 11 Aug 2026 20:02:02 +0000",
+      "description": "The divestiture comes as the two once-tight companies have started to diverge on the business side."
+    },
+    {
+      "title": "FBI says cybercriminals are hacking into victims&#8217; online accounts to steal their intimate pictures",
+      "link": "https://techcrunch.com/2026/08/11/fbi-says-cybercriminals-are-hacking-into-victims-online-accounts-to-steal-their-intimate-pictures/",
+      "pubDate": "Tue, 11 Aug 2026 19:38:23 +0000",
+      "description": "In a new alert, the FBI said cybercriminals are targeting adults and minors in an attempt to steal their personal and intimate pictures in extortion campaigns."
+    },
+    {
+      "title": "OpenAI launches ChatGPT desktop app for Linux",
+      "link": "https://techcrunch.com/2026/08/11/openai-launches-chatgpt-desktop-app-for-linux/",
+      "pubDate": "Tue, 11 Aug 2026 19:15:35 +0000",
+      "description": "OpenAI is finally bringing a dedicated ChatGPT desktop app to Linux operating systems."
+    },
+    {
+      "title": "Google’s Gemini app surges to 1 billion users",
+      "link": "https://techcrunch.com/2026/08/11/googles-gemini-app-surges-to-one-billion-users/",
+      "pubDate": "Tue, 11 Aug 2026 18:49:12 +0000",
+      "description": "Google also shared numbers of how people are actually using the chatbot, with 63% of Gemini users talking directly to the assistant using the voice feature. Plus, Gemini now generates more than 150 million images every day, according to Google."
+    },
+    {
+      "title": "Bluesky’s active user base is shrinking as its focus expands beyond the app",
+      "link": "https://techcrunch.com/2026/08/11/blueskys-active-user-base-is-shrinking-as-its-focus-expands-beyond-the-app/",
+      "pubDate": "Tue, 11 Aug 2026 17:46:14 +0000",
+      "description": "Over a year following its post-election surge, Bluesky’s mobile app is seeing a continued decline in active users, though its remaining community is still relatively engaged."
+    },
+    {
+      "title": "What’s Scaleup Europe, the $5.7B fund that just backed satellite company ICEYE?",
+      "link": "https://techcrunch.com/2026/08/11/whats-scaleup-europe-the-5-7b-fund-that-just-backed-satellite-company-iceye/",
+      "pubDate": "Tue, 11 Aug 2026 17:41:49 +0000",
+      "description": "Scaleup Europe, a public-private fund with a $5.7 billion target, made its first investment by backing Finnish satellite company ICEYE."
+    },
+    {
+      "title": "Brad Lightcap, OpenAI&#8217;s longtime COO, is leaving to &#8216;start something new&#8217;",
+      "link": "https://techcrunch.com/2026/08/11/brad-lightcap-openais-longtime-coo-is-leaving-to-start-something-new/",
+      "pubDate": "Tue, 11 Aug 2026 17:41:34 +0000",
+      "description": "One of OpenAI's longest-serving executives is headed out the door, although the longtime COO told staff that he was \"excited to help you all advance the mission from a different vantage point.\""
+    }
+  ]
+}

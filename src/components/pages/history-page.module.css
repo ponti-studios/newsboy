@@ -1,0 +1,216 @@
+.page {
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+  max-width: 40rem;
+  flex: 1;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 6);
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+}
+
+.guestWrap {
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+  max-width: 32rem;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+}
+
+.eyebrow {
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  margin: 0;
+}
+
+.title {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 800;
+  color: var(--color-game-ink);
+  margin: 0.125rem 0 0;
+}
+
+.rowList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rowList > li {
+  border-bottom: 1px solid var(--color-game-paper-border);
+}
+.rowList > li:last-child {
+  border-bottom: none;
+}
+
+/* Two stacked rows so nothing has to compete for horizontal space on a
+   narrow screen: guesses + result on top, date + category below. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  border-radius: var(--radius-md);
+  padding: calc(var(--spacing) * 4) calc(var(--spacing) * 2);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 120ms ease;
+}
+
+.row:hover {
+  background: var(--color-game-paper);
+}
+
+.rowTop,
+.rowBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  min-width: 0;
+}
+
+.rowMini {
+  /* Compact context for GameTile (was the `.game-history-mini` override). */
+  --game-tile-size: 22px;
+  --game-tile-gap: calc(var(--spacing) * 0.75);
+  --game-radius: var(--radius-md);
+  --game-tile-font-size: var(--text-xs);
+
+  display: flex;
+  flex-shrink: 0;
+  min-height: var(--game-tile-size);
+  gap: var(--game-tile-gap);
+}
+
+.rowDateText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.rowGame {
+  flex-shrink: 0;
+  color: var(--color-game-ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: 999px;
+  padding: 0.0625rem 0.5rem;
+}
+
+.rowClue {
+  min-width: 0;
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pageLabel {
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
+}
+
+.unplayedList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.unplayedList > li {
+  border-bottom: 1px solid var(--color-game-paper-border);
+}
+.unplayedList > li:last-child {
+  border-bottom: none;
+}
+
+.unplayedLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-md);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 2);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 120ms ease;
+}
+
+.unplayedLink:hover {
+  background: var(--color-game-paper);
+}
+
+.unplayedFooter {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.unplayedCount {
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
+}
+
+.triggerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+
+.triggerLabelSub {
+  color: var(--color-game-ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+
+/* Narrow phones: the guess-tile preview and status badge are fixed-size, so
+   shrink the tiles and tighten padding to leave the date/badge/clue column
+   enough room instead of squeezing it to near-zero. */
+@media (max-width: 420px) {
+  .page {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+
+  .row {
+    gap: calc(var(--spacing) * 2);
+    padding-inline: 0.25rem;
+  }
+
+  .rowMini {
+    --game-tile-size: 18px;
+    --game-tile-gap: calc(var(--spacing) * 0.5);
+  }
+}

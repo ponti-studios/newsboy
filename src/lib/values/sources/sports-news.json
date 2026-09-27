@@ -1,0 +1,128 @@
+{
+  "id": "sports-news",
+  "genre": "sports",
+  "sourceUrl": "https://www.espn.com/espn/rss/news",
+  "capturedAt": "2026-08-12T15:43:22.557Z",
+  "items": [
+    {
+      "title": "Sources: Kushner, Iger to buy Lakers for $12.5B",
+      "link": "https://www.espn.com/nba/story/_/id/49590362/josh-kushner-bob-iger-buy-lakers-12b",
+      "pubDate": "Wed, 12 Aug 2026 11:30:10 EST",
+      "description": "The Lakers are being sold to businessmen Josh Kushner and Bob Iger for $12.5 billion, a record-breaking price, multiple sources told ESPN."
+    },
+    {
+      "title": "White rips critics, backed by Fever after fans boo",
+      "link": "https://www.espn.com/wnba/story/_/id/49586227/fever-white-rips-critics-says-always-stand-players",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Fever coach Stephanie White spoke out against her critics and received vocal support from Caitlin Clark and Sophie Cunningham after she was booed in Indiana before Tuesday's win over the Liberty."
+    },
+    {
+      "title": "Skenes lifted after 65 pitches, mum on velo drop",
+      "link": "https://www.espn.com/mlb/story/_/id/49590096/paul-skenes-exits-65-pitches-amid-latest-velocity-drop",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Paul Skenes, battling another dip in his fastball velocity, was lifted after just 65 pitches in Tuesday's loss to the Marlins, leading to further speculation about the health status of the reigning National League Cy Young Award winner."
+    },
+    {
+      "title": "Trimble leaves UNC 'home,' commits to Louisville",
+      "link": "https://www.espn.com/mens-college-basketball/story/_/id/49589093/seth-trimble-becomes-louisville-latest-high-profile-transfer",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Seth Trimble has committed to play for Louisville next season following the court ruling that gave class of 2022 high schoolers a fifth season of college eligibility."
+    },
+    {
+      "title": "Ex-QB Hasselbeck joins effort to find CTE in living",
+      "link": "https://www.espn.com/nfl/story/_/id/49589099/ex-qb-matt-hasselbeck-part-quest-living-diagnosis-cte",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Former NFL quarterback Matt Hasselbeck recently spent two days going through a battery of scans and tests to determine how much collisions affected his brain. The hope is that it will be a small step toward diagnosing CTE in the living."
+    },
+    {
+      "title": "Tafoya wins GOP Senate primary in Minnesota",
+      "link": "https://www.espn.com/nfl/story/_/id/49589072/ex-nfl-reporter-michele-tafoya-wins-gop-senate-primary-minn",
+      "pubDate": "Wed, 12 Aug 2026 10:09:52 EST",
+      "description": "Former NFL sideline reporter Michele Tafoya will compete for an open seat in the U.S. Senate after winning the Republican primary in Minnesota."
+    },
+    {
+      "title": "Tulsa kept from chance at LLBWS bid, judge rules",
+      "link": "https://www.espn.com/llws/story/_/id/49585682/judge-backs-little-league-baseball-decision-remove-tulsa",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "A Texas judge backed a decision to remove a Tulsa, Oklahoma, team from the Southwest Region and keep it from playing in Tuesday's title game for a spot in the Little League Baseball World Series, according to a statement from a Little League spokesperson."
+    },
+    {
+      "title": "A's Wilson sees errorless run live on after overturn",
+      "link": "https://www.espn.com/mlb/story/_/id/49587533/overturn-helps-ss-wilson-push-errorless-run-113-games",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "After his surprising error was overturned to a Tampa Bay hit on Tuesday night in his club's 12-4 loss to the Rays at Sutter Health Park, Athletics shortstop Jacob Wilson's major-league-record errorless streak at the position was extended to 113 games."
+    },
+    {
+      "title": "'Awful' Raleigh takes blame as M's lose 5th in row",
+      "link": "https://www.espn.com/mlb/story/_/id/49587821/cal-raleigh-shoulders-blame-mariners-lose-fifth-straight",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Cal Raleigh, saddled with a .159 average a year after finishing second in the AL MVP race, acknowledged his struggles after the Seattle Mariners' 4-1 loss to the New York Yankees on Tuesday night, telling reporters \"I've got to find a way to be better.\""
+    },
+    {
+      "title": "📈 Names to know: Top 10 MLB prospect rankings",
+      "link": "https://www.espn.com/mlb/story/_/id/47684227/2026-top-10-prospect-rankings-all-30-mlb-teams-kiley-mcdaniel",
+      "pubDate": "Wed, 12 Aug 2026 10:09:53 EST",
+      "description": "Who is rising and falling in every major league farm system after the trade deadline? Kiley McDaniel digs in."
+    },
+    {
+      "title": "Exotic pets, family houses and Lego: Here's what NFL rookies have spent their first paychecks on",
+      "link": "https://www.espn.com/nfl/story/_/id/49554282/2026-nfl-rookies-spent-their-first-paychecks-money-cash-nil",
+      "pubDate": "Wed, 12 Aug 2026 09:54:46 EST",
+      "description": "Jeremiyah Love, Drew Allar and Carnell Tate are among the NFL rookies who just got their first pro contracts. How did they spend their new money?"
+    },
+    {
+      "title": "The 10 storylines that will shape the rest of this MLB season",
+      "link": "https://www.espn.com/mlb/story/_/id/49582983/mlb-2026-season-storylines-playoff-races-awards-ohtani-pca-alvarez-misiorowski-miller",
+      "pubDate": "Wed, 12 Aug 2026 09:08:55 EST",
+      "description": "An epic MVP battle. A Triple Crown pursuit. So many teams still dreaming of October. Here's what we're watching."
+    },
+    {
+      "title": "From Dan Kendra to John Mateer, a investigation of jacked college QBs",
+      "link": "https://www.espn.com/college-football/story/_/id/49581777/john-mateer-college-football-your-quarterback-too-swole",
+      "pubDate": "Wed, 12 Aug 2026 10:05:57 EST",
+      "description": "Oklahoma quarterback John Mateer has turned heads this offseason with his massive arms. But has he gotten too big?"
+    },
+    {
+      "title": "WNBA Power Rankings: Time running out as teams jockey for playoff seeds",
+      "link": "https://www.espn.com/wnba/story/_/id/49575389/wnba-power-rankings-2026-lynx-aces-fever-valkyries",
+      "pubDate": "Tue, 11 Aug 2026 19:27:18 EST",
+      "description": "The time to nitpick every win and loss has arrived, as some teams need a dramatic run to reach the playoffs."
+    },
+    {
+      "title": "Mike Clay's Playbook, Part 2: Draft tips for nontraditional formats",
+      "link": "https://www.espn.com/fantasy/football/story/_/id/49377843/fantasy-football-draft-strategy-dynasty-rookie-keeper-superflex-best-ball-knockout",
+      "pubDate": "Wed, 12 Aug 2026 08:44:05 EST",
+      "description": "No matter which type of league you play in, Mike Clay gives you a guide to being a savvy, title-winning manager."
+    },
+    {
+      "title": "Draft Guide: Rankings, mock drafts and analysis",
+      "link": "https://www.espn.com/fantasy/football/story/_/page/FFDraftGuide26-48677635/2026-fantasy-football-rankings-mock-draft-cheat-sheets-sleepers",
+      "pubDate": "Wed, 12 Aug 2026 08:44:05 EST",
+      "description": "Your one-stop shop as you prep for draft season, including rankings, projections and analysis."
+    },
+    {
+      "title": "NFL training camp buzz notebook: Updates on Caleb Downs, Denzel Boston, Jalen Hurts, more",
+      "link": "https://www.espn.com/nfl/story/_/id/49574464/2026-nfl-training-camp-updates-buzz-notes-news-fantasy-football",
+      "pubDate": "Wed, 12 Aug 2026 11:27:41 EST",
+      "description": "Here's what we heard on the road at training camp for the 49ers, Bengals, Bills, Browns, Cowboys, Eagles, Jets, Raiders, Ravens, Seahawks and Steelers."
+    },
+    {
+      "title": "NFL training camp updates: Purdy impresses in joint practice against Titans",
+      "link": "https://www.espn.com/nfl/story/_/id/49368181/training-camp-2026-latest-news-intel-updates-buzz-all-32-teams",
+      "pubDate": "Wed, 12 Aug 2026 11:27:41 EST",
+      "description": "Get all the latest news, intel and insights on NFL training camps from our team of reporters in the field."
+    },
+    {
+      "title": "New rosters in the West? KAT contract? The under-the-radar concerns for NBA contenders",
+      "link": "https://www.espn.com/nba/story/_/id/49574798/2026-27-nba-season-radar-concerns-10-title-contenders",
+      "pubDate": "Tue, 11 Aug 2026 11:30:05 EST",
+      "description": "What hurdles could the top 10 contenders in the NBA face during the 2026-27 season? Our NBA insiders break it down."
+    },
+    {
+      "title": "Ranked: The 30 best men's soccer club managers in Europe",
+      "link": "https://www.espn.com/soccer/story/_/id/49422798/ranking-top-30-best-mens-club-managers-europe",
+      "pubDate": "Wed, 12 Aug 2026 09:35:09 EST",
+      "description": "ESPN ranks the top 30 men's managers in the European club game. Who is going to be No. 1? Mikel Arteta, Xabi Alonso, Luis Enrique?"
+    }
+  ]
+}

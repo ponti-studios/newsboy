@@ -1,0 +1,72 @@
+/* Animated aurora backdrop used only to showcase the glass update toast.
+   Cream page, gossip-pink and gold blobs drifting over deep plum. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #231019;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(56px);
+  opacity: 0.85;
+  will-change: transform;
+}
+
+.blobPink {
+  width: 55vmax;
+  height: 55vmax;
+  left: -14vmax;
+  top: -12vmax;
+  background: var(--color-game-correct-bg);
+  animation: blob-pink 14s ease-in-out infinite alternate;
+}
+
+.blobGold {
+  width: 50vmax;
+  height: 50vmax;
+  right: -13vmax;
+  bottom: -15vmax;
+  background: var(--color-game-present-bg);
+  animation: blob-gold 18s ease-in-out infinite alternate;
+}
+
+.blobPlum {
+  width: 42vmax;
+  height: 42vmax;
+  left: 28%;
+  bottom: -12vmax;
+  background: #7b1c4b;
+  animation: blob-plum 22s ease-in-out infinite alternate;
+}
+
+@keyframes blob-pink {
+  to {
+    transform: translate(8vmax, 6vmax) scale(1.18);
+  }
+}
+
+@keyframes blob-gold {
+  to {
+    transform: translate(-7vmax, -5vmax) scale(1.12);
+  }
+}
+
+@keyframes blob-plum {
+  to {
+    transform: translate(-6vmax, -9vmax) scale(1.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob,
+  .blobPink,
+  .blobGold,
+  .blobPlum {
+    animation: none !important;
+  }
+}

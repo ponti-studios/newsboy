@@ -1,0 +1,44 @@
+.field {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+}
+
+.articleField {
+  display: grid;
+  min-width: 0;
+  gap: calc(var(--spacing) * 2);
+}
+
+.trigger {
+  width: 100%;
+}
+
+.articleTrigger {
+  width: 100%;
+  min-width: 0;
+}
+
+.articleTrigger :global(*[data-slot="select-value"]) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.articleMenu {
+  width: var(--anchor-width);
+  max-width: var(--anchor-width);
+}
+
+.articleItem {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.articleItem > :last-child {
+  min-width: 0;
+  flex: 1 1 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

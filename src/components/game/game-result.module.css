@@ -1,0 +1,197 @@
+.eyebrow {
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+}
+
+.authCard {
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--game-radius);
+  background-color: var(--color-game-paper);
+  box-shadow: var(--shadow-lg);
+  animation: game-result-card-in 420ms var(--game-ease-out) both;
+}
+
+.authCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
+  text-align: center;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
+}
+
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  animation: game-result-verdict-in 360ms var(--game-ease-out) 420ms both;
+}
+
+.verdict[data-solved="true"] {
+  color: var(--color-game-correct-accent);
+}
+
+.verdict[data-solved="false"] {
+  color: var(--color-game-ink);
+}
+
+.verdictLabel {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid currentColor;
+}
+
+.verdictDots {
+  display: flex;
+  gap: calc(var(--spacing) * 1.2);
+  margin-left: auto;
+}
+
+.verdictDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  background: transparent;
+}
+
+.verdictDot[data-filled="true"] {
+  background: currentColor;
+}
+
+.verdictDot[data-filled="false"] {
+  opacity: 0.35;
+}
+
+.resultCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--game-radius);
+  background-color: var(--color-game-paper);
+  padding: calc(var(--spacing) * 6);
+  box-shadow: var(--shadow-lg);
+  animation: game-result-card-in 420ms var(--game-ease-out) both;
+}
+
+.resultHeading {
+  font-size: clamp(1.5rem, 5vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-game-ink);
+  margin: 0;
+}
+
+.resultBody {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-game-ink);
+  animation: game-result-fade-in 350ms ease 600ms both;
+  > :not(:first-child) {
+    margin-block-start: calc(var(--spacing) * 5);
+  }
+}
+
+.resultBody p {
+  margin-top: calc(var(--spacing) * 2);
+}
+
+.resultActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: calc(var(--spacing) * 1.5);
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--color-game-paper-border);
+}
+
+.resultAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-game-ink-muted);
+  animation: game-result-action-in 280ms var(--game-ease-out)
+    calc(850ms + var(--action-i, 0) * 90ms) both;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.resultAction:hover {
+  border-color: var(--color-game-link-text);
+  background: color-mix(in srgb, var(--color-game-link-text) 8%, transparent);
+  color: var(--color-game-link-text);
+}
+
+.resultAction:focus-visible {
+  outline: 2px solid var(--color-game-link-text);
+  outline-offset: 2px;
+}
+
+@keyframes game-result-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes game-result-verdict-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes game-result-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes game-result-action-in {
+  from {
+    transform: translateX(20px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .authCard,
+  .resultCard,
+  .verdict,
+  .resultBody,
+  .resultAction {
+    animation: none !important;
+  }
+}

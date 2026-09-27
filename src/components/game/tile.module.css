@@ -1,0 +1,183 @@
+/* Shared guess-tile skin — used by the board, history rows, and anywhere a
+   tile appears. Sized by the --game-tile-* tokens set on :root or by an
+   ancestor context (e.g. history's mini rows override tile size + font). */
+
+.tile {
+  --game-tile-letter: var(--color-game-ink);
+
+  position: relative;
+  display: grid;
+  width: var(--game-tile-size);
+  height: var(--game-tile-size);
+  place-items: center;
+  isolation: isolate;
+  overflow: visible;
+  border-radius: var(--game-radius);
+  background: var(--color-game-paper);
+  border: 2px solid var(--color-game-paper-border);
+  color: var(--game-tile-letter);
+  font-size: var(--game-tile-font-size, clamp(1.1rem, calc(var(--game-tile-size) * 0.42), 1.5rem));
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-xs);
+}
+
+.tile.mini {
+  --game-tile-size: 42px;
+  --game-tile-font-size: 1.05rem;
+  --game-radius: 10px;
+}
+
+.tileLetter {
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+}
+
+.tile[data-state="correct"] {
+  --game-tile-letter: var(--color-game-correct-text);
+  border-color: transparent;
+  background: var(--color-game-correct-bg);
+}
+
+.tile[data-state="correct"] .tileLetter {
+  font-size: 1.08em;
+  font-weight: 900;
+  text-shadow:
+    -0.5px -0.5px 0 var(--color-game-correct-shadow),
+    0.5px -0.5px 0 var(--color-game-correct-shadow),
+    -0.5px 0.5px 0 var(--color-game-correct-shadow),
+    0.5px 0.5px 0 var(--color-game-correct-shadow);
+}
+
+.tile[data-state="present"] {
+  --game-tile-letter: var(--color-game-present-text);
+  border-color: transparent;
+  background: var(--color-game-present-bg);
+}
+
+.tile[data-state="absent"] {
+  /* Keep board feedback identical to the keyboard's absent state. */
+  --game-tile-letter: var(--color-game-absent-text);
+  border-color: var(--color-game-absent-border);
+  background: var(--color-game-absent-bg);
+}
+
+.tile[data-state="typed"] {
+  border-color: var(--color-game-ink);
+  animation: type-pop 160ms var(--game-ease-out);
+}
+
+.reveal {
+  animation: marquee-reveal 420ms var(--game-ease-in-out) forwards;
+}
+
+.revealIncorrect {
+  transition:
+    background-color 420ms var(--game-ease-in-out),
+    border-color 420ms var(--game-ease-in-out),
+    color 420ms var(--game-ease-in-out);
+}
+
+.error {
+  --game-tile-letter: var(--color-game-error-text);
+  border-color: var(--color-game-error-border);
+}
+
+.pending {
+  background-color: var(--color-game-paper);
+  border-color: var(--color-game-paper-border);
+  opacity: 0.75;
+  animation: tile-flash 1000ms var(--game-ease-in-out) infinite;
+  animation-delay: calc(var(--game-tile-i, 0) * 150ms);
+}
+
+.solved {
+  --game-tile-i: 0;
+  animation: solved-wave 650ms var(--game-ease-in-out) both;
+  animation-delay: calc(var(--game-tile-i) * 90ms);
+}
+
+.skeleton {
+  background: var(--color-game-skeleton-bg);
+  border: 2px solid var(--color-game-paper-border);
+  box-shadow: none;
+  animation: skeleton-fade 3s ease-in-out infinite both;
+}
+
+@keyframes type-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  65% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes marquee-reveal {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(0.96);
+    filter: brightness(0.7);
+  }
+  58% {
+    transform: scale(1.035);
+    filter: brightness(1.25);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes tile-flash {
+  0%,
+  100% {
+    background-color: var(--color-game-paper);
+    border-color: var(--color-game-paper-border);
+  }
+  50% {
+    background-color: var(--color-game-pending-bg);
+    border-color: var(--color-game-pending-border);
+    color: var(--color-game-pending-text);
+  }
+}
+
+@keyframes solved-wave {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.06);
+  }
+}
+
+@keyframes skeleton-fade {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .reveal,
+  .revealIncorrect,
+  .error,
+  .pending,
+  .solved,
+  .skeleton {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
