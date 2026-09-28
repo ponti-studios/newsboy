@@ -24,6 +24,27 @@ const PLAYABLE_LOOKBACK_DAYS = 90;
 // game, so a "week" is a more meaningful unit than an arbitrary row count.
 const WEEK_DAYS = 7;
 
+/** Public, spoiler-free puzzle inventory shown to signed-out History visitors. */
+export async function loadGuestPuzzleHistoryPreview(): Promise<PlayableUnplayedPuzzle[]> {
+  const games = await getActiveGames();
+  const gameIds = games.map((game) => game.id);
+  if (gameIds.length === 0) return [];
+
+  const gameById = new Map(games.map((game) => [game.id, game]));
+  const todayKey = getDateKey(new Date(), "UTC");
+  const yesterdayKey = addDaysToDateKey(todayKey, -1);
+  const earliestKey = await getEarliestPuzzleDateKeyAcrossTopics(gameIds);
+  if (!earliestKey || !yesterdayKey || earliestKey > yesterdayKey) return [];
+
+  const puzzles = await getExistingPuzzlesAcrossTopics(gameIds, earliestKey, yesterdayKey);
+  return puzzles
+    .flatMap(({ gameId, dateUtc }) => {
+      const game = gameById.get(gameId);
+      return game ? [{ dateKey: dateUtc, gameSlug: game.slug, gameName: game.name }] : [];
+    })
+    .sort((a, b) => (a.dateKey === b.dateKey ? a.gameName.localeCompare(b.gameName) : b.dateKey.localeCompare(a.dateKey)));
+}
+
 export interface PuzzleHistoryRow {
   dateKey: string;
   gameSlug: string;

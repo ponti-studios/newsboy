@@ -25,11 +25,14 @@ export function buildGameShareText(
   topic?: string,
   topicSlug?: string,
   date = new Date(),
+  origin = "https://newsboy.ponti.io",
 ): string {
   const tiles = shareTiles(topicSlug);
   const score = isSolved ? `${guesses.length}/6` : "X/6";
   const rows = guesses.map((guess) => guess.states.map((state) => tiles[state]).join(""));
   const topicLabel = topic ? ` · ${getTopicEmoji(topicSlug)} ${topic}` : "";
+  const path = topicSlug ? `/${encodeURIComponent(topicSlug)}` : "/";
+  const shareUrl = `${origin.replace(/\/$/, "")}${path}?src=share`;
 
-  return [`${BRAND_NAME}${topicLabel} · ${formatShareDate(date)}`, score, "", ...rows].join("\n");
+  return [`${BRAND_NAME}${topicLabel} · ${formatShareDate(date)}`, score, "", ...rows, "", shareUrl].join("\n");
 }

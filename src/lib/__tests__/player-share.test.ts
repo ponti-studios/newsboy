@@ -29,6 +29,7 @@ describe("game sharing", () => {
     expect(text).toContain("🟠");
     expect(text).not.toContain("FLANK");
     expect(text).not.toContain("BACKS");
+    expect(text).toContain("https://newsboy.ponti.io/reality?src=share");
   });
 
   it("falls back to a default emoji for an unrecognized topic slug", () => {

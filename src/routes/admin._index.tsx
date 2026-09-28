@@ -57,6 +57,9 @@ export default function GameAdminOverview() {
               <Button asChild variant="outline">
                 <Link to="/admin/costs">Costs</Link>
               </Button>
+              <Button asChild variant="outline">
+                <Link to="/admin/analytics">Analytics</Link>
+              </Button>
               <Button asChild>
                 <Link to={`/admin/generate?game=${overview.game.slug}`}>Generate</Link>
               </Button>

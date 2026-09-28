@@ -1,7 +1,7 @@
 import { useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router";
 
 import { HistoryGuestView, HistoryPageView } from "../components/pages/history-page";
-import { loadPuzzleHistory } from "../lib/data/history.server";
+import { loadGuestPuzzleHistoryPreview, loadPuzzleHistory } from "../lib/data/history.server";
 import { getGameUser, loginUrl } from "../server/auth";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -9,7 +9,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getGameUser(request);
 
   if (!user) {
-    return { signedIn: false as const, loginUrl: login };
+    const puzzles = await loadGuestPuzzleHistoryPreview();
+    return { signedIn: false as const, loginUrl: login, puzzles };
   }
 
   const url = new URL(request.url);
@@ -26,7 +27,7 @@ export default function HistoryRoute() {
   const [, setSearchParams] = useSearchParams();
 
   if (!props.signedIn) {
-    return <HistoryGuestView loginUrl={props.loginUrl} />;
+    return <HistoryGuestView loginUrl={props.loginUrl} puzzles={props.puzzles} />;
   }
 
   const setPage = (page: number) => {

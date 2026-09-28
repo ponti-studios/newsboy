@@ -6,9 +6,8 @@ import { evaluateGuessServer } from "../lib/data/puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),
-  // Only trusted for anonymous players, and only to gate the single free
-  // guess client-side — see evaluateGuessServer's doc comment. Signed-in
-  // players are checked against games_attempts instead.
+  // Used to reject duplicate guesses and enforce the guess cap for anonymous
+  // on-device games. Signed-in players are checked against games_attempts.
   previousGuesses: z
     .array(z.object({ word: z.string().min(1) }))
     .max(6)
@@ -36,7 +35,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     parsed.dateKey,
     parsed.word,
     user,
-    parsed.previousGuesses.length,
+    parsed.previousGuesses,
     gameSlug,
   );
 

@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getGameUserMock, getGameBySlugMock, loadPuzzleForSpecificDateMock } = vi.hoisted(() => ({
+const { getGameUserMock, getGameBySlugMock, loadGuestPuzzleHistoryPreviewMock, loadPuzzleForSpecificDateMock } = vi.hoisted(() => ({
   getGameUserMock: vi.fn(),
   getGameBySlugMock: vi.fn(),
+  loadGuestPuzzleHistoryPreviewMock: vi.fn(),
   loadPuzzleForSpecificDateMock: vi.fn(),
 }));
 
@@ -17,6 +18,10 @@ vi.mock("../lib/data/games.server", () => ({
 
 vi.mock("../lib/data/puzzle.server", () => ({
   loadPuzzleForSpecificDate: loadPuzzleForSpecificDateMock,
+}));
+
+vi.mock("../lib/data/history.server", () => ({
+  loadGuestPuzzleHistoryPreview: loadGuestPuzzleHistoryPreviewMock,
 }));
 
 const PUZZLE = {
@@ -106,6 +111,9 @@ describe("dated-puzzle route loader", () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
     loadPuzzleForSpecificDateMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
+    loadGuestPuzzleHistoryPreviewMock.mockResolvedValueOnce([
+      { gameSlug: "reality", dateKey: "2026-05-20", gameName: "Reality" },
+    ]);
 
     const loader = await importLoader();
     const result = await loader({
@@ -114,6 +122,25 @@ describe("dated-puzzle route loader", () => {
       context: {} as never,
     } as never);
 
-    expect(result).toMatchObject({ puzzle: PUZZLE, attempt: null, signedIn: false });
+    expect(result).toMatchObject({ puzzle: PUZZLE, attempt: null, signedIn: false, canPlayAsGuest: true });
+  });
+
+  it("does not allow anonymous play for dates outside the two-puzzle history preview", async () => {
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce(null);
+    loadPuzzleForSpecificDateMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
+    loadGuestPuzzleHistoryPreviewMock.mockResolvedValueOnce([
+      { gameSlug: "reality", dateKey: "2026-05-19", gameName: "Reality" },
+      { gameSlug: "culture", dateKey: "2026-05-18", gameName: "Culture" },
+    ]);
+
+    const loader = await importLoader();
+    const result = await loader({
+      request: request("https://game.example.com/reality/2026-05-20"),
+      params: { topic: "reality", dateKey: "2026-05-20" },
+      context: {} as never,
+    } as never);
+
+    expect(result).toMatchObject({ signedIn: false, canPlayAsGuest: false });
   });
 });

@@ -253,19 +253,15 @@ export async function loadPuzzleForSpecificDate(
  * per-letter states and the post-guess status only.
  *
  * `user` is the resolved Hominem session (null for anonymous). Anonymous
- * players get exactly one unpersisted guess, gated by `anonymousGuessCount` —
- * the number of guesses the client has already accumulated in its own local
- * state. That count is client-reported and therefore not adversarially
- * secure, but nothing sensitive depends on it: the six-guess cap, the
- * duplicate-guess check, and the guesses-per-minute rate limit are all
- * authoritative only once a user is signed in and backed by
- * `games_attempts`, which is the actual gap this closes.
+ * players may play the full puzzle; their progress is stored on-device. Their
+ * previous guesses are client-reported, so signed-in attempts remain the
+ * authoritative record for history and cross-device stats.
  */
 export async function evaluateGuessServer(
   dateKey: string,
   rawWord: string,
   user: HominemUser | null,
-  anonymousGuessCount: number,
+  previousGuesses: readonly { word: string }[],
   gameSlug = DEFAULT_GAME_SLUG,
 ): Promise<GameGuessResult> {
   const childLogger = logger.child({
@@ -326,8 +322,13 @@ export async function evaluateGuessServer(
       childLogger.warn({ event: "[GUESS_RATE_LIMITED]", recentGuessCount }, "rate limit exceeded");
       return { valid: false, word, reason: "rate-limited" };
     }
-  } else if (anonymousGuessCount >= 1) {
-    return { valid: false, word, reason: "auth-required", authRequired: true };
+  } else {
+    if (previousGuesses.length >= MAX_GUESSES) {
+      return { valid: false, word, reason: "game-over", isGameOver: true, status: "failed" };
+    }
+    if (previousGuesses.some((guess) => normalizeGuess(guess.word) === word)) {
+      return { valid: false, word, reason: "already-guessed" };
+    }
   }
 
   const inWordList = await isValidWord(word, gameId);
@@ -339,16 +340,20 @@ export async function evaluateGuessServer(
   const isSolved = isGuessSolved({ word, states });
 
   if (!user) {
-    // Anonymous free guess: scored but never persisted. Game is over either
-    // way — solved outright, or the player must sign in to keep going.
+    // Anonymous progress is intentionally not written to the account table.
+    // The browser keeps the scored guesses locally; sign-in remains optional.
+    const guessCount = previousGuesses.length + 1;
+    const isGameOver = isSolved || guessCount >= MAX_GUESSES;
     return {
       valid: true,
       word,
       states,
       isSolved,
-      isGameOver: true,
-      status: isSolved ? "solved" : "playing",
-      authRequired: !isSolved,
+      isGameOver,
+      status: isSolved ? "solved" : isGameOver ? "failed" : "playing",
+      remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
+      clue: !isSolved && guessCount === MAX_GUESSES - 1 ? puzzle.clue : undefined,
+      detail: isGameOver ? puzzle.detail : undefined,
     };
   }
 
@@ -381,5 +386,7 @@ export async function evaluateGuessServer(
     isGameOver,
     status,
     remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
+    clue: !isSolved && guessCount === MAX_GUESSES - 1 ? puzzle.clue : undefined,
+    detail: isGameOver ? puzzle.detail : undefined,
   };
 }

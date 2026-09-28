@@ -75,7 +75,7 @@ describe("api.$topic.guess action", () => {
       "2026-05-20",
       "erika",
       { id: "user-1", email: "user@example.com" },
-      1,
+      [{ word: "ABABA" }],
       "reality",
     );
     expect(response.status).toBe(200);
@@ -97,6 +97,6 @@ describe("api.$topic.guess action", () => {
       context: {} as never,
     } as never);
 
-    expect(evaluateGuessServerMock).toHaveBeenCalledWith("2026-05-20", "abcde", null, 0, "reality");
+    expect(evaluateGuessServerMock).toHaveBeenCalledWith("2026-05-20", "abcde", null, [], "reality");
   });
 });

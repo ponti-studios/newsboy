@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getGameUserMock, loadPuzzleHistoryMock } = vi.hoisted(() => ({
+const { getGameUserMock, loadGuestPuzzleHistoryPreviewMock, loadPuzzleHistoryMock } = vi.hoisted(() => ({
   getGameUserMock: vi.fn(),
+  loadGuestPuzzleHistoryPreviewMock: vi.fn(),
   loadPuzzleHistoryMock: vi.fn(),
 }));
 
@@ -11,6 +12,7 @@ vi.mock("../server/auth", () => ({
 }));
 
 vi.mock("../lib/data/history.server", () => ({
+  loadGuestPuzzleHistoryPreview: loadGuestPuzzleHistoryPreviewMock,
   loadPuzzleHistory: loadPuzzleHistoryMock,
 }));
 
@@ -26,13 +28,24 @@ function request(url: string) {
 describe("history route loader", () => {
   it("returns signedIn false with a login URL for anonymous visitors", async () => {
     getGameUserMock.mockResolvedValueOnce(null);
+    loadGuestPuzzleHistoryPreviewMock.mockResolvedValueOnce([
+      { dateKey: "2026-05-13", gameSlug: "culture", gameName: "Culture" },
+      { dateKey: "2026-05-12", gameSlug: "culture", gameName: "Culture" },
+    ]);
     const loader = await importLoader();
     const result = await loader({
       request: request("https://game.example.com/history"),
       params: {},
       context: {} as never,
     } as never);
-    expect(result).toMatchObject({ signedIn: false });
+    expect(result).toMatchObject({
+      signedIn: false,
+      puzzles: [
+        { dateKey: "2026-05-13", gameSlug: "culture", gameName: "Culture" },
+        { dateKey: "2026-05-12", gameSlug: "culture", gameName: "Culture" },
+      ],
+    });
+    expect(loadGuestPuzzleHistoryPreviewMock).toHaveBeenCalledOnce();
     expect(loadPuzzleHistoryMock).not.toHaveBeenCalled();
   });
 

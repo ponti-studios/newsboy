@@ -7,7 +7,6 @@ import { OnscreenKeyboard } from "../components/keyboard/onscreen-keyboard";
 import { GAME_ANSWER_LENGTH, type GameGuess } from "../lib/puzzle";
 import { TILE_REVEAL_STEP_MS } from "../hooks/use-animation";
 import {
-  authRequiredGame,
   errorGame,
   failedGame,
   gameState,
@@ -251,13 +250,12 @@ function ResultStory({ game }: { game: typeof solvedGame }) {
     <GameResult
       game={game}
       puzzle={puzzle}
-      loginUrl="https://auth.example.com/login"
+      detail={game.detail}
       onShare={fn()}
       onCopy={fn()}
     />
   );
 }
-export const AuthRequired: Story = { render: () => <ResultStory game={authRequiredGame} /> };
 export const SolvedResult: Story = { render: () => <ResultStory game={solvedGame} /> };
 export const FailedResult: Story = { render: () => <ResultStory game={failedGame} /> };
 export const ResultActions: Story = {
@@ -268,7 +266,7 @@ export const ResultActions: Story = {
       <GameResult
         game={solvedGame}
         puzzle={puzzle}
-        loginUrl="/login"
+        detail={solvedGame.detail}
         onShare={share}
         onCopy={copy}
       />

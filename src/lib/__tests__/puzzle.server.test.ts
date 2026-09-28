@@ -180,7 +180,7 @@ describe("loadActivePublicPuzzle", () => {
 describe("evaluateGuessServer", () => {
   it("rejects a word that is not the answer length", async () => {
     const { evaluateGuessServer } = await import("../data/puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ABC", null, 0);
+    const result = await evaluateGuessServer("2026-05-20", "ABC", null, []);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("wrong-length");
@@ -194,7 +194,7 @@ describe("evaluateGuessServer", () => {
     isValidWordMock.mockResolvedValue(false);
 
     const { evaluateGuessServer } = await import("../data/puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", null, 0);
+    const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", null, []);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
@@ -205,7 +205,7 @@ describe("evaluateGuessServer", () => {
     loadPuzzleForDateMock.mockResolvedValue(null);
 
     const { evaluateGuessServer } = await import("../data/puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
+    const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, []);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
@@ -219,39 +219,72 @@ describe("evaluateGuessServer", () => {
       isValidWordMock.mockResolvedValue(true);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 0);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, []);
 
       expect(result.valid).toBe(true);
-      expect(result.isGameOver).toBe(true);
-      expect(result.authRequired).toBe(true);
+      expect(result.isGameOver).toBe(false);
+      expect(result.remainingGuesses).toBe(5);
       expect(createAttemptMock).not.toHaveBeenCalled();
       expect(appendGuessMock).not.toHaveBeenCalled();
     });
 
-    it("does not require auth when the free guess solves the puzzle", async () => {
+    it("allows anonymous players to solve without persisting an attempt", async () => {
       getGameBySlugMock.mockResolvedValue(GAME);
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
       isValidWordMock.mockResolvedValue(true);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
+      const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, []);
 
       expect(result.valid).toBe(true);
       expect(result.isSolved).toBe(true);
-      expect(result.authRequired).toBe(false);
+      expect(result.isGameOver).toBe(true);
+      expect(createAttemptMock).not.toHaveBeenCalled();
     });
 
-    it("rejects a second guess with auth-required, without scoring it", async () => {
+    it("accepts later distinct guesses and rejects a repeated anonymous guess", async () => {
       getGameBySlugMock.mockResolvedValue(GAME);
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 1);
+      const result = await evaluateGuessServer("2026-05-20", "KYLEE", null, [{ word: "DORIT" }]);
 
-      expect(result.valid).toBe(false);
-      expect(result.reason).toBe("auth-required");
-      expect(result.authRequired).toBe(true);
-      expect(isValidWordMock).not.toHaveBeenCalled();
+      expect(result.valid).toBe(true);
+      expect(result.isGameOver).toBe(false);
+      const duplicate = await evaluateGuessServer("2026-05-20", "DORIT", null, [{ word: "DORIT" }]);
+      expect(duplicate.valid).toBe(false);
+      expect(duplicate.reason).toBe("already-guessed");
+    });
+
+    it("allows the sixth anonymous guess and then ends the game", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+      const { evaluateGuessServer } = await import("../data/puzzle.server");
+      isValidWordMock.mockResolvedValue(true);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, [
+        { word: "ALERT" }, { word: "RIVAL" }, { word: "SNEAK" },
+        { word: "TOAST" }, { word: "GLARE" },
+      ]);
+      expect(result.valid).toBe(true);
+      expect(result.isGameOver).toBe(true);
+      expect(result.remainingGuesses).toBe(0);
+    });
+
+    it("reveals the clue after the fifth guess and story detail only when the game ends", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ clue: "earned clue", detail: "story reveal" }));
+      isValidWordMock.mockResolvedValue(true);
+      const { evaluateGuessServer } = await import("../data/puzzle.server");
+
+      const fifthGuess = await evaluateGuessServer("2026-05-20", "DORIT", null, [
+        { word: "ALERT" }, { word: "RIVAL" }, { word: "SNEAK" }, { word: "TOAST" },
+      ]);
+      expect(fifthGuess.clue).toBe("earned clue");
+      expect(fifthGuess.detail).toBeUndefined();
+
+      const solved = await evaluateGuessServer("2026-05-20", "ERIKA", null, []);
+      expect(solved.detail).toBe("story reveal");
     });
   });
 
@@ -265,7 +298,7 @@ describe("evaluateGuessServer", () => {
       createAttemptMock.mockResolvedValue(makeAttempt({ guesses: [] }));
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, []);
 
       expect(result.valid).toBe(true);
       expect(result.status).toBe("playing");
@@ -286,7 +319,7 @@ describe("evaluateGuessServer", () => {
       countRecentGuessesMock.mockResolvedValue(0);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "ERIKA", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "ERIKA", USER, []);
 
       expect(result.valid).toBe(true);
       expect(result.isSolved).toBe(true);
@@ -311,7 +344,7 @@ describe("evaluateGuessServer", () => {
       countRecentGuessesMock.mockResolvedValue(0);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "KYLEE", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "KYLEE", USER, []);
 
       expect(result.valid).toBe(true);
       expect(result.isSolved).toBe(false);
@@ -329,7 +362,7 @@ describe("evaluateGuessServer", () => {
       countRecentGuessesMock.mockResolvedValue(0);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, []);
 
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("already-guessed");
@@ -342,7 +375,7 @@ describe("evaluateGuessServer", () => {
       loadAttemptMock.mockResolvedValue(makeAttempt({ status: "solved" }));
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, []);
 
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("game-over");
@@ -357,7 +390,7 @@ describe("evaluateGuessServer", () => {
       countRecentGuessesMock.mockResolvedValue(10);
 
       const { evaluateGuessServer } = await import("../data/puzzle.server");
-      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, []);
 
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("rate-limited");

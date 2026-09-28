@@ -55,7 +55,7 @@ export function NewsboyNavigation({ games, signedIn, canAccessAdmin, loginUrl }:
               </Link>
             </li>
           </ul>
-        ) : signedIn && games.length > 1 ? (
+        ) : games.length > 1 ? (
           <Popover>
             <PopoverTrigger
               className="border-game-paper/18 bg-game-paper/10 text-game-paper hover:bg-game-paper/18 inline-flex min-h-9 items-center gap-2 rounded-xl border px-2.5 py-2 text-sm leading-none font-semibold"

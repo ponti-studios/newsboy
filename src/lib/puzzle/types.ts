@@ -40,7 +40,6 @@ type GuessRejectReason =
   | "not-in-word-list"
   | "wrong-length"
   | "already-guessed"
-  | "auth-required"
   | "rate-limited"
   | "game-over";
 
@@ -51,7 +50,8 @@ export interface GameGuessResult {
   isSolved?: boolean;
   isGameOver?: boolean;
   status?: GameStatus;
+  clue?: string;
+  detail?: string;
   reason?: GuessRejectReason;
-  authRequired?: boolean;
   remainingGuesses?: number;
 }

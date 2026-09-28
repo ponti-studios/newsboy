@@ -14,17 +14,15 @@ import {
 
 import { useAnimation } from "./use-animation";
 import { useTyping } from "./use-typing";
+import { loadLocalGame, saveLocalGame } from "../lib/player/local-game";
 
 export interface GameState {
   guesses: readonly GameGuess[];
+  clue: string;
+  detail: string;
   status: GameStatus;
   isSolved: boolean;
   isGameOver: boolean;
-  // True once an anonymous player has used their one free guess (or tried a
-  // second) without it solving the puzzle. isGameOver is also true in this
-  // state, but callers that need to distinguish "sign in to keep playing"
-  // from a genuinely finished game (solved/6 guesses) should check this.
-  authRequired: boolean;
   isRevealingRow: boolean;
   isValidationPending: boolean;
   currentGuess: string;
@@ -45,11 +43,21 @@ interface UseGameOptions {
   puzzle: PublicGamesPuzzle;
   initialGuesses: readonly GameGuess[];
   gameSlug: string;
+  isSignedIn: boolean;
+  onAcceptedGuess?: (guessCount: number, isSolved: boolean, isGameOver: boolean) => void;
 }
 
-export function useGame({ puzzle, initialGuesses, gameSlug }: UseGameOptions): GameState {
+export function useGame({
+  puzzle,
+  initialGuesses,
+  gameSlug,
+  isSignedIn,
+  onAcceptedGuess,
+}: UseGameOptions): GameState {
   const [guesses, setGuesses] = useState<GameGuess[]>(() => [...initialGuesses]);
-  const [authRequired, setAuthRequired] = useState(false);
+  const [revealedClue, setRevealedClue] = useState(puzzle.clue);
+  const [revealedDetail, setRevealedDetail] = useState(puzzle.detail);
+  const [loadedStorageKey, setLoadedStorageKey] = useState<string | null>(null);
   const fetcher = useFetcher<GameGuessResult>();
   const isValidationPending = fetcher.state !== "idle";
 
@@ -62,10 +70,32 @@ export function useGame({ puzzle, initialGuesses, gameSlug }: UseGameOptions): G
   const anim = useAnimation();
   const isRevealingRow = anim.revealingGuessIndex !== null;
   const status = useMemo(() => deriveGameStatus(guesses), [guesses]);
-  const isGameOver = status !== "playing" || authRequired;
+  const isGameOver = status !== "playing";
   const canMutateGuess = !isGameOver && !isValidationPending && !isRevealingRow;
 
   const typing = useTyping(!canMutateGuess);
+  const currentStorageKey = `${gameSlug}:${puzzle.dateKey}`;
+
+  useEffect(() => {
+    if (isSignedIn) {
+      setLoadedStorageKey(currentStorageKey);
+      return;
+    }
+    const localGame = loadLocalGame(gameSlug, puzzle.dateKey);
+    setGuesses(localGame.guesses);
+    setRevealedClue(localGame.clue || puzzle.clue);
+    setRevealedDetail(localGame.detail || puzzle.detail);
+    setLoadedStorageKey(currentStorageKey);
+  }, [currentStorageKey, gameSlug, isSignedIn, puzzle.dateKey]);
+
+  useEffect(() => {
+    if (isSignedIn || loadedStorageKey !== currentStorageKey) return;
+    saveLocalGame(gameSlug, puzzle.dateKey, {
+      guesses,
+      clue: revealedClue,
+      detail: revealedDetail,
+    });
+  }, [currentStorageKey, gameSlug, guesses, isSignedIn, loadedStorageKey, puzzle.dateKey, revealedClue, revealedDetail]);
 
   // Reset everything when the active puzzle changes (midnight rollover).
   // The ref guard prevents the effect from firing on the initial mount,
@@ -74,12 +104,16 @@ export function useGame({ puzzle, initialGuesses, gameSlug }: UseGameOptions): G
   useEffect(() => {
     if (puzzle.dateKey === prevDateKeyRef.current) return;
     prevDateKeyRef.current = puzzle.dateKey;
-    setGuesses([]);
-    setAuthRequired(false);
+    const localGame = isSignedIn ? null : loadLocalGame(gameSlug, puzzle.dateKey);
+    setGuesses(localGame?.guesses ?? []);
+    setRevealedClue(puzzle.clue);
+    setRevealedDetail(puzzle.detail);
+    if (localGame?.clue) setRevealedClue(localGame.clue);
+    if (localGame?.detail) setRevealedDetail(localGame.detail);
     inFlightDateKeyRef.current = null;
     typing.setCurrentGuess("");
     anim.resetAnimation();
-  }, [puzzle.dateKey]);
+  }, [gameSlug, isSignedIn, puzzle.clue, puzzle.dateKey, puzzle.detail]);
 
   // Stable refs so the keydown listener never needs to be re-registered
   // when these callbacks change identity between renders.
@@ -165,28 +199,34 @@ export function useGame({ puzzle, initialGuesses, gameSlug }: UseGameOptions): G
         anim.animateError("Too many guesses — slow down", true, "rate-limited");
       else if (result.reason === "game-over")
         anim.animateError("This puzzle is already over", true, "game-over");
-      if (result.reason === "auth-required") setAuthRequired(true);
       return;
     }
 
     if (result.word && result.states) {
+      if (result.clue) setRevealedClue(result.clue);
+      if (result.detail) setRevealedDetail(result.detail);
+      onAcceptedGuess?.(
+        guesses.length + 1,
+        result.isSolved ?? false,
+        result.isGameOver ?? false,
+      );
       setGuesses((prev) => {
         if (hasGuessedWord(prev, result.word!)) return prev;
         return [...prev, { word: result.word!, states: result.states! }];
       });
       typing.setCurrentGuess("");
       anim.startReveal(guessIndex);
-      if (result.authRequired) setAuthRequired(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetcher.data, fetcher.state]);
+  }, [fetcher.data, fetcher.state, guesses.length, onAcceptedGuess]);
 
   return {
     guesses,
+    clue: revealedClue,
+    detail: revealedDetail,
     status,
     isSolved: status === "solved",
     isGameOver,
-    authRequired,
     isRevealingRow,
     isValidationPending,
     currentGuess: typing.currentGuess,

@@ -39,18 +39,64 @@ function formatShortDate(dateKey: string) {
   });
 }
 
-export function HistoryGuestView({ loginUrl }: { loginUrl: string }) {
+export function HistoryGuestView({
+  loginUrl,
+  puzzles,
+}: {
+  loginUrl: string;
+  puzzles: readonly PlayableUnplayedPuzzle[];
+}) {
+  const visiblePuzzles = puzzles.slice(0, 2);
+  const lockedPuzzles = puzzles.slice(2);
+
   return (
-    <div className={styles.guestWrap}>
-      <EmptyState
-        title="Sign in to see your puzzle history"
-        description="Track every puzzle you've played, your win rate, and your streak."
-        action={
-          <Button asChild variant="default">
-            <a href={loginUrl}>Sign in</a>
-          </Button>
-        }
-      />
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div>
+          <h1 className={styles.title}>Puzzle history</h1>
+          <p className={styles.guestDescription}>Play the two most recent past puzzles. Sign in to unlock the full archive and track your stats.</p>
+        </div>
+      </header>
+
+      {puzzles.length === 0 ? (
+        <EmptyState title="No past puzzles yet" description="Check back after more daily puzzles have been published." />
+      ) : (
+        <>
+          <ul className={styles.rowList} aria-label="Recent historical puzzles">
+            {visiblePuzzles.map((puzzle) => (
+              <li key={`${puzzle.gameSlug}:${puzzle.dateKey}`}>
+                <a className={styles.guestPuzzle} href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}>
+                  <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
+                  <span className={styles.rowGame}>{puzzle.gameName}</span>
+                  <span className={styles.guestPlay}>Play puzzle <span aria-hidden="true">→</span></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {lockedPuzzles.length > 0 && (
+            <section className={styles.lockedHistory} aria-label="More historical puzzles">
+              <ul className={styles.rowList} aria-hidden="true">
+                {lockedPuzzles.map((puzzle) => (
+                  <li key={`${puzzle.gameSlug}:${puzzle.dateKey}`}>
+                    <div className={styles.guestPuzzle}>
+                      <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
+                      <span className={styles.rowGame}>{puzzle.gameName}</span>
+                      <span className={styles.guestPlay}>Play puzzle <span aria-hidden="true">→</span></span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className={styles.historyGate}>
+                <p>Keep the streak going</p>
+                <Button asChild variant="default">
+                  <a href={loginUrl}>Sign in to play full history</a>
+                </Button>
+              </div>
+            </section>
+          )}
+        </>
+      )}
     </div>
   );
 }

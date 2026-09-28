@@ -22,6 +22,25 @@
   font-size: var(--text-xs);
 }
 
+.howToPlay {
+  border: 1px solid color-mix(in srgb, var(--color-game-ink) 16%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-game-paper) 88%, transparent);
+  color: var(--color-game-ink);
+  padding: 0.7rem 0.85rem;
+  font-size: var(--text-xs);
+}
+
+.howToPlay summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.howToPlay p {
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
 .clue {
   border: 1px solid var(--color-game-present-border);
   border-radius: var(--radius-md);

@@ -24,7 +24,7 @@ export function useShare({
   onResult: (outcome: ShareOutcome) => void;
 }): UseShare {
   const share = useCallback(async (): Promise<ShareOutcome> => {
-    const shareText = buildGameShareText(guesses, isSolved, topic, topicSlug);
+    const shareText = buildGameShareText(guesses, isSolved, topic, topicSlug, undefined, window.location.origin);
 
     try {
       if (navigator.share) {

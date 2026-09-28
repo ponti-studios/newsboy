@@ -1,8 +1,7 @@
 import { CheckCircle2, Copy, ExternalLink, Share2, XCircle } from "lucide-react";
 import type { CSSProperties } from "react";
 
-import { MAX_GUESSES, type PublicGamesPuzzle } from "../../lib/puzzle";
-import { Button, Card, CardContent } from "../primitives";
+import type { PublicGamesPuzzle } from "../../lib/puzzle";
 
 import type { GameState } from "../../hooks/use-game";
 import styles from "./game-result.module.css";
@@ -10,32 +9,12 @@ import styles from "./game-result.module.css";
 interface GameResultProps {
   game: GameState;
   puzzle: PublicGamesPuzzle;
-  loginUrl: string;
+  detail: string;
   onShare: () => void;
   onCopy: () => void;
 }
 
-export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResultProps) {
-  if (game.authRequired) {
-    return (
-      <Card className={styles.authCard} data-testid="game-auth-required">
-        <CardContent className={styles.authCardContent}>
-          <div>
-            <p className={styles.eyebrow}>Free guess used</p>
-            <p style={{ marginTop: "0.25rem", fontSize: "0.875rem" }}>
-              Sign in to keep playing — six guesses a day, saved automatically.
-            </p>
-          </div>
-          <Button asChild variant="default">
-            <a href={loginUrl} data-testid="game-auth-signin">
-              Sign in to keep playing
-            </a>
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
+export function GameResult({ game, puzzle, detail, onShare, onCopy }: GameResultProps) {
   if (!game.isGameOver) return null;
 
   return (
@@ -60,7 +39,7 @@ export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResu
               </span>
             </div>
           </div>
-          <p>{puzzle.detail}</p>
+          <p>{detail}</p>
         </div>
         <div className={styles.resultActions}>
           <button

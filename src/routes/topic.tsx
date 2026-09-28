@@ -5,7 +5,7 @@ import { useTimeZone } from "../hooks/use-timezone";
 import { getGameBySlug } from "../lib/data/games.server";
 import { loadActivePublicPuzzleWithAttempt } from "../lib/data/puzzle.server";
 import { readTimeZoneCookie } from "../lib/puzzle/timezone";
-import { getGameUser, loginUrl } from "../server/auth";
+import { getGameUser } from "../server/auth";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const topic = params.topic!;
@@ -19,12 +19,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const envelope = await loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic);
 
-  const login = loginUrl(request);
   if (!envelope) {
-    return { puzzle: null, loginUrl: login, gameSlug: topic };
+    return { puzzle: null, gameSlug: topic, isSignedIn: user !== null };
   }
 
-  return { ...envelope, loginUrl: login, gameSlug: topic };
+  return { ...envelope, gameSlug: topic, isSignedIn: user !== null };
 }
 
 export default function TodayRoute() {
@@ -48,8 +47,8 @@ export default function TodayRoute() {
       key={boardKey}
       puzzle={data.puzzle}
       initialGuesses={data.attempt?.guesses ?? []}
-      loginUrl={data.loginUrl}
       gameSlug={data.gameSlug}
+      isSignedIn={data.isSignedIn}
     />
   );
 }

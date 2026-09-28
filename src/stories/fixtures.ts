@@ -46,10 +46,11 @@ const noop = () => undefined;
 export function gameState(overrides: Partial<GameState> = {}): GameState {
   return {
     guesses: [],
+    clue: "",
+    detail: "",
     status: "playing",
     isSolved: false,
     isGameOver: false,
-    authRequired: false,
     isRevealingRow: false,
     isValidationPending: false,
     currentGuess: "",
@@ -91,7 +92,6 @@ export const failedGame = gameState({
   status: "failed",
   isGameOver: true,
 });
-export const authRequiredGame = gameState({ authRequired: true, isGameOver: true });
 
 const stats = {
   gamesPlayed: 8,

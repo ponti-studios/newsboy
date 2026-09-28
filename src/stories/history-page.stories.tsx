@@ -9,7 +9,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SignedOut: Story = {
-  render: () => <HistoryGuestView loginUrl="/login" />,
+  render: () => (
+    <HistoryGuestView
+      loginUrl="/login"
+      puzzles={[
+        { dateKey: "2026-05-13", gameSlug: "culture", gameName: "Culture" },
+        { dateKey: "2026-05-12", gameSlug: "culture", gameName: "Culture" },
+        { dateKey: "2026-05-11", gameSlug: "reality", gameName: "Reality" },
+        { dateKey: "2026-05-10", gameSlug: "technology", gameName: "Technology" },
+      ]}
+    />
+  ),
 };
 
 export const WithHistory: Story = {

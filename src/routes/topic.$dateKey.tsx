@@ -5,6 +5,7 @@ import styles from "../components/pages/date-page.module.css";
 import { Button, Card, CardContent } from "../components/primitives";
 import { BRAND_NAME } from "../config/brand";
 import { getGameBySlug } from "../lib/data/games.server";
+import { loadGuestPuzzleHistoryPreview } from "../lib/data/history.server";
 import { loadPuzzleForSpecificDate } from "../lib/data/puzzle.server";
 import { isDateKey } from "../lib/puzzle/date";
 import { getGameUser, loginUrl } from "../server/auth";
@@ -27,12 +28,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response(`No ${BRAND_NAME} puzzle found for that date`, { status: 404 });
   }
 
-  return { ...envelope, signedIn: user !== null, loginUrl: loginUrl(request), gameSlug: topic };
+  const guestPreview = user ? [] : await loadGuestPuzzleHistoryPreview();
+  const canPlayAsGuest = guestPreview.some((puzzle) => puzzle.gameSlug === topic && puzzle.dateKey === dateKey);
+
+  return {
+    ...envelope,
+    signedIn: user !== null,
+    canPlayAsGuest,
+    loginUrl: loginUrl(request),
+    gameSlug: topic,
+  };
 }
 
 export default function DatedPuzzleRoute() {
-  const { puzzle, attempt, signedIn, loginUrl, gameSlug } = useLoaderData<typeof loader>();
-  if (!signedIn) {
+  const { puzzle, attempt, signedIn, canPlayAsGuest, loginUrl, gameSlug } = useLoaderData<typeof loader>();
+  if (!signedIn && !canPlayAsGuest) {
     return <SignedOutTeaser dateKey={puzzle.dateKey} loginUrl={loginUrl} />;
   }
 
@@ -40,8 +50,8 @@ export default function DatedPuzzleRoute() {
     <GameBoard
       puzzle={puzzle}
       initialGuesses={attempt?.guesses ?? []}
-      loginUrl={loginUrl}
       gameSlug={gameSlug}
+      isSignedIn={signedIn}
     />
   );
 }
