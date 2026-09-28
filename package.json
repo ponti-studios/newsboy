@@ -37,7 +37,7 @@
     "@pontistudios/env": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
-    "cn": "^0.2.6",
+    "cn": "^0.4.0",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
     "fast-xml-parser": "catalog:",
