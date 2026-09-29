@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 
-import { GameHeader, GameResult, GuessGrid } from "../components/game";
+import { GameHeader, GameResult, GuessGrid, StatsSheet } from "../components/game";
 import { OnscreenKeyboard } from "../components/keyboard/onscreen-keyboard";
 import { GAME_ANSWER_LENGTH, type GameGuess } from "../lib/puzzle";
 import { TILE_REVEAL_STEP_MS } from "../hooks/use-animation";
@@ -283,6 +283,41 @@ export const ResultActions: Story = {
       "href",
       puzzle.sources[0].url,
     );
+  },
+};
+
+export const Stats: Story = {
+  render: () => <StatsSheet stats={stats} />,
+};
+
+export const StatsOpen: Story = {
+  render: () => <StatsSheet stats={stats} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "View your stats" }));
+    await expect(canvas.getByText("Your stats")).toBeVisible();
+  },
+};
+
+// What computeHistoryStats([]) actually returns for a first-ever game —
+// note the zeroed guessDistribution too, unlike stories/fixtures.ts's
+// `emptyHistory.stats`, which only zeroes the summary numbers.
+const zeroStats = {
+  gamesPlayed: 0,
+  gamesSolved: 0,
+  winRate: 0,
+  currentStreak: 0,
+  maxStreak: 0,
+  guessDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+};
+
+export const StatsEmpty: Story = {
+  name: "Stats (no history yet)",
+  render: () => <StatsSheet stats={zeroStats} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "View your stats" }));
+    await expect(canvas.getByText("Current streak")).toBeVisible();
   },
 };
 

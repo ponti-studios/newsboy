@@ -3,6 +3,7 @@ export { GameHeader } from "./game-header";
 export { GameResult } from "./game-result";
 export { GuessGrid } from "./guess-grid";
 export { GameTile, type GameTileState } from "./game-tile";
+export { StatsSheet } from "./stats-sheet";
 export {
   WeekStreakGrid,
   type WeekGridCell,
