@@ -21,7 +21,12 @@ export function getCurrentGame(pathname: string, games: readonly NavigationGame[
   return games.find((game) => game.slug === firstSegment) ?? null;
 }
 
-export function NewsboyNavigation({ games, signedIn, canAccessAdmin, loginUrl }: NewsboyNavigationProps) {
+export function NewsboyNavigation({
+  games,
+  signedIn,
+  canAccessAdmin,
+  loginUrl,
+}: NewsboyNavigationProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const currentGame = getCurrentGame(location.pathname, games);
@@ -31,10 +36,9 @@ export function NewsboyNavigation({ games, signedIn, canAccessAdmin, loginUrl }:
 
   return (
     <header
-      className="sticky top-0 z-50 bg-transparent px-4 pb-3 sm:px-8"
+      className="sticky top-0 z-50 bg-transparent px-4 pb-3"
       style={{ paddingTop: "var(--game-gutter-top)" }}
     >
-
       <nav
         aria-label={`${BRAND_NAME} navigation`}
         className="bg-game-ink text-game-paper mx-auto flex min-h-15 max-w-5xl items-center gap-3 rounded-2xl px-3.5 py-2.5 shadow-lg"

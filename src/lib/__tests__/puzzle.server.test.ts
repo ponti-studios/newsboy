@@ -263,8 +263,11 @@ describe("evaluateGuessServer", () => {
       const { evaluateGuessServer } = await import("../data/puzzle.server");
       isValidWordMock.mockResolvedValue(true);
       const result = await evaluateGuessServer("2026-05-20", "DORIT", null, [
-        { word: "ALERT" }, { word: "RIVAL" }, { word: "SNEAK" },
-        { word: "TOAST" }, { word: "GLARE" },
+        { word: "ALERT" },
+        { word: "RIVAL" },
+        { word: "SNEAK" },
+        { word: "TOAST" },
+        { word: "GLARE" },
       ]);
       expect(result.valid).toBe(true);
       expect(result.isGameOver).toBe(true);
@@ -273,12 +276,17 @@ describe("evaluateGuessServer", () => {
 
     it("reveals the clue after the fifth guess and story detail only when the game ends", async () => {
       getGameBySlugMock.mockResolvedValue(GAME);
-      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ clue: "earned clue", detail: "story reveal" }));
+      loadPuzzleForDateMock.mockResolvedValue(
+        makePuzzle({ clue: "earned clue", detail: "story reveal" }),
+      );
       isValidWordMock.mockResolvedValue(true);
       const { evaluateGuessServer } = await import("../data/puzzle.server");
 
       const fifthGuess = await evaluateGuessServer("2026-05-20", "DORIT", null, [
-        { word: "ALERT" }, { word: "RIVAL" }, { word: "SNEAK" }, { word: "TOAST" },
+        { word: "ALERT" },
+        { word: "RIVAL" },
+        { word: "SNEAK" },
+        { word: "TOAST" },
       ]);
       expect(fifthGuess.clue).toBe("earned clue");
       expect(fifthGuess.detail).toBeUndefined();

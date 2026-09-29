@@ -3,8 +3,7 @@
  * instead of hunting down hardcoded strings across the codebase.
  */
 export const BRAND_NAME = "Newsboy";
-export const BRAND_TAGLINE =
-  "Wordplay, fresh off the press.";
+export const BRAND_TAGLINE = "Wordplay, fresh off the press.";
 
 /** Browser/OS chrome colors — SVG/JSON surface, so they live here, not in CSS. */
 export const BRAND_THEME_COLOR = "#f5b400";

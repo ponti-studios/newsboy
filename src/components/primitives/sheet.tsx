@@ -68,5 +68,7 @@ export function SheetHeader({ className, ...props }: HTMLAttributes<HTMLDivEleme
 
 export function SheetTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   const { titleId } = useSheetContext("SheetTitle");
-  return <h2 id={titleId} className={[styles.title, className].filter(Boolean).join(" ")} {...props} />;
+  return (
+    <h2 id={titleId} className={[styles.title, className].filter(Boolean).join(" ")} {...props} />
+  );
 }

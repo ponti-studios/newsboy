@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getGameUserMock, loadGuestPuzzleHistoryPreviewMock, loadPuzzleHistoryMock } = vi.hoisted(() => ({
-  getGameUserMock: vi.fn(),
-  loadGuestPuzzleHistoryPreviewMock: vi.fn(),
-  loadPuzzleHistoryMock: vi.fn(),
-}));
+const { getGameUserMock, loadGuestPuzzleHistoryPreviewMock, loadPuzzleHistoryMock } = vi.hoisted(
+  () => ({
+    getGameUserMock: vi.fn(),
+    loadGuestPuzzleHistoryPreviewMock: vi.fn(),
+    loadPuzzleHistoryMock: vi.fn(),
+  }),
+);
 
 vi.mock("../server/auth", () => ({
   getGameUser: getGameUserMock,

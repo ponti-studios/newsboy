@@ -26,7 +26,11 @@ describe("anonymous local game persistence", () => {
     saveLocalGame("reality", "2026-09-27", game);
 
     expect(loadLocalGame("reality", "2026-09-27")).toEqual(game);
-    expect(loadLocalGame("technology", "2026-09-27")).toEqual({ guesses: [], clue: "", detail: "" });
+    expect(loadLocalGame("technology", "2026-09-27")).toEqual({
+      guesses: [],
+      clue: "",
+      detail: "",
+    });
     expect(loadLocalGame("reality", "2026-09-28")).toEqual({ guesses: [], clue: "", detail: "" });
   });
 

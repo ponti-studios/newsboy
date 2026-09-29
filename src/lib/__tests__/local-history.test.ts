@@ -36,15 +36,12 @@ describe("loadLocalGameHistory", () => {
   });
 
   it("reconstructs attempts across topics and dates from newsboy:game: entries", () => {
-    vi.stubGlobal(
-      "window",
-      {
-        localStorage: fakeLocalStorage({
-          "newsboy:game:reality:2026-07-29": SOLVED_IN_3,
-          "newsboy:game:technology:2026-07-28": FAILED,
-        }),
-      },
-    );
+    vi.stubGlobal("window", {
+      localStorage: fakeLocalStorage({
+        "newsboy:game:reality:2026-07-29": SOLVED_IN_3,
+        "newsboy:game:technology:2026-07-28": FAILED,
+      }),
+    });
 
     const attempts = loadLocalGameHistory();
 
@@ -63,15 +60,12 @@ describe("loadLocalGameHistory", () => {
   });
 
   it("ignores unrelated localStorage keys and games with no guesses yet", () => {
-    vi.stubGlobal(
-      "window",
-      {
-        localStorage: fakeLocalStorage({
-          "newsboy:analytics:session": "some-uuid",
-          "newsboy:game:reality:2026-07-29": JSON.stringify({ guesses: [], clue: "", detail: "" }),
-        }),
-      },
-    );
+    vi.stubGlobal("window", {
+      localStorage: fakeLocalStorage({
+        "newsboy:analytics:session": "some-uuid",
+        "newsboy:game:reality:2026-07-29": JSON.stringify({ guesses: [], clue: "", detail: "" }),
+      }),
+    });
 
     expect(loadLocalGameHistory()).toEqual([]);
   });

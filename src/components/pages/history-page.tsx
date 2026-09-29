@@ -54,12 +54,18 @@ export function HistoryGuestView({
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Puzzle history</h1>
-          <p className={styles.guestDescription}>Play the two most recent past puzzles. Sign in to unlock the full archive and track your stats.</p>
+          <p className={styles.guestDescription}>
+            Play the two most recent past puzzles. Sign in to unlock the full archive and track your
+            stats.
+          </p>
         </div>
       </header>
 
       {puzzles.length === 0 ? (
-        <EmptyState title="No past puzzles yet" description="Check back after more daily puzzles have been published." />
+        <EmptyState
+          title="No past puzzles yet"
+          description="Check back after more daily puzzles have been published."
+        />
       ) : (
         <>
           <ul className={styles.rowList} aria-label="Recent historical puzzles">
@@ -68,7 +74,9 @@ export function HistoryGuestView({
                 <a className={styles.guestPuzzle} href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}>
                   <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
                   <span className={styles.rowGame}>{puzzle.gameName}</span>
-                  <span className={styles.guestPlay}>Play puzzle <span aria-hidden="true">→</span></span>
+                  <span className={styles.guestPlay}>
+                    Play puzzle <span aria-hidden="true">→</span>
+                  </span>
                 </a>
               </li>
             ))}
@@ -82,7 +90,9 @@ export function HistoryGuestView({
                     <div className={styles.guestPuzzle}>
                       <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
                       <span className={styles.rowGame}>{puzzle.gameName}</span>
-                      <span className={styles.guestPlay}>Play puzzle <span aria-hidden="true">→</span></span>
+                      <span className={styles.guestPlay}>
+                        Play puzzle <span aria-hidden="true">→</span>
+                      </span>
                     </div>
                   </li>
                 ))}

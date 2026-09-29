@@ -28,13 +28,12 @@ export function HowToPlaySheet() {
         </SheetHeader>
         <p className={styles.body}>
           Guess the five-letter answer from today&apos;s news story in six tries. Each guess shows
-          which letters match and where they belong. Your final clue appears before your last
-          guess.
+          which letters match and where they belong. Your final clue appears before your last guess.
         </p>
         <p className={styles.body}>
           There&apos;s one shared puzzle per topic each day. You can play without an account; this
-          device saves your progress. Newsboy uses AI to draft puzzles from current stories and
-          runs automated checks before publication.
+          device saves your progress. Newsboy uses AI to draft puzzles from current stories and runs
+          automated checks before publication.
         </p>
       </SheetContent>
     </Sheet>

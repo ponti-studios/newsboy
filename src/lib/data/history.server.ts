@@ -55,7 +55,11 @@ export async function loadGuestPuzzleHistoryPreview(): Promise<PlayableUnplayedP
       const game = gameById.get(gameId);
       return game ? [{ dateKey: dateUtc, gameSlug: game.slug, gameName: game.name }] : [];
     })
-    .sort((a, b) => (a.dateKey === b.dateKey ? a.gameName.localeCompare(b.gameName) : b.dateKey.localeCompare(a.dateKey)));
+    .sort((a, b) =>
+      a.dateKey === b.dateKey
+        ? a.gameName.localeCompare(b.gameName)
+        : b.dateKey.localeCompare(a.dateKey),
+    );
 }
 
 export interface PuzzleHistoryRow {

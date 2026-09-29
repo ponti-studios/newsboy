@@ -46,12 +46,15 @@ export function GameBoard({
   const [isOffline, setIsOffline] = useState(false);
   const analytics = useGameAnalytics(gameSlug, puzzle.dateKey);
   const { track } = analytics;
-  const onAcceptedGuess = useCallback((count: number, solved: boolean, over: boolean) => {
-    const clueCount = !solved && count >= MAX_GUESSES - 1 ? 1 : 0;
-    track("guess_made", count, clueCount);
-    if (solved) track("game_won", count, clueCount, true);
-    else if (over) track("game_lost", count, clueCount, true);
-  }, [track]);
+  const onAcceptedGuess = useCallback(
+    (count: number, solved: boolean, over: boolean) => {
+      const clueCount = !solved && count >= MAX_GUESSES - 1 ? 1 : 0;
+      track("guess_made", count, clueCount);
+      if (solved) track("game_won", count, clueCount, true);
+      else if (over) track("game_lost", count, clueCount, true);
+    },
+    [track],
+  );
   const game = useGame({ puzzle, initialGuesses, gameSlug, isSignedIn, onAcceptedGuess });
   const stats = usePlayerStats(serverStats, isSignedIn, game.isGameOver);
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
@@ -79,7 +82,14 @@ export function GameBoard({
   const copyStory = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(
-        buildGameShareText(game.guesses, game.isSolved, puzzle.topic, gameSlug, undefined, window.location.origin),
+        buildGameShareText(
+          game.guesses,
+          game.isSolved,
+          puzzle.topic,
+          gameSlug,
+          undefined,
+          window.location.origin,
+        ),
       );
       track("shared", game.guesses.length, game.clue ? 1 : 0);
       game.clearError();

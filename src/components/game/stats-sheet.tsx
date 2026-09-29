@@ -16,7 +16,10 @@ interface StatsSheetProps {
 }
 
 export function StatsSheet({ stats, actionIndex = 3 }: StatsSheetProps) {
-  const maxDistribution = Math.max(1, ...GUESS_COUNTS.map((count) => stats.guessDistribution[count]));
+  const maxDistribution = Math.max(
+    1,
+    ...GUESS_COUNTS.map((count) => stats.guessDistribution[count]),
+  );
 
   return (
     <Sheet>

@@ -85,9 +85,10 @@ export async function loadFunnelReport(now = new Date()): Promise<FunnelReportRo
     } else if (event.event === "game_lost") {
       row.losses++;
       row.guesses += event.attemptCount;
-    }
-    else if (event.event === "clue_used") row.clueUses++;
+    } else if (event.event === "clue_used") row.clueUses++;
   }
 
-  return [...groups.values()].sort((a, b) => a.topicSlug.localeCompare(b.topicSlug) || a.source.localeCompare(b.source));
+  return [...groups.values()].sort(
+    (a, b) => a.topicSlug.localeCompare(b.topicSlug) || a.source.localeCompare(b.source),
+  );
 }

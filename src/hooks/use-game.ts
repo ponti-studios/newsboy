@@ -95,7 +95,16 @@ export function useGame({
       clue: revealedClue,
       detail: revealedDetail,
     });
-  }, [currentStorageKey, gameSlug, guesses, isSignedIn, loadedStorageKey, puzzle.dateKey, revealedClue, revealedDetail]);
+  }, [
+    currentStorageKey,
+    gameSlug,
+    guesses,
+    isSignedIn,
+    loadedStorageKey,
+    puzzle.dateKey,
+    revealedClue,
+    revealedDetail,
+  ]);
 
   // Reset everything when the active puzzle changes (midnight rollover).
   // The ref guard prevents the effect from firing on the initial mount,
@@ -205,11 +214,7 @@ export function useGame({
     if (result.word && result.states) {
       if (result.clue) setRevealedClue(result.clue);
       if (result.detail) setRevealedDetail(result.detail);
-      onAcceptedGuess?.(
-        guesses.length + 1,
-        result.isSolved ?? false,
-        result.isGameOver ?? false,
-      );
+      onAcceptedGuess?.(guesses.length + 1, result.isSolved ?? false, result.isGameOver ?? false);
       setGuesses((prev) => {
         if (hasGuessedWord(prev, result.word!)) return prev;
         return [...prev, { word: result.word!, states: result.states! }];

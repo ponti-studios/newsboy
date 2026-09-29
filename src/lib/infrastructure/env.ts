@@ -21,7 +21,10 @@ function resolveHominemUrls(raw: unknown): Record<string, unknown> {
   const env = { ...(raw as Record<string, string | undefined>) };
   const isDevelopment = env.NODE_ENV === "development";
 
-  if (isDevelopment && (!env.HOMINEM_API_URL || isLoopbackHostname(new URL(env.HOMINEM_API_URL).hostname))) {
+  if (
+    isDevelopment &&
+    (!env.HOMINEM_API_URL || isLoopbackHostname(new URL(env.HOMINEM_API_URL).hostname))
+  ) {
     env.HOMINEM_API_URL = DEFAULT_HOMINEM_API_URL;
   }
 
@@ -30,7 +33,8 @@ function resolveHominemUrls(raw: unknown): Record<string, unknown> {
   }
   if (
     isDevelopment &&
-    (!env.HOMINEM_INTERNAL_API_URL || isLoopbackHostname(new URL(env.HOMINEM_INTERNAL_API_URL).hostname))
+    (!env.HOMINEM_INTERNAL_API_URL ||
+      isLoopbackHostname(new URL(env.HOMINEM_INTERNAL_API_URL).hostname))
   ) {
     env.HOMINEM_INTERNAL_API_URL = DEFAULT_HOMINEM_API_URL;
   }

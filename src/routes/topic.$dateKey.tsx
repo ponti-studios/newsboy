@@ -32,7 +32,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response(`No ${BRAND_NAME} puzzle found for that date`, { status: 404 });
   }
 
-  const canPlayAsGuest = guestPreview.some((puzzle) => puzzle.gameSlug === topic && puzzle.dateKey === dateKey);
+  const canPlayAsGuest = guestPreview.some(
+    (puzzle) => puzzle.gameSlug === topic && puzzle.dateKey === dateKey,
+  );
 
   return {
     ...envelope,

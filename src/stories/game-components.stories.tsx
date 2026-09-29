@@ -6,15 +6,7 @@ import { GameHeader, GameResult, GuessGrid, HowToPlaySheet, StatsSheet } from ".
 import { OnscreenKeyboard } from "../components/keyboard/onscreen-keyboard";
 import { GAME_ANSWER_LENGTH, type GameGuess } from "../lib/puzzle";
 import { TILE_REVEAL_STEP_MS } from "../hooks/use-animation";
-import {
-  errorGame,
-  failedGame,
-  gameState,
-  guesses,
-  puzzle,
-  solvedGame,
-  stats,
-} from "./fixtures";
+import { errorGame, failedGame, gameState, guesses, puzzle, solvedGame, stats } from "./fixtures";
 
 const meta = { title: "Game/Components", parameters: { layout: "padded" } } satisfies Meta;
 export default meta;

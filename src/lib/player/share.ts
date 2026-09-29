@@ -34,5 +34,12 @@ export function buildGameShareText(
   const path = topicSlug ? `/${encodeURIComponent(topicSlug)}` : "/";
   const shareUrl = `${origin.replace(/\/$/, "")}${path}?src=share`;
 
-  return [`${BRAND_NAME}${topicLabel} · ${formatShareDate(date)}`, score, "", ...rows, "", shareUrl].join("\n");
+  return [
+    `${BRAND_NAME}${topicLabel} · ${formatShareDate(date)}`,
+    score,
+    "",
+    ...rows,
+    "",
+    shareUrl,
+  ].join("\n");
 }

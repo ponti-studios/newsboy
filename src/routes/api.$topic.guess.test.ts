@@ -97,6 +97,12 @@ describe("api.$topic.guess action", () => {
       context: {} as never,
     } as never);
 
-    expect(evaluateGuessServerMock).toHaveBeenCalledWith("2026-05-20", "abcde", null, [], "reality");
+    expect(evaluateGuessServerMock).toHaveBeenCalledWith(
+      "2026-05-20",
+      "abcde",
+      null,
+      [],
+      "reality",
+    );
   });
 });

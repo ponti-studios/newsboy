@@ -348,7 +348,10 @@ describe("game daily puzzle helpers", () => {
         sources: [BRAVO_SOURCE],
       },
       new Set(),
-      { requireLiteralMatch: true, articleText: "The couple confirmed the split in a joint statement." },
+      {
+        requireLiteralMatch: true,
+        articleText: "The couple confirmed the split in a joint statement.",
+      },
     );
 
     expect(result.valid).toBe(true);

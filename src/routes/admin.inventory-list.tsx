@@ -136,7 +136,7 @@ function GenerationRow({
 }) {
   return (
     <TableRow>
-      <TableCell className="whitespace-nowrap align-top">
+      <TableCell className="align-top whitespace-nowrap">
         <Link
           to={`/admin/generations/${generation.id}?game=${gameSlug}`}
           className="text-primary font-medium underline-offset-4 hover:underline"
@@ -144,7 +144,7 @@ function GenerationRow({
           {formatGenerationTime(generation.createdAt)}
         </Link>
       </TableCell>
-      <TableCell className="whitespace-nowrap align-top">
+      <TableCell className="align-top whitespace-nowrap">
         <Link
           to={`/admin/dates/${generation.dateKey}?game=${gameSlug}`}
           className="text-primary underline-offset-4 hover:underline"
@@ -162,10 +162,10 @@ function GenerationRow({
       <TableCell className="text-muted-foreground max-w-[190px] align-top break-words">
         {generation.model}
       </TableCell>
-      <TableCell className="text-muted-foreground align-top text-right whitespace-nowrap">
+      <TableCell className="text-muted-foreground text-right align-top whitespace-nowrap">
         <GenerationTokens generation={generation} />
       </TableCell>
-      <TableCell className="text-muted-foreground align-top text-right whitespace-nowrap">
+      <TableCell className="text-muted-foreground text-right align-top whitespace-nowrap">
         {generation.status === "running" ? "…" : formatUsd(generation.costUsd)}
       </TableCell>
     </TableRow>
@@ -215,7 +215,7 @@ function GenerationCard({
         </div>
         <div className="col-span-2 min-w-0">
           <dt className="text-muted-foreground text-xs">Model</dt>
-          <dd className="mt-1 break-words font-medium">{generation.model}</dd>
+          <dd className="mt-1 font-medium break-words">{generation.model}</dd>
         </div>
         <div className="min-w-0">
           <dt className="text-muted-foreground text-xs">Cost</dt>
