@@ -1,5 +1,12 @@
 .shell {
   position: relative;
+  /* Shared with how-to-play-sheet.module.css's .trigger, which is an
+     absolutely positioned descendant of .shell and inherits these — one
+     source of truth for the help icon's footprint, so the conditional
+     panels below that reserve clearance for it can never drift out of
+     sync with the icon's actual size/position. */
+  --game-help-trigger-size: 2.25rem;
+  --game-help-trigger-inset: calc(var(--spacing) * 4);
   margin: 0 auto;
   display: flex;
   width: 100%;
@@ -13,12 +20,24 @@
   padding-bottom: calc(var(--game-safe-bottom) + calc(var(--spacing) * 46));
 }
 
+/* .offlineBanner and .clue can render as the shell's first flow child, at
+   the same vertical position as the absolutely positioned help trigger
+   (how-to-play-sheet.module.css) — reserve clearance on that side so their
+   content never renders underneath it. */
+.offlineBanner,
+.clue {
+  padding-right: calc(
+    var(--game-help-trigger-size) + var(--game-help-trigger-inset) + var(--spacing) * 2
+  );
+}
+
 .offlineBanner {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-game-error-border);
   background: var(--color-game-paper);
   color: var(--color-game-ink);
-  padding: 0.5rem 0.75rem;
+  padding-block: 0.5rem;
+  padding-left: 0.75rem;
   text-align: center;
   font-size: var(--text-xs);
 }
@@ -27,7 +46,8 @@
   border: 1px solid var(--color-game-present-border);
   border-radius: var(--radius-md);
   background: var(--color-game-present-bg);
-  padding: calc(var(--spacing) * 3);
+  padding-block: calc(var(--spacing) * 3);
+  padding-left: calc(var(--spacing) * 3);
   font-size: var(--text-sm);
   line-height: 1.25rem;
   color: var(--color-game-present-text);
