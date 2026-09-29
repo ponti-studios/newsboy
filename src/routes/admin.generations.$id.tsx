@@ -69,7 +69,7 @@ export default function GameAdminGeneration() {
   const { game, generation } = useLoaderData<typeof loader>();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-2 p-6">
+    <div className="flex flex-col gap-2">
       <SectionIntro title={`Generation ${generation.id}`} />
 
       <dl className="border-muted-foreground bg-card space-y-2 rounded-md border p-2 text-sm">
@@ -119,6 +119,6 @@ export default function GameAdminGeneration() {
         gameSlug={game.slug}
         publishable={generation.publishable}
       />
-    </main>
+    </div>
   );
 }

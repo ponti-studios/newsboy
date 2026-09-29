@@ -106,7 +106,7 @@ export default function GameAdminCosts() {
   const report = useLoaderData<typeof loader>();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8">
       <Button asChild variant="ghost" size="sm" className="w-fit">
         <Link to="/admin">← Admin</Link>
       </Button>
@@ -129,6 +129,6 @@ export default function GameAdminCosts() {
         emptyLabel="No environments"
       />
       <BreakdownTable title="Model" rows={report.byModel} emptyLabel="No models" showOutcomeRates />
-    </main>
+    </div>
   );
 }

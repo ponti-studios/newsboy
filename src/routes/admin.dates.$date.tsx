@@ -53,7 +53,7 @@ export default function GameAdminDate() {
   const detail = useLoaderData<typeof loader>();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8">
       <Button asChild variant="ghost" size="sm" className="w-fit">
         <Link to={`/admin?game=${detail.game.slug}`}>← Inventory</Link>
       </Button>
@@ -124,6 +124,6 @@ export default function GameAdminDate() {
         <h2 className="text-xl font-medium">Generations</h2>
         <GenerationsList generations={detail.generations} gameSlug={detail.game.slug} />
       </section>
-    </main>
+    </div>
   );
 }

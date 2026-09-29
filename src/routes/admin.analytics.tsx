@@ -15,7 +15,7 @@ export default function GameAnalyticsPage() {
   const { rows, windowDays } = useLoaderData<typeof loader>();
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+    <>
       <header className="mb-8 border-b pb-6">
         <p className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
           Game operations
@@ -52,7 +52,9 @@ export default function GameAnalyticsPage() {
                 const completed = row.wins + row.losses;
                 return (
                   <tr key={`${row.topicSlug}:${row.source}`}>
-                    <th scope="row" className="px-4 py-3 font-medium">{row.topicSlug}</th>
+                    <th scope="row" className="px-4 py-3 font-medium">
+                      {row.topicSlug}
+                    </th>
                     <td className="px-4 py-3">{row.source}</td>
                     <td className="px-4 py-3 tabular-nums">{row.starts}</td>
                     <td className="px-4 py-3 tabular-nums">{completed}</td>
@@ -78,7 +80,7 @@ export default function GameAnalyticsPage() {
       <p className="text-muted-foreground mt-4 text-xs">
         Events are anonymous and contain no answers, guess words, clue text, or referrer URLs.
       </p>
-    </main>
+    </>
   );
 }
 

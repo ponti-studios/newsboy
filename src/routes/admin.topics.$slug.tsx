@@ -81,7 +81,7 @@ export default function GameAdminTopicArticles() {
   const data = fetcher.data;
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8">
       <Button asChild variant="ghost" size="sm" className="w-fit">
         <Link to="/admin/topics">← Topics</Link>
       </Button>
@@ -162,6 +162,6 @@ export default function GameAdminTopicArticles() {
           </TableBody>
         </Table>
       )}
-    </main>
+    </div>
   );
 }

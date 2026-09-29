@@ -173,7 +173,7 @@ export default function GameAdminGenerate() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8">
       {running ? (
         <GenerateProgress running failed={false} stage={stage} />
       ) : result ? (
@@ -192,6 +192,6 @@ export default function GameAdminGenerate() {
           onSubmit={onSubmit}
         />
       )}
-    </main>
+    </div>
   );
 }
