@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { db, gamesTopics } from "@pontistudios/db";
+import { articles, db, gamesPuzzles, gamesTopics } from "@pontistudios/db";
 import { cleanAll } from "../../data/test-db";
 import { GAME_CATALOG } from "../generation/catalog";
 import { ensureGameCatalog, extractArticleText, fetchFeedItems } from "../generation/ingest.server";
+import { getDateKey } from "../puzzle/date";
 
 describe("fetchFeedItems", () => {
   it("normalizes RSS markup and control content while preserving safe fields", async () => {
@@ -56,6 +57,77 @@ describe("ensureGameCatalog", () => {
     expect(rows.map((row) => row.slug).sort()).toEqual(
       GAME_CATALOG.map((entry) => entry.slug).sort(),
     );
+  });
+
+  it("includes the BBC topics with their requested names and feeds", () => {
+    const bbcTopics = GAME_CATALOG.filter(
+      (entry) => entry.slug !== "reality" && entry.feedLabel.startsWith("BBC"),
+    );
+
+    expect(
+      bbcTopics.map(({ slug, name, feedUrl, feedLabel }) => ({ slug, name, feedUrl, feedLabel })),
+    ).toEqual([
+      {
+        slug: "politics",
+        name: "Politics",
+        feedUrl: "https://feeds.bbci.co.uk/news/politics/rss.xml",
+        feedLabel: "BBC Politics",
+      },
+      {
+        slug: "business",
+        name: "Business",
+        feedUrl: "https://feeds.bbci.co.uk/news/business/rss.xml",
+        feedLabel: "BBC Business",
+      },
+      {
+        slug: "science",
+        name: "Science",
+        feedUrl: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+        feedLabel: "BBC Science & Environment",
+      },
+      {
+        slug: "world",
+        name: "World News",
+        feedUrl: "https://feeds.bbci.co.uk/news/world/rss.xml",
+        feedLabel: "BBC World",
+      },
+      {
+        slug: "health",
+        name: "Health",
+        feedUrl: "https://feeds.bbci.co.uk/news/health/rss.xml",
+        feedLabel: "BBC Health",
+      },
+    ]);
+  });
+
+  it("keeps new BBC topics pending until a puzzle exists for the current UTC date", async () => {
+    await ensureGameCatalog();
+    const politics = await db.query.gamesTopics.findFirst({
+      where: (table, { eq }) => eq(table.slug, "politics"),
+    });
+    expect(politics).toMatchObject({ active: false, activationPending: true });
+
+    const [article] = await db
+      .insert(articles)
+      .values({ gamesTopicId: politics!.id, url: "https://example.com/today", title: "Today" })
+      .returning();
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: politics!.id,
+      articleId: article!.id,
+      dateUtc: getDateKey(new Date()),
+      answer: "BRAVO",
+      answerType: "storyline",
+      normalizedAnswer: "BRAVO",
+      clue: "A current puzzle",
+      detail: "Ready to play",
+    });
+
+    await ensureGameCatalog();
+
+    const activated = await db.query.gamesTopics.findFirst({
+      where: (table, { eq }) => eq(table.slug, "politics"),
+    });
+    expect(activated).toMatchObject({ active: true, activationPending: false });
   });
 
   it("renames a stale row that already holds a catalog feed URL under a different slug", async () => {

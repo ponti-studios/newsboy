@@ -60,7 +60,7 @@
   /* Keep board feedback identical to the keyboard's absent state. */
   --game-tile-letter: var(--color-game-absent-text);
   border-color: var(--color-game-absent-border);
-  background: var(--color-game-absent-bg);
+  background: var(--color-absent);
 }
 
 .tile[data-state="typed"] {

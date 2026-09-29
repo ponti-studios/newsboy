@@ -36,6 +36,46 @@ export const GAME_CATALOG = [
     feedUrl: "https://www.cbssports.com/rss/headlines/",
     feedLabel: "CBS Sports",
   },
+  {
+    slug: "politics",
+    name: "Politics",
+    genre: "politics",
+    feedUrl: "https://feeds.bbci.co.uk/news/politics/rss.xml",
+    feedLabel: "BBC Politics",
+    deferActivationUntilCurrentPuzzle: true,
+  },
+  {
+    slug: "business",
+    name: "Business",
+    genre: "business",
+    feedUrl: "https://feeds.bbci.co.uk/news/business/rss.xml",
+    feedLabel: "BBC Business",
+    deferActivationUntilCurrentPuzzle: true,
+  },
+  {
+    slug: "science",
+    name: "Science",
+    genre: "science",
+    feedUrl: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    feedLabel: "BBC Science & Environment",
+    deferActivationUntilCurrentPuzzle: true,
+  },
+  {
+    slug: "world",
+    name: "World News",
+    genre: "world",
+    feedUrl: "https://feeds.bbci.co.uk/news/world/rss.xml",
+    feedLabel: "BBC World",
+    deferActivationUntilCurrentPuzzle: true,
+  },
+  {
+    slug: "health",
+    name: "Health",
+    genre: "health",
+    feedUrl: "https://feeds.bbci.co.uk/news/health/rss.xml",
+    feedLabel: "BBC Health",
+    deferActivationUntilCurrentPuzzle: true,
+  },
 ] as const;
 
 /**
@@ -50,6 +90,11 @@ export const TOPIC_EMOJI: Readonly<Record<string, string>> = {
   "page-six": "🗞️",
   tmz: "📸",
   sports: "🏆",
+  politics: "🏛️",
+  business: "💼",
+  science: "🔬",
+  world: "🌍",
+  health: "🩺",
   markets: "📈",
   culture: "🎭",
 };

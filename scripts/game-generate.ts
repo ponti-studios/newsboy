@@ -7,16 +7,19 @@ import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 import { getErrorMessage } from "../src/lib/errors";
 import { createLogger } from "../src/lib/logger.server";
-import { CIRCUIT_BREAKER_THRESHOLD, createCircuitBreaker } from "../src/lib/generation/circuit-breaker";
+import {
+  CIRCUIT_BREAKER_THRESHOLD,
+  createCircuitBreaker,
+} from "../src/lib/generation/circuit-breaker";
 import { detectRunEnvironment } from "../src/lib/generation/generate.server";
 import { getDateKey } from "../src/lib/puzzle/date";
 import { resolveGenerateRange, isDisposableDatabase } from "../src/lib/generation/generate-range";
-import { GAME_READY_INVENTORY_DAYS, runGenerateRange } from "../src/lib/generation/generation-runner";
-import { getActiveGames } from "../src/lib/data/games.server";
 import {
-  backfillPuzzlePublishedAt,
-  countInventoryForRange,
-} from "../src/lib/data/puzzles.server";
+  GAME_READY_INVENTORY_DAYS,
+  runGenerateRange,
+} from "../src/lib/generation/generation-runner";
+import { getGamesForGeneration } from "../src/lib/data/games.server";
+import { backfillPuzzlePublishedAt, countInventoryForRange } from "../src/lib/data/puzzles.server";
 import { LabsServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
@@ -24,6 +27,7 @@ const logger = createLogger();
 function parseGenerateArgs(): {
   force: boolean;
   daysAhead: number;
+  topics: string[];
   from?: string;
   to?: string;
 } {
@@ -32,6 +36,7 @@ function parseGenerateArgs(): {
     options: {
       force: { type: "boolean" },
       "days-ahead": { type: "string" },
+      topic: { type: "string", multiple: true },
       from: { type: "string" },
       to: { type: "string" },
     },
@@ -42,6 +47,7 @@ function parseGenerateArgs(): {
     daysAhead: values["days-ahead"]
       ? Number.parseInt(values["days-ahead"], 10)
       : GAME_READY_INVENTORY_DAYS,
+    topics: values.topic ?? [],
     ...(values.from !== undefined ? { from: values.from } : {}),
     ...(values.to !== undefined ? { to: values.to } : {}),
   };
@@ -95,8 +101,8 @@ async function main() {
   await expireGenerations();
 
   const locked = await withGenerateLock(async () => {
-    const games = await getActiveGames();
-    if (games.length === 0) throw new Error("No active games found");
+    const games = await getGamesForGeneration(args.topics);
+    if (games.length === 0) throw new Error("No eligible games found for generation");
 
     let totalDeleted = 0;
     let totalGenerated = 0;
@@ -198,7 +204,11 @@ if (!process.env.VITEST) {
     await main();
   } catch (err) {
     logger.error(
-      { event: "generate.run.failed", error: getErrorMessage(err), durationMs: Date.now() - errorStartedAt },
+      {
+        event: "generate.run.failed",
+        error: getErrorMessage(err),
+        durationMs: Date.now() - errorStartedAt,
+      },
       "generate run failed",
     );
     process.exit(1);

@@ -26,6 +26,7 @@
   --color-game-present-border: var(--game-present-border);
   --color-game-present-accent: var(--game-present-accent);
   --color-game-absent-bg: var(--game-absent-bg);
+  --color-absent: var(--game-absent-bg);
   --color-game-absent-text: var(--game-absent-text);
   --color-game-absent-border: var(--game-absent-border);
   --color-game-error-border: var(--game-error-border);

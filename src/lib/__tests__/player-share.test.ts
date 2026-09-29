@@ -72,6 +72,14 @@ describe("game sharing", () => {
 });
 
 describe("getTopicEmoji", () => {
+  it("uses a distinct emoji for each BBC topic", () => {
+    expect(getTopicEmoji("politics")).toBe("🏛️");
+    expect(getTopicEmoji("business")).toBe("💼");
+    expect(getTopicEmoji("science")).toBe("🔬");
+    expect(getTopicEmoji("world")).toBe("🌍");
+    expect(getTopicEmoji("health")).toBe("🩺");
+  });
+
   it("falls back to the default for inherited Object properties instead of leaking them", () => {
     expect(getTopicEmoji("toString")).toBe("📰");
     expect(getTopicEmoji("__proto__")).toBe("📰");

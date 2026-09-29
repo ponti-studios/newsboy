@@ -1,11 +1,12 @@
 /**
- * Ingest job: polls active feeds and stores newly-seen articles.
+ * Ingest job: polls active and launch-pending feeds and stores new articles.
  *
  * Deliberately decoupled from puzzle generation and run on its own cadence
  * (e.g. hourly) — its only job is to make sure an article gets captured into
  * `articles` before it scrolls out of the source feed's short item window.
- * Dedup happens at the database via the `articles.url` unique constraint, so
- * re-polling a feed that returns the same items is a no-op.
+ * Dedup happens at the database via the `(games_topic_id, url)` unique index,
+ * so repeated items within one topic are a no-op while cross-listed stories
+ * remain available to each topic.
  */
 
 import { db, eq, gamesTopics, or } from "@pontistudios/db";
@@ -26,6 +27,7 @@ import {
 } from "./feed-text";
 import type { FeedItem } from "./types";
 import { GAME_CATALOG } from "./catalog";
+import { getDateKey } from "../puzzle/date";
 
 const logger = createLogger();
 
@@ -194,10 +196,12 @@ export async function ingestFeed(topic: GamesTopic): Promise<number> {
   }
 }
 
-/** Ingest every active feed. Returns the total number of new articles inserted. */
+/** Ingest active and launch-pending feeds. Returns newly inserted article count. */
 export async function ingestAllActiveFeeds(): Promise<number> {
-  const activeTopics = await db.query.gamesTopics.findMany({ where: eq(gamesTopics.active, true) });
-  const results = await Promise.all(activeTopics.map((topic) => ingestFeed(topic)));
+  const topics = await db.query.gamesTopics.findMany({
+    where: or(eq(gamesTopics.active, true), eq(gamesTopics.activationPending, true)),
+  });
+  const results = await Promise.all(topics.map((topic) => ingestFeed(topic)));
   return results.reduce((sum, n) => sum + n, 0);
 }
 
@@ -211,18 +215,29 @@ export async function ingestAllActiveFeeds(): Promise<number> {
  */
 export async function ensureGameCatalog(): Promise<void> {
   for (const entry of GAME_CATALOG) {
+    const existing = await db.query.gamesTopics.findFirst({
+      where: or(eq(gamesTopics.slug, entry.slug), eq(gamesTopics.feedUrl, entry.feedUrl)),
+    });
+    const deferActivation =
+      "deferActivationUntilCurrentPuzzle" in entry && entry.deferActivationUntilCurrentPuzzle;
+    let hasCurrentPuzzle = false;
+    if (deferActivation && existing) {
+      const puzzle = await db.query.gamesPuzzles.findFirst({
+        where: (table, { and, eq }) =>
+          and(eq(table.gamesTopicId, existing.id), eq(table.dateUtc, getDateKey(new Date()))),
+        columns: { id: true },
+      });
+      hasCurrentPuzzle = Boolean(puzzle);
+    }
     const setValues = {
       slug: entry.slug,
       name: entry.name,
       feedUrl: entry.feedUrl,
       feedLabel: entry.feedLabel,
       systemPromptPath: "src/prompts/game-generation.md",
-      active: true,
+      active: deferActivation ? hasCurrentPuzzle : true,
+      activationPending: deferActivation ? !hasCurrentPuzzle : false,
     };
-
-    const existing = await db.query.gamesTopics.findFirst({
-      where: or(eq(gamesTopics.slug, entry.slug), eq(gamesTopics.feedUrl, entry.feedUrl)),
-    });
 
     const [feed] = existing
       ? await db

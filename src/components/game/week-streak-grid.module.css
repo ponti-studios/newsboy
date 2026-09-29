@@ -70,8 +70,7 @@
    intact instead of leaving a hole where a cell should be. */
 .cell[data-status="no-puzzle"] {
   border-style: dashed;
-  background: transparent;
-  opacity: 0.35;
+  background: var(--color-absent);
 }
 
 @media (max-width: 420px) {

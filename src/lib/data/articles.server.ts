@@ -10,7 +10,7 @@ import type { Article, GamesTopic } from "@pontistudios/db";
 import { and, articles, count, db, desc, eq, inArray, lt, sql } from "@pontistudios/db";
 
 /**
- * Insert newly-seen articles for a feed, deduped globally on `url`.
+ * Insert newly-seen articles for a feed, deduped on `(gamesTopicId, url)`.
  * Re-ingesting a feed that returns the same items is a no-op.
  */
 export async function upsertArticles(
@@ -38,7 +38,7 @@ export async function upsertArticles(
         publishedAt: item.publishedAt ?? null,
       })),
     )
-    .onConflictDoNothing({ target: articles.url })
+    .onConflictDoNothing({ target: [articles.gamesTopicId, articles.url] })
     .returning({ id: articles.id });
   return inserted.length;
 }

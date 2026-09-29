@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { articles, db, gamesPuzzles } from "@pontistudios/db";
 
@@ -47,10 +47,13 @@ export async function ensureSeedPuzzle(
       title: options.title ?? `Seed article for ${dateKey}`,
       status: "used",
     })
-    .onConflictDoNothing({ target: articles.url })
+    .onConflictDoNothing({ target: [articles.gamesTopicId, articles.url] })
     .returning();
   const articleRow =
-    article ?? (await db.query.articles.findFirst({ where: eq(articles.url, url) }));
+    article ??
+    (await db.query.articles.findFirst({
+      where: and(eq(articles.gamesTopicId, gameId), eq(articles.url, url)),
+    }));
   if (!articleRow) throw new Error(`Failed to create or find seed article for ${dateKey}`);
 
   await db

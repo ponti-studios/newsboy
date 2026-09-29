@@ -8,7 +8,7 @@ beforeEach(async () => {
 });
 
 describe("upsertArticles", () => {
-  it("dedupes on url via onConflictDoNothing and returns the inserted count", async () => {
+  it("dedupes a URL within one topic and returns the inserted count", async () => {
     const game = await seedGame();
 
     const { upsertArticles } = await import("../data/articles.server");
@@ -18,6 +18,26 @@ describe("upsertArticles", () => {
     ]);
 
     expect(result).toBe(1);
+  });
+
+  it("keeps the same URL in separate topic inventories", async () => {
+    const politics = await seedGame({ slug: "politics", feedUrl: "https://example.com/politics" });
+    const world = await seedGame({ slug: "world", feedUrl: "https://example.com/world" });
+    const { upsertArticles } = await import("../data/articles.server");
+    const sharedUrl = "https://example.com/shared-story";
+
+    expect(
+      await upsertArticles(politics.id, [{ url: sharedUrl, title: "Politics coverage" }]),
+    ).toBe(1);
+    expect(await upsertArticles(world.id, [{ url: sharedUrl, title: "World coverage" }])).toBe(1);
+
+    const copies = await db.query.articles.findMany({
+      where: (table, { eq }) => eq(table.url, sharedUrl),
+    });
+    expect(copies.map((article) => [article.gamesTopicId, article.title])).toEqual([
+      [politics.id, "Politics coverage"],
+      [world.id, "World coverage"],
+    ]);
   });
 
   it("returns 0 without querying when given no items", async () => {
