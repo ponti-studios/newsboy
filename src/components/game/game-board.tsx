@@ -16,6 +16,7 @@ import styles from "./game-board.module.css";
 import { GameResult } from "./game-result";
 import { GameTile } from "./game-tile";
 import { GuessGrid } from "./guess-grid";
+import { HowToPlaySheet } from "./how-to-play-sheet";
 import { useGame } from "../../hooks/use-game";
 import { usePlayerStats } from "../../hooks/use-player-stats";
 import { useShare } from "../../hooks/use-share";
@@ -106,20 +107,7 @@ export function GameBoard({
         </div>
       )}
 
-      <details className={styles.howToPlay}>
-        <summary>How to play</summary>
-        <p>
-          Guess the five-letter answer from today&apos;s news story in six tries.
-          Each guess shows which letters match and where they belong. Your final
-          clue appears before your last guess.
-        </p>
-        <p>
-          There&apos;s one shared puzzle per topic each day. You can play without
-          an account; this device saves your progress. Newsboy uses AI to draft
-          puzzles from current stories and runs automated checks before
-          publication.
-        </p>
-      </details>
+      <HowToPlaySheet />
 
       {shouldShowClue && (
         <div className={styles.clue}>

@@ -1,0 +1,43 @@
+/* Absolutely positioned against `.shell` (game-board.module.css) so this
+   never occupies layout space itself, unlike the <details> block it
+   replaced. */
+.trigger {
+  position: absolute;
+  top: calc(var(--spacing) * 2);
+  right: calc(var(--spacing) * 4);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink-muted);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.trigger:hover {
+  border-color: var(--color-game-link-text);
+  background: color-mix(in srgb, var(--color-game-link-text) 8%, transparent);
+  color: var(--color-game-link-text);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-game-link-text);
+  outline-offset: 2px;
+}
+
+.body {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-game-ink);
+}
+
+.body + .body {
+  margin-top: calc(var(--spacing) * 3);
+}

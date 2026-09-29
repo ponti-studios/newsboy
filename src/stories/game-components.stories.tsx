@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 
-import { GameHeader, GameResult, GuessGrid, StatsSheet } from "../components/game";
+import { GameHeader, GameResult, GuessGrid, HowToPlaySheet, StatsSheet } from "../components/game";
 import { OnscreenKeyboard } from "../components/keyboard/onscreen-keyboard";
 import { GAME_ANSWER_LENGTH, type GameGuess } from "../lib/puzzle";
 import { TILE_REVEAL_STEP_MS } from "../hooks/use-animation";
@@ -318,6 +318,19 @@ export const StatsEmpty: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("button", { name: "View your stats" }));
     await expect(canvas.getByText("Current streak")).toBeVisible();
+  },
+};
+
+export const HowToPlay: Story = {
+  render: () => <HowToPlaySheet />,
+};
+
+export const HowToPlayOpen: Story = {
+  render: () => <HowToPlaySheet />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "How to play" }));
+    await expect(canvas.getByText("How to play")).toBeVisible();
   },
 };
 
