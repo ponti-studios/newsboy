@@ -2,9 +2,11 @@ import { CheckCircle2, Copy, ExternalLink, Share2, XCircle } from "lucide-react"
 import type { CSSProperties } from "react";
 
 import type { PublicGamesPuzzle } from "../../lib/puzzle";
+import type { PuzzleHistoryStats } from "../../lib/puzzle/stats";
 
 import type { GameState } from "../../hooks/use-game";
 import styles from "./game-result.module.css";
+import { StatsSheet } from "./stats-sheet";
 
 interface GameResultProps {
   game: GameState;
@@ -12,9 +14,10 @@ interface GameResultProps {
   detail: string;
   onShare: () => void;
   onCopy: () => void;
+  stats: PuzzleHistoryStats;
 }
 
-export function GameResult({ game, puzzle, detail, onShare, onCopy }: GameResultProps) {
+export function GameResult({ game, puzzle, detail, onShare, onCopy, stats }: GameResultProps) {
   if (!game.isGameOver) return null;
 
   return (
@@ -64,13 +67,14 @@ export function GameResult({ game, puzzle, detail, onShare, onCopy }: GameResult
           >
             <Copy aria-hidden="true" size={18} strokeWidth={2.25} />
           </button>
+          <StatsSheet stats={stats} actionIndex={2} />
           {puzzle.sources.length > 0 && (
             <a
               aria-label="Read the source article"
               className={styles.resultAction}
               href={puzzle.sources[0].url}
               rel="noopener noreferrer"
-              style={{ "--action-i": 2 } as CSSProperties}
+              style={{ "--action-i": 3 } as CSSProperties}
               target="_blank"
               title={puzzle.sources[0].title ?? "Read the source article"}
             >

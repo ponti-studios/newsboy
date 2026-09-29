@@ -3,6 +3,7 @@ import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-ro
 import { GameBoard } from "../components/game";
 import { useTimeZone } from "../hooks/use-timezone";
 import { getGameBySlug } from "../lib/data/games.server";
+import { loadPlayerStats } from "../lib/data/history.server";
 import { loadActivePublicPuzzleWithAttempt } from "../lib/data/puzzle.server";
 import { readTimeZoneCookie } from "../lib/puzzle/timezone";
 import { getGameUser } from "../server/auth";
@@ -17,13 +18,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const timeZone = readTimeZoneCookie(request.headers.get("Cookie")) ?? "UTC";
   const user = await getGameUser(request);
 
-  const envelope = await loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic);
+  const [envelope, stats] = await Promise.all([
+    loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic),
+    user ? loadPlayerStats(user.id) : Promise.resolve(null),
+  ]);
 
   if (!envelope) {
-    return { puzzle: null, gameSlug: topic, isSignedIn: user !== null };
+    return { puzzle: null, gameSlug: topic, isSignedIn: user !== null, stats };
   }
 
-  return { ...envelope, gameSlug: topic, isSignedIn: user !== null };
+  return { ...envelope, gameSlug: topic, isSignedIn: user !== null, stats };
 }
 
 export default function TodayRoute() {
@@ -49,6 +53,7 @@ export default function TodayRoute() {
       initialGuesses={data.attempt?.guesses ?? []}
       gameSlug={data.gameSlug}
       isSignedIn={data.isSignedIn}
+      serverStats={data.stats}
     />
   );
 }

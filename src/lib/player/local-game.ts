@@ -1,6 +1,6 @@
 import type { GameGuess, LetterState } from "../puzzle/types";
 
-const STORAGE_PREFIX = "newsboy:game:";
+export const STORAGE_PREFIX = "newsboy:game:";
 const letterStates = new Set<LetterState>(["absent", "present", "correct"]);
 
 export interface LocalGameState {

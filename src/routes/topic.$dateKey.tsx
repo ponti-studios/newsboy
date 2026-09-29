@@ -5,7 +5,7 @@ import styles from "../components/pages/date-page.module.css";
 import { Button, Card, CardContent } from "../components/primitives";
 import { BRAND_NAME } from "../config/brand";
 import { getGameBySlug } from "../lib/data/games.server";
-import { loadGuestPuzzleHistoryPreview } from "../lib/data/history.server";
+import { loadGuestPuzzleHistoryPreview, loadPlayerStats } from "../lib/data/history.server";
 import { loadPuzzleForSpecificDate } from "../lib/data/puzzle.server";
 import { isDateKey } from "../lib/puzzle/date";
 import { getGameUser, loginUrl } from "../server/auth";
@@ -23,12 +23,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   const user = await getGameUser(request);
-  const envelope = await loadPuzzleForSpecificDate(dateKey, user, topic);
+  const [envelope, guestPreview, stats] = await Promise.all([
+    loadPuzzleForSpecificDate(dateKey, user, topic),
+    user ? Promise.resolve([]) : loadGuestPuzzleHistoryPreview(),
+    user ? loadPlayerStats(user.id) : Promise.resolve(null),
+  ]);
   if (!envelope) {
     throw new Response(`No ${BRAND_NAME} puzzle found for that date`, { status: 404 });
   }
 
-  const guestPreview = user ? [] : await loadGuestPuzzleHistoryPreview();
   const canPlayAsGuest = guestPreview.some((puzzle) => puzzle.gameSlug === topic && puzzle.dateKey === dateKey);
 
   return {
@@ -37,11 +40,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     canPlayAsGuest,
     loginUrl: loginUrl(request),
     gameSlug: topic,
+    stats,
   };
 }
 
 export default function DatedPuzzleRoute() {
-  const { puzzle, attempt, signedIn, canPlayAsGuest, loginUrl, gameSlug } = useLoaderData<typeof loader>();
+  const { puzzle, attempt, signedIn, canPlayAsGuest, loginUrl, gameSlug, stats } =
+    useLoaderData<typeof loader>();
   if (!signedIn && !canPlayAsGuest) {
     return <SignedOutTeaser dateKey={puzzle.dateKey} loginUrl={loginUrl} />;
   }
@@ -52,6 +57,7 @@ export default function DatedPuzzleRoute() {
       initialGuesses={attempt?.guesses ?? []}
       gameSlug={gameSlug}
       isSignedIn={signedIn}
+      serverStats={stats}
     />
   );
 }

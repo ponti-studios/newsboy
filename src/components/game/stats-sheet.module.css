@@ -1,0 +1,95 @@
+.streaks {
+  display: flex;
+  gap: calc(var(--spacing) * 3);
+  padding-bottom: calc(var(--spacing) * 3);
+  margin-bottom: calc(var(--spacing) * 3);
+  border-bottom: 1px dashed var(--color-game-paper-border);
+}
+
+.streakStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.streakValue {
+  font-size: clamp(2rem, 8vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--color-game-correct-accent);
+}
+
+.streakLabel {
+  margin-top: calc(var(--spacing) * 1);
+  font-size: var(--text-sm);
+  color: var(--color-game-ink-muted);
+  text-align: center;
+}
+
+.summary {
+  display: flex;
+  gap: calc(var(--spacing) * 3);
+  margin-bottom: calc(var(--spacing) * 4);
+}
+
+.summaryStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.summaryValue {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-game-ink);
+}
+
+.summaryLabel {
+  margin-top: calc(var(--spacing) * 0.5);
+  font-size: var(--text-sm);
+  color: var(--color-game-ink-muted);
+}
+
+.distribution {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1);
+}
+
+.distributionRow {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+
+.distributionLabel {
+  width: 1rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-game-ink-muted);
+  text-align: right;
+}
+
+.distributionTrack {
+  flex: 1;
+  display: flex;
+}
+
+.distributionBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 1.5rem;
+  padding-inline: calc(var(--spacing) * 1.5);
+  border-radius: var(--radius-lg);
+  background: var(--color-game-correct-accent);
+  transition: width 220ms var(--game-ease-out, ease);
+}
+
+.distributionValue {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-game-paper);
+}

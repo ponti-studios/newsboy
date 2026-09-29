@@ -1,10 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getGameUserMock, getGameBySlugMock, loadGuestPuzzleHistoryPreviewMock, loadPuzzleForSpecificDateMock } = vi.hoisted(() => ({
+const {
+  getGameUserMock,
+  getGameBySlugMock,
+  loadGuestPuzzleHistoryPreviewMock,
+  loadPuzzleForSpecificDateMock,
+  loadPlayerStatsMock,
+} = vi.hoisted(() => ({
   getGameUserMock: vi.fn(),
   getGameBySlugMock: vi.fn(),
   loadGuestPuzzleHistoryPreviewMock: vi.fn(),
   loadPuzzleForSpecificDateMock: vi.fn(),
+  loadPlayerStatsMock: vi.fn(),
 }));
 
 vi.mock("../server/auth", () => ({
@@ -22,6 +29,7 @@ vi.mock("../lib/data/puzzle.server", () => ({
 
 vi.mock("../lib/data/history.server", () => ({
   loadGuestPuzzleHistoryPreview: loadGuestPuzzleHistoryPreviewMock,
+  loadPlayerStats: loadPlayerStatsMock,
 }));
 
 const PUZZLE = {
@@ -84,13 +92,22 @@ describe("dated-puzzle route loader", () => {
     ).rejects.toMatchObject({ status: 404 });
   });
 
-  it("returns the envelope with signedIn true for an authenticated user", async () => {
+  it("returns the envelope with signedIn true and stats for an authenticated user", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce({ id: "user-1", email: null });
     loadPuzzleForSpecificDateMock.mockResolvedValueOnce({
       puzzle: PUZZLE,
       attempt: { guesses: [], status: "playing" },
     } as never);
+    const stats = {
+      gamesPlayed: 4,
+      gamesSolved: 3,
+      winRate: 0.75,
+      currentStreak: 2,
+      maxStreak: 3,
+      guessDistribution: { 1: 0, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0 },
+    };
+    loadPlayerStatsMock.mockResolvedValueOnce(stats);
 
     const loader = await importLoader();
     const result = await loader({
@@ -104,10 +121,12 @@ describe("dated-puzzle route loader", () => {
       { id: "user-1", email: null },
       "reality",
     );
-    expect(result).toMatchObject({ puzzle: PUZZLE, signedIn: true, gameSlug: "reality" });
+    expect(loadPlayerStatsMock).toHaveBeenCalledWith("user-1");
+    expect(loadGuestPuzzleHistoryPreviewMock).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ puzzle: PUZZLE, signedIn: true, gameSlug: "reality", stats });
   });
 
-  it("returns signedIn false with attempt null for an anonymous visitor", async () => {
+  it("returns signedIn false with attempt null and null stats for an anonymous visitor", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
     loadPuzzleForSpecificDateMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
@@ -122,7 +141,14 @@ describe("dated-puzzle route loader", () => {
       context: {} as never,
     } as never);
 
-    expect(result).toMatchObject({ puzzle: PUZZLE, attempt: null, signedIn: false, canPlayAsGuest: true });
+    expect(loadPlayerStatsMock).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      puzzle: PUZZLE,
+      attempt: null,
+      signedIn: false,
+      canPlayAsGuest: true,
+      stats: null,
+    });
   });
 
   it("does not allow anonymous play for dates outside the two-puzzle history preview", async () => {

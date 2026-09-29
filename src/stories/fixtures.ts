@@ -93,7 +93,7 @@ export const failedGame = gameState({
   isGameOver: true,
 });
 
-const stats = {
+export const stats = {
   gamesPlayed: 8,
   gamesSolved: 6,
   winRate: 0.75,

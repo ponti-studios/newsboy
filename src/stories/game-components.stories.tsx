@@ -13,6 +13,7 @@ import {
   guesses,
   puzzle,
   solvedGame,
+  stats,
 } from "./fixtures";
 
 const meta = { title: "Game/Components", parameters: { layout: "padded" } } satisfies Meta;
@@ -253,6 +254,7 @@ function ResultStory({ game }: { game: typeof solvedGame }) {
       detail={game.detail}
       onShare={fn()}
       onCopy={fn()}
+      stats={stats}
     />
   );
 }
@@ -269,6 +271,7 @@ export const ResultActions: Story = {
         detail={solvedGame.detail}
         onShare={share}
         onCopy={copy}
+        stats={stats}
       />
     );
   },

@@ -24,6 +24,19 @@ const PLAYABLE_LOOKBACK_DAYS = 90;
 // game, so a "week" is a more meaningful unit than an arbitrary row count.
 const WEEK_DAYS = 7;
 
+/**
+ * A signed-in player's streak/win-rate/distribution stats alone, without the
+ * paginated row list, week grid, or playable-unplayed inventory
+ * `loadPuzzleHistory` also computes — used by the post-game stats sheet,
+ * which only needs the numbers.
+ */
+export async function loadPlayerStats(userId: string): Promise<PuzzleHistoryStats> {
+  const games = await getActiveGames();
+  const gameIds = games.map((game) => game.id);
+  const allAttempts = await loadAllAttemptsForUser(userId, gameIds);
+  return computeHistoryStats(allAttempts);
+}
+
 /** Public, spoiler-free puzzle inventory shown to signed-out History visitors. */
 export async function loadGuestPuzzleHistoryPreview(): Promise<PlayableUnplayedPuzzle[]> {
   const games = await getActiveGames();
