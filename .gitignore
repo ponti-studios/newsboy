@@ -1,7 +1,56 @@
-node_modules
-dist
-build
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.DS_Store
+.artifacts
+
+# React Router
 .react-router
-.size-limit-last.json
-.env
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# What source fixtures are intentionally committed; keep only local overrides out.
+
+# build
+.next
+build
+dist
+dist-storybook
+tsconfig.tsbuildinfo
+build-analysis.txt
+target/
+
+# misc
+.DS_Store
+*.pem
+.turbo
+
+# Logging
+logs
+npm-debug.log*
+
+# local env files
+.env*
 !.env.example
+
+# The shared server environment package is source code, not a local env file.
+!packages/env/
+!packages/env/**
+packages/env/node_modules/
+packages/env/dist/
+packages/env/tsconfig.tsbuildinfo
+
+# NX Workspaces
+.nx/cache
+.nx/workspace-data
+
+# Generated demo/reference screenshots (scripts/what-tile-states.ts)
+public/screenshots/tile-states/
+**/.claude/settings.local.json
+
+# Playwright MCP session artifacts (page snapshots, console logs)
+.playwright-mcp/

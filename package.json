@@ -26,15 +26,17 @@
     "newsboy:tile-states": "tsx scripts/game-tile-states.ts",
     "newsboy:e2e": "tsx scripts/game-e2e.ts",
     "storybook": "storybook dev -p 6008",
-    "typecheck": "react-router typegen && tsc -b"
+    "typecheck": "react-router typegen && tsc -b",
+    "db:migrate:test": "drizzle-kit migrate",
+    "format:check": "oxfmt src --check"
   },
   "dependencies": {
     "@mozilla/readability": "catalog:",
     "@ponti-studios/auth": "catalog:",
     "@ponti-studios/ui": "catalog:",
-    "@pontistudios/ai": "workspace:*",
-    "@pontistudios/db": "workspace:*",
-    "@pontistudios/env": "workspace:*",
+    "@pontistudios/ai": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/ai",
+    "@pontistudios/db": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/db",
+    "@pontistudios/env": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/env",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "cn": "^0.4.0",
@@ -72,10 +74,18 @@
     "vite": "catalog:",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "catalog:",
-    "workbox-window": "^7.4.1"
+    "workbox-window": "^7.4.1",
+    "drizzle-kit": "^0.31.10",
+    "portless": "0.15.6",
+    "oxfmt": "0.70.0"
   },
   "portless": {
     "name": "newsboy",
     "script": "dev:app"
+  },
+  "packageManager": "pnpm@11.10.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ponti-studios/newsboy.git"
   }
 }

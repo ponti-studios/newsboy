@@ -1,7 +1,7 @@
 /**
  * Regenerates public/manifest.webmanifest from the brand constants in
  * src/config/brand.ts so Chrome-theme and PWA colors stay in one place.
- * Runs as part of `pnpm build` (see packages/newsboy/package.json).
+ * Runs as part of `pnpm build` (see package.json).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
