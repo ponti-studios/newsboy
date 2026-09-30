@@ -1,0 +1,1 @@
+ALTER TABLE "labs"."articles" ADD COLUMN "article_text" text;

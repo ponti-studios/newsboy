@@ -1,16 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { LabsServerEnv } from "../infrastructure/env";
+import { NewsboyGenerationEnv } from "../infrastructure/env";
 
-describe("LabsServerEnv", () => {
+describe("NewsboyGenerationEnv", () => {
   const baseEnv = { OPENROUTER_API_KEY: "test-key" };
 
   it("rejects an empty NEWSBOY_AI_MODEL override", () => {
-    expect(LabsServerEnv.safeParse({ ...baseEnv, NEWSBOY_AI_MODEL: "" }).success).toBe(false);
+    expect(NewsboyGenerationEnv.safeParse({ ...baseEnv, NEWSBOY_AI_MODEL: "" }).success).toBe(
+      false,
+    );
   });
 
   it("accepts a non-empty NEWSBOY_AI_MODEL override", () => {
-    const result = LabsServerEnv.safeParse({
+    const result = NewsboyGenerationEnv.safeParse({
       ...baseEnv,
       NEWSBOY_AI_MODEL: "meta/muse-spark-1.3-contributor",
     });
@@ -20,7 +22,7 @@ describe("LabsServerEnv", () => {
   });
 
   it("accepts valid generation tuning values", () => {
-    const result = LabsServerEnv.safeParse({
+    const result = NewsboyGenerationEnv.safeParse({
       ...baseEnv,
       GAME_REASONING_EFFORT: "low",
       GAME_MAX_TOKENS: "8000",
@@ -34,7 +36,7 @@ describe("LabsServerEnv", () => {
   });
 
   it("leaves generation tuning unset by default", () => {
-    const result = LabsServerEnv.safeParse(baseEnv);
+    const result = NewsboyGenerationEnv.safeParse(baseEnv);
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -53,6 +55,6 @@ describe("LabsServerEnv", () => {
     { GAME_MAX_TOKENS: "0x2000" },
     { GAME_MAX_TOKENS: " 8000" },
   ])("rejects malformed generation tuning %o", (override) => {
-    expect(LabsServerEnv.safeParse({ ...baseEnv, ...override }).success).toBe(false);
+    expect(NewsboyGenerationEnv.safeParse({ ...baseEnv, ...override }).success).toBe(false);
   });
 });

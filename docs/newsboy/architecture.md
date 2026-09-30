@@ -16,12 +16,13 @@ tomorrow's puzzles ready. This page is the map for that whole setup.
 
 ## Package layout
 
-This repository is the standalone Newsboy application. Shared code is pinned to
-an immutable Labs commit: `@pontistudios/db` owns the Drizzle schema and
-migrations, `@pontistudios/ai` the OpenRouter client, and `@pontistudios/env`
-shared env schemas. The database schema is a fixed Postgres schema named `labs`;
-generation tables are defined in the pinned Labs package at
-`packages/db/src/schema/game.ts`.
+This repository is the standalone Newsboy application. Its OpenRouter client,
+Drizzle client, database schema, environment schemas, and migration history are
+owned locally under `src/lib/infrastructure/` and `migrations/`. Newsboy does
+not import application logic or workspace packages from Labs. The production
+database still uses the Postgres schema named `labs`; the migration files must
+stay hash-compatible with Labs' production migration job, which applies schema
+changes before Newsboy deploys.
 
 The pipeline lives in `src/lib/`:
 

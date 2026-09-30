@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getConfiguredTextModel } from "@pontistudios/ai";
-import { db, eq, generationRuns } from "@pontistudios/db";
+import { getConfiguredTextModel } from "~/lib/infrastructure/ai";
+import { db, eq, generationRuns } from "~/lib/infrastructure/db";
 import { detectRunEnvironment, generateCandidates } from "../src/lib/generation/generate.server";
 import { getDateKey } from "../src/lib/puzzle/date";
 import { PROMPT_TEST_CASES } from "../src/lib/values/prompt-test-cases";

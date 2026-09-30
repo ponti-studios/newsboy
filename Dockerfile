@@ -33,6 +33,7 @@ COPY --from=build --chown=app:app /app/package.json ./package.json
 COPY --from=build --chown=app:app /app/build ./build
 COPY --from=build --chown=app:app /app/src/data ./data
 COPY --from=build --chown=app:app /app/scripts ./scripts
+COPY --from=build --chown=app:app /app/migrations ./migrations
 COPY --from=build --chown=app:app /app/src/prompts ./src/prompts
 
 USER app

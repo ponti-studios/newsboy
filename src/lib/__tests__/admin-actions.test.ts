@@ -1,4 +1,4 @@
-import { adminActions, db, eq, sql } from "@pontistudios/db";
+import { adminActions, db, eq, sql } from "~/lib/infrastructure/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../data/test-db";
 import { seedGame } from "./test-helpers";

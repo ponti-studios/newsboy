@@ -1,5 +1,5 @@
-import { chatCompletion, formatAiError, type ChatReasoningEffort } from "@pontistudios/ai";
-import type { Article, GamesTopic, GenerationEnvironment } from "@pontistudios/db";
+import { chatCompletion, formatAiError, type ChatReasoningEffort } from "~/lib/infrastructure/ai";
+import type { Article, GamesTopic, GenerationEnvironment } from "~/lib/infrastructure/db";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";

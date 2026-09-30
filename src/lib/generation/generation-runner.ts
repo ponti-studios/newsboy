@@ -1,4 +1,4 @@
-import type { GamesTopic } from "@pontistudios/db";
+import type { GamesTopic } from "~/lib/infrastructure/db";
 
 import {
   CIRCUIT_BREAKER_THRESHOLD,

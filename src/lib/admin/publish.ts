@@ -1,4 +1,4 @@
-import type { GamesTopic } from "@pontistudios/db";
+import type { GamesTopic } from "~/lib/infrastructure/db";
 import {
   and,
   articles,
@@ -9,7 +9,7 @@ import {
   generationCandidates,
   generationRuns,
   puzzleRevisions,
-} from "@pontistudios/db";
+} from "~/lib/infrastructure/db";
 import { recordAdminAction } from "../data/admin-actions.server";
 import { markArticleUsed } from "../data/articles.server";
 import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../data/puzzles.server";

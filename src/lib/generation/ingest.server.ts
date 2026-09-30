@@ -9,8 +9,8 @@
  * remain available to each topic.
  */
 
-import { db, eq, gamesTopics, or } from "@pontistudios/db";
-import type { GamesTopic } from "@pontistudios/db";
+import { db, eq, gamesTopics, or } from "~/lib/infrastructure/db";
+import type { GamesTopic } from "~/lib/infrastructure/db";
 import { Readability } from "@mozilla/readability";
 import { XMLParser } from "fast-xml-parser";
 import { JSDOM } from "jsdom";

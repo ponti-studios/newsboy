@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { articles, db } from "@pontistudios/db";
+import { articles, db } from "~/lib/infrastructure/db";
 import { cleanAll } from "../../data/test-db";
 import { seedGame } from "./test-helpers";
 

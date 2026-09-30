@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "search_documents_source_url_idx" ON "labs"."search_documents" USING btree ("source_url");

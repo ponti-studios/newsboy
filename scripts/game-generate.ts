@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { parseArgs } from "node:util";
 
-import { getConfiguredTextModel } from "@pontistudios/ai";
-import { closeDb } from "@pontistudios/db";
+import { getConfiguredTextModel } from "~/lib/infrastructure/ai";
+import { closeDb } from "~/lib/infrastructure/db";
 import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 import { getErrorMessage } from "../src/lib/errors";
@@ -20,7 +20,7 @@ import {
 } from "../src/lib/generation/generation-runner";
 import { getGamesForGeneration } from "../src/lib/data/games.server";
 import { backfillPuzzlePublishedAt, countInventoryForRange } from "../src/lib/data/puzzles.server";
-import { LabsServerEnv } from "../src/lib/infrastructure/env";
+import { NewsboyGenerationEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 
@@ -54,7 +54,7 @@ function parseGenerateArgs(): {
 }
 
 async function main() {
-  LabsServerEnv.parse(process.env);
+  NewsboyGenerationEnv.parse(process.env);
 
   const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());

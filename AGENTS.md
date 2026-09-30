@@ -5,14 +5,13 @@ service configuration.
 
 ## Cross-repository ownership
 
-- Labs remains the sole owner of `@pontistudios/db`, the Drizzle schema, and
-  production migrations. Never create Newsboy-owned migrations or run DDL against
-  production.
-- Newsboy pins `@pontistudios/ai`, `@pontistudios/db`, and `@pontistudios/env`
-  to the same immutable Labs commit. Update all three pins together only after
-  Labs CI has successfully applied that commit's production migrations.
-- The Railway pre-deploy command checks that the latest migration in the pinned
-  DB package is recorded in production. It must not apply migrations.
+- Newsboy owns its AI client, database client/schema, environment schemas, and
+  migration files under this repository. Do not add dependencies on Labs
+  workspace paths or Git subdirectory packages.
+- Labs continues to run the production migration job for the shared `labs`
+  PostgreSQL schema. Keep the Newsboy migration journal, SQL, and snapshots in
+  sync with Labs' migration history so Railway's pre-deploy hash check remains
+  valid. Newsboy deployment verifies migration state; it never applies DDL.
 - Before changing a database, environment, auth, route ownership, or deployment
   boundary, read the [Labs core development flows](https://github.com/ponti-studios/labs/blob/main/docs/operations/core-development-flows.md),
   [deployment and routing lessons](https://github.com/ponti-studios/labs/blob/main/docs/operations/deployment-and-routing.md),
@@ -24,9 +23,9 @@ service configuration.
   `postgresql://postgres:postgres@localhost:4433/hominem-test` for tests.
 - Do not reset or drop the persistent test database to work around a migration
   failure. Inspect it and repair the Drizzle chain in Labs.
-- Every script under `scripts/*.ts` that accesses runtime configuration must
-  parse `LabsServerEnv` from `src/lib/infrastructure/env.ts` (which re-exports
-  the pinned shared schema). Do not add ad-hoc environment checks.
+- Every script under `scripts/*.ts` that accesses generation configuration must
+  parse `NewsboyGenerationEnv` from `src/lib/infrastructure/env.ts`. Do not add
+  ad-hoc environment checks.
 
 ## Puzzle generation
 

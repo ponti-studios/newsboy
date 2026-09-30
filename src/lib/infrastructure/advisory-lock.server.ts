@@ -1,4 +1,4 @@
-import { getSql } from "@pontistudios/db";
+import { getSql } from "~/lib/infrastructure/db";
 
 export const GAME_GENERATE_LOCK_KEYS = [42, 17] as const;
 export type GenerateLockResult<T> = { ok: true; value: T } | { ok: false; code: "lock_busy" };

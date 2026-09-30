@@ -15,8 +15,8 @@ import {
   generationRuns,
   gte,
   sql,
-} from "@pontistudios/db";
-import type { GenerationRunStatus } from "@pontistudios/db";
+} from "~/lib/infrastructure/db";
+import type { GenerationRunStatus } from "~/lib/infrastructure/db";
 
 export async function listGenerationsForTopic(
   gameId: number,

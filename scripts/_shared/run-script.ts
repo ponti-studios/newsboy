@@ -1,10 +1,10 @@
 import "dotenv/config";
 
-import { closeDb } from "@pontistudios/db";
-import { LabsServerEnv } from "~/lib/infrastructure/env";
+import { closeDb } from "~/lib/infrastructure/db";
+import { NewsboyGenerationEnv } from "~/lib/infrastructure/env";
 
 export async function runScript(main: () => Promise<void>): Promise<void> {
-  LabsServerEnv.parse(process.env);
+  NewsboyGenerationEnv.parse(process.env);
 
   try {
     await main();

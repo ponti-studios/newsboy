@@ -1,4 +1,4 @@
-import { db, gameEvents } from "@pontistudios/db";
+import { db, gameEvents } from "~/lib/infrastructure/db";
 
 export interface GameEventInput {
   event: "game_started" | "guess_made" | "game_won" | "game_lost" | "shared" | "clue_used";

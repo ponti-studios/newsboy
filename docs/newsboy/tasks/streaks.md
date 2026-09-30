@@ -37,7 +37,7 @@ infrastructure.
 
 ## Implementation notes
 
-- Signed-in: derive from `gamesAttempts` (`packages/db/src/schema/game.ts`),
+- Signed-in: derive from `gamesAttempts` (`src/lib/infrastructure/db/schema/game.ts`),
   keyed on `hominemUserId` + `gamesTopicId` + `dateUtc` + `status`. Decide
   whether a streak is per-topic or cross-topic — per-topic is more consistent
   with how the rest of the schema is scoped (games_attempts is unique on

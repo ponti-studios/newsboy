@@ -28,11 +28,6 @@ export default defineConfig(({ isSsrBuild }) => ({
       "~": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  ssr: {
-    // The shared Labs packages are Git subdirectory dependencies and publish
-    // TypeScript source. Bundle them so Node does not load TS from node_modules.
-    noExternal: ["@pontistudios/ai", "@pontistudios/db", "@pontistudios/env"],
-  },
   build: {
     cssMinify: "esbuild",
     sourcemap: true,

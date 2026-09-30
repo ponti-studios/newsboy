@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/infrastructure/db";
 import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 describe("withGenerateLock", () => {

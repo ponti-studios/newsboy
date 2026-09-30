@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 
-import { articles, db, gamesPuzzles } from "@pontistudios/db";
+import { articles, db, gamesPuzzles } from "~/lib/infrastructure/db";
 
 import { evaluateGuess, isGuessSolved, normalizeGuess } from "../puzzle/rules";
 import { appendGuess, createAttempt, loadAttempt } from "./attempts.server";

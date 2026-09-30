@@ -1,4 +1,4 @@
-import { db, desc, gameEvents, gte } from "@pontistudios/db";
+import { db, desc, gameEvents, gte } from "~/lib/infrastructure/db";
 
 const REPORT_WINDOW_DAYS = 45;
 const MAX_REPORT_EVENTS = 10_000;

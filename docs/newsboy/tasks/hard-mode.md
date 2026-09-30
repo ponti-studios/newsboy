@@ -43,7 +43,7 @@ they might otherwise treat as solved once they know the format.
   `payloadSchema` (`zod`) so the server knows to apply the constraint — don't
   infer it from client state, since the whole point is server enforcement.
 - Signed-in players' guess history is already authoritative via
-  `games_attempts` (see the note in `packages/db/src/schema/game.ts` that
+  `games_attempts` (see the note in `src/lib/infrastructure/db/schema/game.ts` that
   `previousGuesses` exists precisely because a client-supplied array used to
   be trusted) — validate hard-mode constraints against that authoritative
   history for signed-in players rather than the client-supplied
