@@ -56,6 +56,25 @@ describe("fetchFeedItems", () => {
     vi.unstubAllGlobals();
   });
 
+  it("aborts a stalled RSS request after its timeout", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        (_input: RequestInfo | URL, init?: RequestInit) =>
+          new Promise<Response>((_resolve, reject) => {
+            init?.signal?.addEventListener("abort", () => reject(init.signal?.reason), {
+              once: true,
+            });
+          }),
+      ),
+    );
+
+    await expect(
+      fetchFeedItems("https://realityblurred.com/feed", { timeoutMs: 5 }),
+    ).rejects.toMatchObject({ name: "TimeoutError" });
+    vi.unstubAllGlobals();
+  });
+
   it("raises a feed-level error when the response is not an RSS channel", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("<html>maintenance</html>")));
     await expect(fetchFeedItems("https://realityblurred.com/feed")).rejects.toThrow(
@@ -312,11 +331,16 @@ describe("ingestFeed", () => {
     });
     expect(summary).toMatchObject({ inserted: 2, scanned: 2, extracted: 1, failed: 1 });
     expect(
-      rows.map(({ articleTextStatus, articleTextError }) => [articleTextStatus, articleTextError]),
-    ).toEqual([
-      ["failed", "http_403"],
-      ["succeeded", null],
-    ]);
+      Object.fromEntries(
+        rows.map(({ url, articleTextStatus, articleTextError }) => [
+          url,
+          [articleTextStatus, articleTextError],
+        ]),
+      ),
+    ).toEqual({
+      "https://example.com/blocked": ["failed", "http_403"],
+      "https://example.com/readable": ["succeeded", null],
+    });
   });
 
   it("backfills legacy empty text, honors automatic retry dates, and lets manual refresh retry failures", async () => {

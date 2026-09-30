@@ -39,6 +39,7 @@ import { getDateKey } from "../puzzle/date";
 const logger = createLogger();
 const ARTICLE_TEXT_CONCURRENCY = 5;
 const ARTICLE_TEXT_TIMEOUT_MS = 8_000;
+const FEED_FETCH_TIMEOUT_MS = 8_000;
 const MAX_AUTOMATIC_TEXT_ATTEMPTS = 3;
 
 function extractUrlLikeNode(value: unknown): string | undefined {
@@ -75,8 +76,13 @@ function extractUrlLikeNode(value: unknown): string | undefined {
   return undefined;
 }
 
-export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
-  const res = await fetch(feedUrl);
+export async function fetchFeedItems(
+  feedUrl: string,
+  options: { timeoutMs?: number } = {},
+): Promise<FeedItem[]> {
+  const res = await fetch(feedUrl, {
+    signal: AbortSignal.timeout(options.timeoutMs ?? FEED_FETCH_TIMEOUT_MS),
+  });
   if (!res.ok) throw new Error(`Failed to fetch RSS feed: ${res.status}`);
   const xml = await res.text();
   const parser = new XMLParser({ ignoreAttributes: false });
