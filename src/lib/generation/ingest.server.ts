@@ -20,6 +20,7 @@ import { createLogger } from "../logger.server";
 
 import {
   expireStaleArticles,
+  claimArticleTextAttempt,
   getArticlesNeedingText,
   markExistingArticleTextSucceeded,
   saveArticleTextAttempt,
@@ -178,7 +179,7 @@ function parsePubDate(pubDate: string): Date | undefined {
 /** Fetch one feed and store any articles not already known by url. Returns the count newly inserted. */
 export async function ingestFeed(
   topic: GamesTopic,
-  options: { forceRetry?: boolean } = {},
+  options: { forceRetry?: boolean; maxTextArticles?: number } = {},
 ): Promise<IngestSummary> {
   const runStartedAt = new Date();
   const childLogger = logger.child({
@@ -220,11 +221,12 @@ export async function ingestFeed(
 
 async function processArticleText(
   topicId: number,
-  options: { forceRetry?: boolean },
+  options: { forceRetry?: boolean; maxTextArticles?: number },
   runStartedAt: Date,
 ): Promise<Pick<IngestSummary, "updated" | "extracted" | "emptyBody" | "failed">> {
   const rows = await getArticlesNeedingText(topicId, new Date(), {
     forceRetry: options.forceRetry,
+    limit: options.maxTextArticles,
   });
   let cursor = 0;
   let updated = 0;
@@ -237,6 +239,10 @@ async function processArticleText(
         const article = rows[cursor++];
         if (!article) continue;
         const attemptedAt = new Date();
+        const attempts = await claimArticleTextAttempt(article.id, attemptedAt, {
+          forceRetry: options.forceRetry,
+        });
+        if (attempts === null) continue;
         const result = article.url
           ? await fetchArticleText(article.url)
           : {
@@ -246,7 +252,6 @@ async function processArticleText(
               error: "missing_url",
               transient: false,
             };
-        const attempts = article.articleTextAttempts + 1;
         let nextAttemptAt: Date | undefined;
         if (!result.ok && result.transient && attempts < MAX_AUTOMATIC_TEXT_ATTEMPTS) {
           nextAttemptAt = new Date(attemptedAt.getTime() + 60 * 60 * 1000 * 4 ** (attempts - 1));

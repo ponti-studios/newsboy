@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     url.searchParams.delete("game");
     url.pathname = `/admin/topics/${slug}/create`;
   } else {
-    url.pathname = url.pathname.replace("/admin/preview", "/admin/generate");
+    url.pathname = "/admin";
   }
   return redirect(`${url.pathname}${url.search}`);
 }

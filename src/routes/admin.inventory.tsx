@@ -5,6 +5,7 @@ import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router";
 
 import { loadAdminInventory, loadAdminRunHistory } from "~/lib/admin/inventory";
+import { clampPage } from "~/lib/admin/pagination";
 import { isDateKey } from "~/lib/puzzle/date";
 
 import { GenerationsList, InventoryList } from "./admin.inventory-list";
@@ -44,10 +45,7 @@ export default function GameAdminInventory() {
   const pageSize = 50;
   const filteredCells = inventory.cells.filter((cell) => cell.dateKey.includes(dateKey));
   const pageCount = Math.max(1, Math.ceil(filteredCells.length / pageSize));
-  const currentDatePage = Math.min(
-    Number.parseInt(searchParams.get("page") ?? "0", 10) || 0,
-    pageCount - 1,
-  );
+  const currentDatePage = clampPage(searchParams.get("page"), pageCount);
   const datePageCells = filteredCells.slice(
     currentDatePage * pageSize,
     (currentDatePage + 1) * pageSize,

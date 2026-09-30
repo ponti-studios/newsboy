@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { randomUUID } from "node:crypto";
 
 import { articles, db, eq, gamesPuzzles, gamesTopics } from "~/lib/infrastructure/db";
 import { cleanAll } from "../../data/test-db";
-import { getArticlesNeedingText } from "../data/articles.server";
+import {
+  claimArticleTextAttempt,
+  getArticlesNeedingText,
+  saveArticleTextAttempt,
+} from "../data/articles.server";
 import { GAME_CATALOG } from "../generation/catalog";
 import {
   ensureGameCatalog,
@@ -366,6 +371,141 @@ describe("ingestFeed", () => {
       articleTextAttempts: 2,
       articleTextError: null,
     });
+  });
+});
+
+describe("article text extraction claims", () => {
+  let createdTopicId: number | undefined;
+
+  afterEach(async () => {
+    if (createdTopicId === undefined) return;
+    await db.delete(articles).where(eq(articles.gamesTopicId, createdTopicId));
+    await db.delete(gamesTopics).where(eq(gamesTopics.id, createdTopicId));
+    createdTopicId = undefined;
+  });
+
+  it("allows only one overlapping ingest run to claim an article", async () => {
+    const slug = `claim-test-${randomUUID()}`;
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug,
+        name: "Claim test",
+        feedUrl: `https://feeds.example.com/${slug}.xml`,
+        feedLabel: "Claim test",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    createdTopicId = topic!.id;
+    const [article] = await db
+      .insert(articles)
+      .values({
+        gamesTopicId: topic!.id,
+        url: "https://example.com/claim",
+        title: "Claim test article",
+      })
+      .returning();
+    const claimedAt = new Date();
+
+    const results = await Promise.all([
+      claimArticleTextAttempt(article!.id, claimedAt),
+      claimArticleTextAttempt(article!.id, claimedAt),
+    ]);
+    const saved = await db.query.articles.findFirst({
+      where: (table, { eq }) => eq(table.id, article!.id),
+    });
+
+    expect(results.filter((attempts) => attempts !== null)).toEqual([1]);
+    expect(saved).toMatchObject({
+      articleTextAttempts: 1,
+      articleTextStatus: "failed",
+      articleTextError: "article_text_extraction_in_progress",
+    });
+  });
+
+  it("commits the result against its claim without losing the attempt count", async () => {
+    const slug = `finalize-test-${randomUUID()}`;
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug,
+        name: "Finalize test",
+        feedUrl: `https://feeds.example.com/${slug}.xml`,
+        feedLabel: "Finalize test",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    createdTopicId = topic!.id;
+    const [article] = await db
+      .insert(articles)
+      .values({
+        gamesTopicId: topic!.id,
+        url: "https://example.com/finalize",
+        title: "Finalize test article",
+      })
+      .returning();
+    const attemptedAt = new Date();
+
+    await expect(claimArticleTextAttempt(article!.id, attemptedAt)).resolves.toBe(1);
+    await saveArticleTextAttempt(article!.id, {
+      text: "Extracted story text",
+      status: "succeeded",
+      attemptedAt,
+    });
+
+    const saved = await db.query.articles.findFirst({
+      where: (table, { eq }) => eq(table.id, article!.id),
+    });
+    expect(saved).toMatchObject({
+      articleText: "Extracted story text",
+      articleTextStatus: "succeeded",
+      articleTextAttempts: 1,
+      articleTextError: null,
+    });
+  });
+
+  it("prioritizes pending articles over forced retries of older failures", async () => {
+    const slug = `priority-test-${randomUUID()}`;
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug,
+        name: "Priority test",
+        feedUrl: `https://feeds.example.com/${slug}.xml`,
+        feedLabel: "Priority test",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    createdTopicId = topic!.id;
+    const [failed] = await db
+      .insert(articles)
+      .values({
+        gamesTopicId: topic!.id,
+        url: "https://example.com/old-failure",
+        title: "Old failure",
+        articleTextStatus: "failed",
+        articleTextAttempts: 3,
+        articleTextNextAttemptAt: new Date(0),
+        publishedAt: new Date("2026-01-01T00:00:00Z"),
+      })
+      .returning();
+    const [pending] = await db
+      .insert(articles)
+      .values({
+        gamesTopicId: topic!.id,
+        url: "https://example.com/new-story",
+        title: "New story",
+        publishedAt: new Date("2026-09-30T00:00:00Z"),
+      })
+      .returning();
+
+    const rows = await getArticlesNeedingText(topic!.id, new Date(), {
+      forceRetry: true,
+      limit: 1,
+    });
+
+    expect(rows.map((row) => row.id)).toEqual([pending!.id]);
+    expect(rows.map((row) => row.id)).not.toContain(failed!.id);
   });
 });
 

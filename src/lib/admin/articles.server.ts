@@ -130,7 +130,9 @@ export async function refreshTopicArticles(
   | { ok: false; error: string }
 > {
   try {
-    const result = await ingestFeed(topic, { forceRetry: true });
+    // Keep the interactive action bounded: article fetches have an 8-second
+    // timeout and run concurrently, so at most one small batch is awaited.
+    const result = await ingestFeed(topic, { forceRetry: true, maxTextArticles: 5 });
     await recordAdminAction({
       hominemUserId: userId,
       kind: "ingest",
