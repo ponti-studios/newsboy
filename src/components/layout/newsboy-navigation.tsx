@@ -1,5 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@ponti-studios/ui/overlays";
 import { LucideChevronDown } from "lucide-react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
 import { BRAND_NAME } from "~/config/brand";
@@ -29,6 +30,7 @@ export function NewsboyNavigation({
 }: NewsboyNavigationProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
   const currentGame = getCurrentGame(location.pathname, games);
   const isHistory = location.pathname === "/history";
   const isAdmin = location.pathname === "/admin" || location.pathname.startsWith("/admin/");
@@ -60,7 +62,7 @@ export function NewsboyNavigation({
             </li>
           </ul>
         ) : games.length > 1 ? (
-          <Popover>
+          <Popover open={isGameMenuOpen} onOpenChange={setIsGameMenuOpen}>
             <PopoverTrigger
               className="border-game-paper/18 bg-game-paper/10 text-game-paper hover:bg-game-paper/18 inline-flex min-h-9 items-center gap-2 rounded-xl border px-2.5 py-2 text-sm leading-none font-semibold"
               aria-label={hasSelectedGame ? `Current game: ${currentGame?.name}` : "Choose a game"}
@@ -80,7 +82,10 @@ export function NewsboyNavigation({
                     key={game.slug}
                     type="button"
                     aria-current={currentGame?.slug === game.slug ? "page" : undefined}
-                    onClick={() => void navigate(`/${game.slug}`)}
+                    onClick={() => {
+                      setIsGameMenuOpen(false);
+                      void navigate(`/${game.slug}`);
+                    }}
                     className="text-foreground hover:bg-muted aria-[current=page]:bg-muted flex w-full flex-col items-start gap-0.5 rounded-lg bg-transparent p-2.5 text-left"
                   >
                     <span>{game.name}</span>
