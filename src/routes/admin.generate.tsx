@@ -2,19 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import {
-  GENERATION_PROMPT_FILES,
   type GenerateErr,
   type GenerateOk,
   type GenerateProgressEvent,
 } from "~/lib/admin/generate-types";
 import { studioModelAllowlist } from "~/lib/admin/generate.server";
 import { resolveAdminGame } from "~/lib/admin/inventory";
-import { getPendingArticlesForTopics } from "~/lib/data/articles.server";
+import { getPendingArticlesByIds, getPendingArticlesForTopics } from "~/lib/data/articles.server";
 import { getActiveGames } from "~/lib/data/games.server";
 import { getActiveAdminGenerationRun } from "~/lib/data/generation-runs.server";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/generation/feed-text";
-import { getDateKey } from "~/lib/puzzle/date";
+import { getDateKey, isDateKey } from "~/lib/puzzle/date";
 import { PROMPT_TEST_CASES } from "~/lib/values/prompt-test-cases";
 
 import { GenerateForm } from "~/components/admin/generate-form";
@@ -25,7 +23,7 @@ import { subscribeToGenerateStream } from "~/components/admin/generate-stream";
 import { BRAND_NAME } from "~/config/brand";
 
 export function meta() {
-  return [{ title: `${BRAND_NAME} generate` }, { name: "robots", content: "noindex" }];
+  return [{ title: `${BRAND_NAME} create puzzle` }, { name: "robots", content: "noindex" }];
 }
 
 function isGenerateErr(value: unknown): value is GenerateErr {
@@ -57,29 +55,39 @@ function unexpectedResponseError(body: unknown, status: number): string {
   return `The server rejected the request (HTTP ${status}).`;
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const slug = params.slug;
+  if (!slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
   const game = await resolveAdminGame(slug);
   if (!game) throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
   const topics = await getActiveGames();
-  const [pendingArticles, activeRun] = await Promise.all([
-    getPendingArticlesForTopics(
-      topics.map((topic) => topic.id),
-      200,
-    ),
+  const dateQuery = url.searchParams.get("date") ?? "";
+  const dateKey = isDateKey(dateQuery) ? dateQuery : getDateKey(new Date());
+  const selectedArticleId = Number.parseInt(url.searchParams.get("articleId") ?? "", 10);
+  const [pendingArticles, selectedArticles, activeRun] = await Promise.all([
+    getPendingArticlesForTopics([game.id], 200),
+    Number.isInteger(selectedArticleId) ? getPendingArticlesByIds([selectedArticleId], 1) : [],
     getActiveAdminGenerationRun(game.id),
   ]);
+  const selectedArticle = selectedArticles.filter((article) => article.gamesTopicId === game.id);
+  const articles = [...pendingArticles];
+  for (const article of selectedArticle) {
+    if (!articles.some((pending) => pending.id === article.id)) articles.unshift(article);
+  }
 
   return {
     game: { id: game.id, slug: game.slug, name: game.name },
-    dateKey: getDateKey(new Date()),
+    dateKey,
+    selectedArticleId: selectedArticle.length > 0 ? String(selectedArticle[0].id) : "",
+    selectedArticleUnavailable: Number.isInteger(selectedArticleId) && selectedArticle.length === 0,
     models: studioModelAllowlist(),
-    promptFiles: GENERATION_PROMPT_FILES,
     topics: topics.map((topic) => ({ id: topic.id, slug: topic.slug, name: topic.name })),
-    articles: pendingArticles.map((article) => ({
+    articles: articles.map((article) => ({
       id: article.id,
       topicId: article.gamesTopicId,
       title: sanitizeFeedText(article.title, MAX_FEED_TITLE_LENGTH),
+      publishedAt: article.publishedAt?.toISOString() ?? null,
     })),
     fixtures: PROMPT_TEST_CASES.map((fixture) => fixture.id),
     activeRunId: activeRun?.id ?? null,
@@ -182,9 +190,12 @@ export default function GameAdminGenerate() {
         <GenerateForm
           data={{
             gameSlug: data.game.slug,
+            gameName: data.game.name,
+            gameId: data.game.id,
             dateKey: data.dateKey,
+            selectedArticleId: data.selectedArticleId,
+            selectedArticleUnavailable: data.selectedArticleUnavailable,
             models: data.models,
-            promptFiles: data.promptFiles,
             topics: data.topics,
             articles: data.articles,
             fixtures: data.fixtures,

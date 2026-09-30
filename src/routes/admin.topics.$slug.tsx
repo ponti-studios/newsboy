@@ -9,6 +9,8 @@ import {
 import { EmptyState } from "@ponti-studios/ui/feedback";
 import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
+import { Input } from "@ponti-studios/ui/forms";
+import { PaginationControls } from "@ponti-studios/ui/navigation";
 import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import {
   Link,
@@ -45,10 +47,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
 
   const statusParam = new URL(request.url).searchParams.get("status");
+  const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
+  const requestedPage = Number.parseInt(new URL(request.url).searchParams.get("page") ?? "0", 10);
+  const page = Number.isInteger(requestedPage) && requestedPage >= 0 ? requestedPage : 0;
   const status = statusParam && isArticleStatus(statusParam) ? statusParam : undefined;
-  const detail = await loadAdminTopicArticles(slug, status);
+  const detail = await loadAdminTopicArticles(slug, { status, query, page });
   if (!detail) throw Response.json({ error: "Topic not found" }, { status: 404 });
-  return { ...detail, status: status ?? "all" };
+  return { ...detail, status: status ?? "all", query };
 }
 
 export async function action({ params, context }: ActionFunctionArgs) {
@@ -62,6 +67,10 @@ export async function action({ params, context }: ActionFunctionArgs) {
     ok: true as const,
     inserted: result.inserted,
     scanned: result.scanned,
+    updated: result.updated,
+    extracted: result.extracted,
+    emptyBody: result.emptyBody,
+    failed: result.failed,
     expired: result.expired,
   };
 }
@@ -74,22 +83,16 @@ function formatPublishedAt(iso: string | null) {
 }
 
 export default function GameAdminTopicArticles() {
-  const { topic, articles, status } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
+  const { topic, articles, status, query, total, page } = useLoaderData<typeof loader>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const fetcher = useFetcher<typeof action>();
   const busy = fetcher.state !== "idle";
   const data = fetcher.data;
 
   return (
     <div className="flex flex-col gap-8">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to="/admin/topics">← Topics</Link>
-      </Button>
-
       <SectionIntro
-        eyebrow="Articles"
         title={topic.name}
-        description={`${topic.feedLabel} · ${topic.counts.pending} pending · ${topic.counts.used} used`}
         actions={
           <fetcher.Form method="post">
             <Button type="submit" disabled={busy} isLoading={busy}>
@@ -101,7 +104,7 @@ export default function GameAdminTopicArticles() {
 
       {data && "ok" in data && data.ok ? (
         <p className="text-muted-foreground text-sm">
-          Pulled {data.scanned} feed items · {data.inserted} new · {data.expired} expired pending.
+          Scanned {data.scanned} feed items · {data.inserted} new · {data.updated} repaired · {data.failed} fetch failures · {data.emptyBody} pages without readable text · {data.expired} expired.
         </p>
       ) : null}
       {data && "ok" in data && !data.ok ? (
@@ -110,10 +113,11 @@ export default function GameAdminTopicArticles() {
 
       <div className="flex flex-wrap gap-2">
         {(["all", ...articleStatusValues] as const).map((value) => {
-          const href =
-            value === "all"
-              ? `/admin/topics/${topic.slug}`
-              : `/admin/topics/${topic.slug}?status=${value}`;
+          const params = new URLSearchParams(searchParams);
+          if (value === "all") params.delete("status");
+          else params.set("status", value);
+          params.delete("page");
+          const href = `/admin/topics/${topic.slug}/articles${params.size ? `?${params}` : ""}`;
           const current = searchParams.get("status") ?? "all";
           const active = current === value || (value === "all" && status === "all");
           return (
@@ -124,10 +128,29 @@ export default function GameAdminTopicArticles() {
         })}
       </div>
 
+      <form method="get" className="flex max-w-xl gap-2">
+        {searchParams.get("status") ? <input type="hidden" name="status" value={status} /> : null}
+        <Input
+          name="q"
+          type="search"
+          defaultValue={query}
+          aria-label="Search article titles and links"
+          placeholder="Search article titles and links"
+        />
+        <Button type="submit" variant="outline">
+          Search
+        </Button>
+      </form>
+      <p className="text-muted-foreground text-sm">{total} articles</p>
+
       {articles.length === 0 ? (
         <EmptyState
-          title="No articles"
-          description="Refresh the feed to pull stories into this topic."
+          title={query ? "No matching articles" : "No articles"}
+          description={
+            query
+              ? "Try a different title or link."
+              : "Refresh the feed to pull stories into this topic."
+          }
         />
       ) : (
         <Table>
@@ -136,7 +159,10 @@ export default function GameAdminTopicArticles() {
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Published</TableHead>
-              <TableHead>Text</TableHead>
+              <TableHead>Article text</TableHead>
+              <TableHead>
+                <span className="sr-only">Action</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -156,12 +182,43 @@ export default function GameAdminTopicArticles() {
                 <TableCell className="text-muted-foreground whitespace-nowrap">
                   {formatPublishedAt(article.publishedAt)}
                 </TableCell>
-                <TableCell className="text-muted-foreground">{article.articleTextLength}</TableCell>
+                <TableCell className="text-muted-foreground" title={article.articleTextError ?? undefined}>
+                  {article.articleTextLength > 0
+                    ? `${article.articleTextLength} chars`
+                    : `${article.articleTextStatus}${article.articleTextError ? ` · ${article.articleTextError}` : ""} · ${article.articleTextAttempts} attempts`}
+                </TableCell>
+                <TableCell className="text-right">
+                  {article.status === "pending" ? (
+                    <Button asChild size="sm" variant="outline">
+                      <Link
+                        to={`/admin/topics/${encodeURIComponent(topic.slug)}/create?articleId=${article.id}`}
+                      >
+                        Create puzzle
+                      </Link>
+                    </Button>
+                  ) : null}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
+      {total > 50 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-muted-foreground text-sm">
+            {total} articles · page {page + 1}
+          </p>
+          <PaginationControls
+            currentPage={page}
+            totalPages={Math.ceil(total / 50)}
+            onPageChange={(nextPage) => {
+              const next = new URLSearchParams(searchParams);
+              next.set("page", String(nextPage));
+              setSearchParams(next);
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

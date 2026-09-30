@@ -10,8 +10,9 @@ import { GAME_READY_INVENTORY_DAYS } from "../generation/candidate-validation";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { countAttemptsByDate } from "../data/attempts.server";
 import { countPendingArticlesForGame } from "../data/articles.server";
-import { getActiveGames, getGameBySlug } from "../data/games.server";
+import { getGameBySlug } from "../data/games.server";
 import {
+  countGenerationsForTopic,
   getGenerationWithCandidates,
   listGenerationsForTopic,
 } from "../data/generation-runs.server";
@@ -127,10 +128,7 @@ export function buildInventoryCells(input: {
 }
 
 export async function resolveAdminGame(slug: string) {
-  const requested = await getGameBySlug(slug);
-  if (requested) return requested;
-  const [fallback] = await getActiveGames();
-  return fallback ?? null;
+  return getGameBySlug(slug);
 }
 
 function asDateKey(value: string | Date): string {
@@ -253,11 +251,15 @@ export async function loadAdminGeneration(slug: string, generationId: number) {
   };
 }
 
-export async function loadAdminOverview(slug: string, now = new Date()) {
+export async function loadAdminOverview(
+  slug: string,
+  now = new Date(),
+  options: { reapStale?: boolean } = {},
+) {
   const game = await resolveAdminGame(slug);
   if (!game) return null;
 
-  await reapStaleGenerations();
+  if (options.reapStale !== false) await reapStaleGenerations();
 
   const utcToday = getDateKey(now, "UTC");
   const dateKeys = overviewInventoryDateKeys(utcToday);
@@ -306,6 +308,31 @@ export async function loadAdminInventory(slug: string, now = new Date()) {
       attemptCounts,
       dateKeys,
     }).reverse(),
+  };
+}
+
+export async function loadAdminRunHistory(
+  slug: string,
+  options: { dateKey?: string; status?: GenerationRunStatus; page?: number } = {},
+) {
+  const game = await resolveAdminGame(slug);
+  if (!game) return null;
+  const page = Math.max(0, options.page ?? 0);
+  const pageSize = 50;
+  const filter = { dateKey: options.dateKey, status: options.status };
+  const total = await countGenerationsForTopic(game.id, filter);
+  const lastPage = Math.max(0, Math.ceil(total / pageSize) - 1);
+  const currentPage = Math.min(page, lastPage);
+  const runs = await listGenerationsForTopic(game.id, {
+    ...filter,
+    limit: pageSize,
+    offset: currentPage * pageSize,
+  });
+  return {
+    game: { id: game.id, slug: game.slug, name: game.name },
+    generations: runs.map(serializeGeneration),
+    total,
+    page: currentPage,
   };
 }
 

@@ -79,7 +79,17 @@ function toGenerateProgressEvent(update: GenerationProgressUpdate): GenerateProg
 }
 
 export function studioModelAllowlist(): string[] {
-  return [...new Set([DEFAULT_TEXT_MODEL, getConfiguredTextModel()])];
+  const efficientModels = [
+    "openai/gpt-4o-mini",
+    "openai/gpt-4.1-mini",
+    "openai/o3-mini",
+    "openai/o4-mini",
+    "openai/gpt-5-mini",
+    "openai/gpt-5.4-mini",
+    "openai/gpt-5.6-luna",
+    "openai/gpt-6-luna",
+  ];
+  return [...new Set([DEFAULT_TEXT_MODEL, ...efficientModels, getConfiguredTextModel()])];
 }
 
 const PRIVATE_V4 = [

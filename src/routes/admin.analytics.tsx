@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { loadFunnelReport } from "~/lib/data/analytics.server";
 import { BRAND_NAME } from "~/config/brand";
@@ -7,24 +7,18 @@ export function meta() {
   return [{ title: `Player funnel · ${BRAND_NAME} admin` }, { name: "robots", content: "noindex" }];
 }
 
-export async function loader() {
-  return { rows: await loadFunnelReport(), windowDays: 45 };
+export async function loader({ params }: LoaderFunctionArgs) {
+  if (!params.slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
+  return { rows: (await loadFunnelReport()).filter((row) => row.topicSlug === params.slug) };
 }
 
 export default function GameAnalyticsPage() {
-  const { rows, windowDays } = useLoaderData<typeof loader>();
+  const { rows } = useLoaderData<typeof loader>();
 
   return (
     <>
       <header className="mb-8 border-b pb-6">
-        <p className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
-          Game operations
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Player funnel</h1>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Topic and first-touch source cohorts over the last {windowDays} days. Next-day return
-          includes cohorts with at least one full day to return.
-        </p>
+        <h1 className="text-3xl font-semibold tracking-tight">Player funnel</h1>
       </header>
 
       {rows.length === 0 ? (

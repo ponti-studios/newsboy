@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@ponti-studios/ui/primitives";
@@ -13,7 +12,6 @@ import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 
 import { loadAdminDate } from "~/lib/admin/inventory";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { isDateKey } from "~/lib/puzzle/date";
 
 import { GenerationsList } from "./admin.inventory-list";
@@ -36,13 +34,14 @@ export function meta() {
   return [{ title: `${BRAND_NAME} date` }, { name: "robots", content: "noindex" }];
 }
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const dateKey = params.date;
   if (!dateKey || !isDateKey(dateKey)) {
     throw Response.json({ error: "Invalid date" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
+  const slug = params.slug;
+  if (!slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
   const detail = await loadAdminDate(slug, dateKey);
   if (!detail)
     throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
@@ -55,22 +54,18 @@ export default function GameAdminDate() {
   return (
     <div className="flex flex-col gap-8">
       <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to={`/admin?game=${detail.game.slug}`}>← Inventory</Link>
+        <Link to={`/admin/topics/${detail.game.slug}/schedule`}>← Schedule</Link>
       </Button>
 
       <SectionIntro
-        eyebrow={detail.game.name}
         title={detail.dateKey}
-        description={
-          detail.puzzle
-            ? `Published puzzle · ${detail.playerCount} player${detail.playerCount === 1 ? "" : "s"} started this day`
-            : `No published puzzle · ${detail.playerCount} player${detail.playerCount === 1 ? "" : "s"} started this day`
-        }
         actions={
           <div className="flex items-center gap-2">
             <StatusBadge status={detail.live ? "live" : "scheduled"} config={DATE_CLASS} />
             <Button asChild>
-              <Link to={`/admin/generate?game=${detail.game.slug}`}>Generate</Link>
+              <Link to={`/admin/topics/${detail.game.slug}/create?date=${detail.dateKey}`}>
+                Create another puzzle
+              </Link>
             </Button>
           </div>
         }
@@ -82,10 +77,6 @@ export default function GameAdminDate() {
             <CardTitle>
               {detail.puzzle.answer} <Badge variant="outline">{detail.puzzle.answerType}</Badge>
             </CardTitle>
-            <CardDescription>
-              Prompt {detail.puzzle.promptPath ?? "unknown"} · model{" "}
-              {detail.puzzle.model ?? "unknown"}
-            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-sm">
             <div>
@@ -114,14 +105,16 @@ export default function GameAdminDate() {
           description="This date has no published puzzle. Generate candidates, then publish."
           action={
             <Button asChild>
-              <Link to={`/admin/generate?game=${detail.game.slug}`}>Generate</Link>
+              <Link to={`/admin/topics/${detail.game.slug}/create?date=${detail.dateKey}`}>
+                Create puzzle
+              </Link>
             </Button>
           }
         />
       )}
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-medium">Generations</h2>
+        <h2 className="text-xl font-medium">Candidate history</h2>
         <GenerationsList generations={detail.generations} gameSlug={detail.game.slug} />
       </section>
     </div>

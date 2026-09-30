@@ -16,15 +16,13 @@ import {
   gte,
   sql,
 } from "@pontistudios/db";
+import type { GenerationRunStatus } from "@pontistudios/db";
 
 export async function listGenerationsForTopic(
   gameId: number,
-  options: { limit?: number; dateKey?: string } = {},
+  options: { limit?: number; offset?: number; dateKey?: string; status?: GenerationRunStatus } = {},
 ) {
-  const conditions = [eq(generationRuns.gamesTopicId, gameId)];
-  if (options.dateKey) {
-    conditions.push(sql`${generationRuns.dateKey} = ${options.dateKey}::date`);
-  }
+  const conditions = generationConditions(gameId, options);
   return db
     .select({
       id: generationRuns.id,
@@ -48,7 +46,29 @@ export async function listGenerationsForTopic(
     .from(generationRuns)
     .where(and(...conditions))
     .orderBy(desc(generationRuns.createdAt))
-    .limit(options.limit ?? 20);
+    .limit(options.limit ?? 20)
+    .offset(options.offset ?? 0);
+}
+
+export async function countGenerationsForTopic(
+  gameId: number,
+  options: { dateKey?: string; status?: GenerationRunStatus } = {},
+): Promise<number> {
+  const [row] = await db
+    .select({ value: count() })
+    .from(generationRuns)
+    .where(and(...generationConditions(gameId, options)));
+  return row?.value ?? 0;
+}
+
+function generationConditions(
+  gameId: number,
+  options: { dateKey?: string; status?: GenerationRunStatus },
+) {
+  const conditions = [eq(generationRuns.gamesTopicId, gameId)];
+  if (options.dateKey) conditions.push(sql`${generationRuns.dateKey} = ${options.dateKey}::date`);
+  if (options.status) conditions.push(eq(generationRuns.status, options.status));
+  return conditions;
 }
 
 /** Most recent still-running admin-triggered run for a topic, if any — used to resume the live view on page load/reload. */
@@ -98,11 +118,13 @@ export type GenerationCostReport = {
  * never show up in `listGenerationsForTopic`, which is scoped to one topic.
  */
 export async function getGenerationCostReport(
-  options: { sinceDays?: number } = {},
+  options: { sinceDays?: number; topicId?: number } = {},
 ): Promise<GenerationCostReport> {
   const sinceDays = options.sinceDays ?? 30;
   const cutoff = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000);
-  const scope = gte(generationRuns.createdAt, cutoff);
+  const scope = options.topicId === undefined
+    ? gte(generationRuns.createdAt, cutoff)
+    : and(gte(generationRuns.createdAt, cutoff), eq(generationRuns.gamesTopicId, options.topicId));
 
   const [totals] = await db
     .select({

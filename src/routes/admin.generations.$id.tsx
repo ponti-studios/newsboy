@@ -11,7 +11,6 @@ import { getGameAdminActor } from "~/lib/admin/auth";
 import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import { loadAdminGeneration, resolveAdminGame } from "~/lib/admin/inventory";
 import { publishCandidate } from "~/lib/admin/publish";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 
 import { CandidateCards } from "~/components/admin/candidate-cards";
 
@@ -27,13 +26,14 @@ export function meta() {
   return [{ title: `${BRAND_NAME} generation` }, { name: "robots", content: "noindex" }];
 }
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const generationId = Number.parseInt(params.id ?? "", 10);
   if (!Number.isInteger(generationId) || generationId < 1) {
     throw Response.json({ error: "Invalid generation" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
+  const slug = params.slug;
+  if (!slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
   const detail = await loadAdminGeneration(slug, generationId);
   if (!detail) throw Response.json({ error: "Generation not found" }, { status: 404 });
   return detail;
@@ -48,7 +48,8 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     return Response.json({ ok: false as const, error: "Invalid publish request" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
+  const slug = params.slug;
+  if (!slug) return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });
   const game = await resolveAdminGame(slug);
   if (!game)
     return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });
@@ -62,7 +63,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   if (!result.ok) {
     return Response.json({ ok: false as const, error: result.error }, { status: 400 });
   }
-  return redirect(`/admin/dates/${result.dateKey}?game=${game.slug}`);
+  return redirect(`/admin/topics/${game.slug}/schedule/dates/${result.dateKey}`);
 }
 
 export default function GameAdminGeneration() {

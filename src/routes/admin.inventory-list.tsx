@@ -61,7 +61,7 @@ export function InventoryList({ cells, gameSlug }: { cells: InventoryCell[]; gam
           <TableRow key={cell.dateKey}>
             <TableCell>
               <Link
-                to={`/admin/dates/${cell.dateKey}?game=${gameSlug}`}
+                to={`/admin/topics/${gameSlug}/schedule/dates/${cell.dateKey}`}
                 className="text-primary font-medium underline-offset-4 hover:underline"
               >
                 {cell.dateKey}
@@ -138,7 +138,7 @@ function GenerationRow({
     <TableRow>
       <TableCell className="align-top whitespace-nowrap">
         <Link
-          to={`/admin/generations/${generation.id}?game=${gameSlug}`}
+          to={`/admin/topics/${gameSlug}/generations/${generation.id}`}
           className="text-primary font-medium underline-offset-4 hover:underline"
         >
           {formatGenerationTime(generation.createdAt)}
@@ -146,7 +146,7 @@ function GenerationRow({
       </TableCell>
       <TableCell className="align-top whitespace-nowrap">
         <Link
-          to={`/admin/dates/${generation.dateKey}?game=${gameSlug}`}
+          to={`/admin/topics/${gameSlug}/schedule/dates/${generation.dateKey}`}
           className="text-primary underline-offset-4 hover:underline"
         >
           {generation.dateKey}
@@ -184,13 +184,13 @@ function GenerationCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Link
-            to={`/admin/generations/${generation.id}?game=${gameSlug}`}
+            to={`/admin/topics/${gameSlug}/generations/${generation.id}`}
             className="text-primary block font-medium underline-offset-4 hover:underline"
           >
             {formatGenerationTime(generation.createdAt)}
           </Link>
           <Link
-            to={`/admin/dates/${generation.dateKey}?game=${gameSlug}`}
+            to={`/admin/topics/${gameSlug}/schedule/dates/${generation.dateKey}`}
             className="text-muted-foreground mt-1 block text-sm underline-offset-4 hover:underline"
           >
             Puzzle date {generation.dateKey}

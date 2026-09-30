@@ -9,8 +9,7 @@ import {
   TableRow,
 } from "@ponti-studios/ui/data-display";
 import { EmptyState } from "@ponti-studios/ui/feedback";
-import { Button } from "@ponti-studios/ui/primitives";
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import {
@@ -20,13 +19,16 @@ import {
 } from "~/lib/data/generation-runs.server";
 
 import { BRAND_NAME } from "~/config/brand";
+import { getGameBySlug } from "~/lib/data/games.server";
 
 export function meta() {
   return [{ title: `${BRAND_NAME} generation cost` }, { name: "robots", content: "noindex" }];
 }
 
-export async function loader() {
-  const report = await getGenerationCostReport({ sinceDays: 30 });
+export async function loader({ params }: LoaderFunctionArgs) {
+  const topic = params.slug ? await getGameBySlug(params.slug) : null;
+  if (!topic) throw Response.json({ error: "Topic not found" }, { status: 404 });
+  const report = await getGenerationCostReport({ sinceDays: 30, topicId: topic.id });
   return report;
 }
 
@@ -45,11 +47,6 @@ function BreakdownTable({
     <section className="flex flex-col gap-3">
       <div>
         <h2 className="text-lg font-medium">{title}</h2>
-        {showOutcomeRates ? (
-          <p className="text-muted-foreground mt-1 text-sm">
-            Success and failure rates exclude runs that are still in progress.
-          </p>
-        ) : null}
       </div>
       {rows.length === 0 ? (
         <EmptyState title={emptyLabel} description="No generation runs in this window." />
@@ -107,14 +104,7 @@ export default function GameAdminCosts() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to="/admin">← Admin</Link>
-      </Button>
-
-      <SectionIntro
-        title="Generation cost"
-        description={`All generation runs across every topic — last ${report.sinceDays} days.`}
-      />
+      <SectionIntro title="Generation cost" />
 
       <section className="grid gap-3 sm:grid-cols-3">
         <MetricCard label="Total runs" value={report.totalRuns} />

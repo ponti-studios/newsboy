@@ -9,7 +9,7 @@ import {
 import { EmptyState } from "@ponti-studios/ui/feedback";
 import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
-import { Link, useFetcher, useLoaderData, type ActionFunctionArgs } from "react-router";
+import { Link, redirect, useFetcher, useLoaderData, type ActionFunctionArgs, type LoaderFunctionArgs } from "react-router";
 
 import { loadAdminTopics, refreshTopicArticlesBySlug } from "~/lib/admin/articles.server";
 import { getGameAdminActor } from "~/lib/admin/auth";
@@ -17,10 +17,16 @@ import { getGameAdminActor } from "~/lib/admin/auth";
 import { BRAND_NAME } from "~/config/brand";
 
 export function meta() {
-  return [{ title: `${BRAND_NAME} topics` }, { name: "robots", content: "noindex" }];
+  return [{ title: `${BRAND_NAME} articles` }, { name: "robots", content: "noindex" }];
 }
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get("game");
+  if (slug) {
+    url.searchParams.delete("game");
+    return redirect(`/admin/topics/${slug}/articles${url.search}`);
+  }
   return { topics: await loadAdminTopics() };
 }
 
@@ -37,6 +43,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
     slug,
     inserted: result.inserted,
     scanned: result.scanned,
+    updated: result.updated,
+    failed: result.failed,
+    emptyBody: result.emptyBody,
     expired: result.expired,
   };
 }
@@ -56,7 +65,7 @@ function RefreshButton({ slug }: { slug: string }) {
       </fetcher.Form>
       {data && "ok" in data && data.ok && data.slug === slug ? (
         <p className="text-muted-foreground text-xs">
-          {data.inserted} new · {data.scanned} in feed · {data.expired} expired
+          {data.inserted} new · {data.updated} repaired · {data.scanned} scanned · {data.failed} failed · {data.emptyBody} unreadable · {data.expired} expired
         </p>
       ) : null}
       {data && "ok" in data && !data.ok ? (
@@ -71,28 +80,21 @@ export default function GameAdminTopics() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to="/admin">← Admin</Link>
-      </Button>
-
-      <SectionIntro
-        title="Topics"
-        description="Each topic has one feed. Refresh pulls new articles and expires stale pending ones."
-      />
+      <SectionIntro title="Articles" />
 
       {topics.length === 0 ? (
         <EmptyState
-          title="No topics"
-          description={`No active ${BRAND_NAME} topics are configured.`}
+          title="No article sources"
+          description={`No active ${BRAND_NAME} games have article feeds configured.`}
         />
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Topic</TableHead>
+              <TableHead>Game</TableHead>
               <TableHead>Pending</TableHead>
               <TableHead>Used</TableHead>
-              <TableHead>Feed</TableHead>
+              <TableHead>Source</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -101,7 +103,7 @@ export default function GameAdminTopics() {
               <TableRow key={topic.id}>
                 <TableCell>
                   <Link
-                    to={`/admin/topics/${topic.slug}`}
+                    to={`/admin/topics/${topic.slug}/articles?status=pending`}
                     className="text-primary font-medium underline-offset-4 hover:underline"
                   >
                     {topic.name}

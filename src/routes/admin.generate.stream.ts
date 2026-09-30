@@ -6,7 +6,6 @@ import {
   subscribeToGeneration,
   type GenerationStreamEvent,
 } from "~/lib/admin/generation-events.server";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { db, eq, generationRuns } from "@pontistudios/db";
 
 /**
@@ -29,9 +28,10 @@ async function terminalResultEvent(
   };
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const slug = url.searchParams.get("game") ?? DEFAULT_GAME_SLUG;
+  const slug = params.slug;
+  if (!slug) return Response.json({ error: "Missing topic" }, { status: 400 });
   const runId = Number.parseInt(url.searchParams.get("runId") ?? "", 10);
   if (!Number.isInteger(runId) || runId < 1) {
     return Response.json({ error: "Invalid runId" }, { status: 400 });

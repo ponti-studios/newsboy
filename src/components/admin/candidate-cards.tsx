@@ -84,8 +84,14 @@ function CandidateCard({
               <a
                 href={candidate.articleUrl}
                 className="text-primary underline-offset-4 hover:underline"
+                aria-label={
+                  candidate.articleTitle
+                    ? `Open source article: ${candidate.articleTitle}`
+                    : "Open source article"
+                }
               >
                 <Link2 className="size-4" />
+                <span className="sr-only">Open source article</span>
               </a>
             </Button>
           ) : (
@@ -94,6 +100,17 @@ function CandidateCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-0 text-sm">
+        {candidate.articleUrl && candidate.articleTitle ? (
+          <div>
+            <p className="text-muted-foreground text-xs font-semibold uppercase">Source article</p>
+            <a
+              href={candidate.articleUrl}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {candidate.articleTitle}
+            </a>
+          </div>
+        ) : null}
         {candidate.candidate.articleAbout ? (
           <div>
             <p className="text-lg font-bold">About</p>
@@ -150,7 +167,7 @@ function CandidateCard({
           </div>
           <fetcher.Form
             method="post"
-            action={`/admin/generations/${generationId}?game=${gameSlug}`}
+            action={`/admin/topics/${gameSlug}/generations/${generationId}`}
           >
             <input type="hidden" name="candidateId" value={candidate.id} />
             <Button type="submit" className="w-fit" disabled={!canPublish || busy} isLoading={busy}>

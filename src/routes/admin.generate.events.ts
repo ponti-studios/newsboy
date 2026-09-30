@@ -5,7 +5,6 @@ import { getGameAdminActor } from "~/lib/admin/auth";
 import { resolveAdminGame } from "~/lib/admin/inventory";
 import { readGenerateForm } from "~/lib/admin/generate-form";
 import { startGeneration } from "~/lib/admin/generate.server";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 /**
@@ -20,7 +19,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const auth = getGameAdminActor(context);
   const form = await request.formData();
-  const slug = String(form.get("game") ?? DEFAULT_GAME_SLUG);
+  const slug = String(form.get("game") ?? "");
   const game = await resolveAdminGame(slug);
   if (!game) {
     return Response.json(

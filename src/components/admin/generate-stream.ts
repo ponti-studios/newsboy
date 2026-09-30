@@ -20,7 +20,7 @@ export function subscribeToGenerateStream(
   onResult: (result: GenerateOk | GenerateErr) => void,
 ): () => void {
   const source = new EventSource(
-    `/admin/generate/stream?runId=${runId}&game=${encodeURIComponent(gameSlug)}`,
+    `/admin/topics/${encodeURIComponent(gameSlug)}/create/stream?runId=${runId}`,
   );
 
   source.onmessage = (event) => {
