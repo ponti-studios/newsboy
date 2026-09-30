@@ -310,19 +310,23 @@ describe("ingestFeed", () => {
       .returning();
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValueOnce(
-          new Response(
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url === topic!.feedUrl) {
+          return new Response(
             "<rss><channel><item><title>Blocked</title><link>https://example.com/blocked</link></item><item><title>Readable</title><link>https://example.com/readable</link></item></channel></rss>",
-          ),
-        )
-        .mockResolvedValueOnce(new Response("blocked", { status: 403 }))
-        .mockResolvedValueOnce(
-          new Response(
+          );
+        }
+        if (url === "https://example.com/blocked") {
+          return new Response("blocked", { status: 403 });
+        }
+        if (url === "https://example.com/readable") {
+          return new Response(
             "<html><body><article><p>This page has readable story text.</p></article></body></html>",
-          ),
-        ),
+          );
+        }
+        throw new Error(`Unexpected fetch URL: ${url}`);
+      }),
     );
 
     const summary = await ingestFeed(topic!);
