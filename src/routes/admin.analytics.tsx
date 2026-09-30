@@ -9,7 +9,7 @@ export function meta() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.slug) throw Response.json({ error: "Missing topic" }, { status: 400 });
-  return { rows: (await loadFunnelReport()).filter((row) => row.topicSlug === params.slug) };
+  return { rows: await loadFunnelReport({ topicSlug: params.slug }) };
 }
 
 export default function GameAnalyticsPage() {

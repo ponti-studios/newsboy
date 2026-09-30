@@ -18,9 +18,13 @@ import {
   isNull,
   lte,
   lt,
+  ne,
   or,
   sql,
 } from "~/lib/infrastructure/db";
+
+const ARTICLE_TEXT_CLAIM_ERROR = "article_text_extraction_in_progress";
+const ARTICLE_TEXT_CLAIM_LEASE_MS = 30_000;
 
 /**
  * Insert newly-seen articles for a feed, deduped on `(gamesTopicId, url)`.
@@ -63,11 +67,31 @@ export async function getArticlesNeedingText(
 ): Promise<Article[]> {
   const missingText = or(isNull(articles.articleText), eq(articles.articleText, ""))!;
   const filters = [eq(articles.gamesTopicId, topicId), missingText];
+  const expiredClaim = lte(
+    articles.articleTextAttemptedAt,
+    new Date(now.getTime() - ARTICLE_TEXT_CLAIM_LEASE_MS),
+  );
+  const notClaimed = or(
+    isNull(articles.articleTextError),
+    ne(articles.articleTextError, ARTICLE_TEXT_CLAIM_ERROR),
+    expiredClaim,
+  )!;
   if (!options.forceRetry) {
     filters.push(
       or(
         eq(articles.articleTextStatus, "pending"),
-        and(eq(articles.articleTextStatus, "failed"), lte(articles.articleTextNextAttemptAt, now))!,
+        and(
+          eq(articles.articleTextStatus, "failed"),
+          notClaimed,
+          lte(articles.articleTextNextAttemptAt, now),
+        )!,
+      )!,
+    );
+  } else {
+    filters.push(
+      or(
+        eq(articles.articleTextStatus, "pending"),
+        and(eq(articles.articleTextStatus, "failed"), notClaimed)!,
       )!,
     );
   }
@@ -75,8 +99,55 @@ export async function getArticlesNeedingText(
     .select()
     .from(articles)
     .where(and(...filters))
-    .orderBy(articles.id)
+    .orderBy(
+      sql`CASE WHEN ${articles.articleTextStatus} = 'pending' THEN 0 ELSE 1 END`,
+      sql`${articles.publishedAt} DESC NULLS LAST`,
+      desc(articles.id),
+    )
     .limit(options.limit ?? 500);
+}
+
+/** Atomically claim an article so overlapping ingest runs cannot fetch/save it twice. */
+export async function claimArticleTextAttempt(
+  articleId: number,
+  now: Date,
+  options: { forceRetry?: boolean } = {},
+): Promise<number | null> {
+  const missingText = or(isNull(articles.articleText), eq(articles.articleText, ""))!;
+  const expiredClaim = lte(
+    articles.articleTextAttemptedAt,
+    new Date(now.getTime() - ARTICLE_TEXT_CLAIM_LEASE_MS),
+  );
+  const notClaimed = or(
+    isNull(articles.articleTextError),
+    ne(articles.articleTextError, ARTICLE_TEXT_CLAIM_ERROR),
+    expiredClaim,
+  )!;
+  const retryable = options.forceRetry
+    ? and(eq(articles.articleTextStatus, "failed"), notClaimed)!
+    : and(
+        eq(articles.articleTextStatus, "failed"),
+        notClaimed,
+        lte(articles.articleTextNextAttemptAt, now),
+      )!;
+  const claimed = await db
+    .update(articles)
+    .set({
+      articleTextStatus: "failed",
+      articleTextAttempts: sql`${articles.articleTextAttempts} + 1`,
+      articleTextAttemptedAt: now,
+      articleTextNextAttemptAt: new Date(now.getTime() + ARTICLE_TEXT_CLAIM_LEASE_MS),
+      articleTextError: ARTICLE_TEXT_CLAIM_ERROR,
+    })
+    .where(
+      and(
+        eq(articles.id, articleId),
+        missingText,
+        or(eq(articles.articleTextStatus, "pending"), retryable)!,
+      ),
+    )
+    .returning({ attempts: articles.articleTextAttempts });
+  return claimed[0]?.attempts ?? null;
 }
 
 export async function markExistingArticleTextSucceeded(topicId: number): Promise<number> {
@@ -108,17 +179,11 @@ export async function saveArticleTextAttempt(
     nextAttemptAt?: Date;
   },
 ): Promise<void> {
-  const row = await db.query.articles.findFirst({
-    where: eq(articles.id, articleId),
-    columns: { articleText: true, articleTextAttempts: true },
-  });
-  if (!row || row.articleText) return;
   await db
     .update(articles)
     .set({
       articleText: result.text || null,
       articleTextStatus: result.status,
-      articleTextAttempts: row.articleTextAttempts + 1,
       articleTextAttemptedAt: result.attemptedAt,
       articleTextNextAttemptAt: result.nextAttemptAt ?? null,
       articleTextError: result.error ?? null,
@@ -126,6 +191,8 @@ export async function saveArticleTextAttempt(
     .where(
       and(
         eq(articles.id, articleId),
+        eq(articles.articleTextAttemptedAt, result.attemptedAt),
+        eq(articles.articleTextError, ARTICLE_TEXT_CLAIM_ERROR),
         or(isNull(articles.articleText), eq(articles.articleText, "")),
       ),
     );

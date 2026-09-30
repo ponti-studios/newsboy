@@ -20,6 +20,7 @@ import { createLogger } from "../logger.server";
 
 import {
   expireStaleArticles,
+  claimArticleTextAttempt,
   getArticlesNeedingText,
   markExistingArticleTextSucceeded,
   saveArticleTextAttempt,
@@ -38,6 +39,7 @@ import { getDateKey } from "../puzzle/date";
 const logger = createLogger();
 const ARTICLE_TEXT_CONCURRENCY = 5;
 const ARTICLE_TEXT_TIMEOUT_MS = 8_000;
+const FEED_FETCH_TIMEOUT_MS = 8_000;
 const MAX_AUTOMATIC_TEXT_ATTEMPTS = 3;
 
 function extractUrlLikeNode(value: unknown): string | undefined {
@@ -74,8 +76,13 @@ function extractUrlLikeNode(value: unknown): string | undefined {
   return undefined;
 }
 
-export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
-  const res = await fetch(feedUrl);
+export async function fetchFeedItems(
+  feedUrl: string,
+  options: { timeoutMs?: number } = {},
+): Promise<FeedItem[]> {
+  const res = await fetch(feedUrl, {
+    signal: AbortSignal.timeout(options.timeoutMs ?? FEED_FETCH_TIMEOUT_MS),
+  });
   if (!res.ok) throw new Error(`Failed to fetch RSS feed: ${res.status}`);
   const xml = await res.text();
   const parser = new XMLParser({ ignoreAttributes: false });
@@ -178,7 +185,7 @@ function parsePubDate(pubDate: string): Date | undefined {
 /** Fetch one feed and store any articles not already known by url. Returns the count newly inserted. */
 export async function ingestFeed(
   topic: GamesTopic,
-  options: { forceRetry?: boolean } = {},
+  options: { forceRetry?: boolean; maxTextArticles?: number } = {},
 ): Promise<IngestSummary> {
   const runStartedAt = new Date();
   const childLogger = logger.child({
@@ -220,11 +227,12 @@ export async function ingestFeed(
 
 async function processArticleText(
   topicId: number,
-  options: { forceRetry?: boolean },
+  options: { forceRetry?: boolean; maxTextArticles?: number },
   runStartedAt: Date,
 ): Promise<Pick<IngestSummary, "updated" | "extracted" | "emptyBody" | "failed">> {
   const rows = await getArticlesNeedingText(topicId, new Date(), {
     forceRetry: options.forceRetry,
+    limit: options.maxTextArticles,
   });
   let cursor = 0;
   let updated = 0;
@@ -237,6 +245,10 @@ async function processArticleText(
         const article = rows[cursor++];
         if (!article) continue;
         const attemptedAt = new Date();
+        const attempts = await claimArticleTextAttempt(article.id, attemptedAt, {
+          forceRetry: options.forceRetry,
+        });
+        if (attempts === null) continue;
         const result = article.url
           ? await fetchArticleText(article.url)
           : {
@@ -246,7 +258,6 @@ async function processArticleText(
               error: "missing_url",
               transient: false,
             };
-        const attempts = article.articleTextAttempts + 1;
         let nextAttemptAt: Date | undefined;
         if (!result.ok && result.transient && attempts < MAX_AUTOMATIC_TEXT_ATTEMPTS) {
           nextAttemptAt = new Date(attemptedAt.getTime() + 60 * 60 * 1000 * 4 ** (attempts - 1));

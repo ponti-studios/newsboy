@@ -1,4 +1,4 @@
-import { db, desc, gameEvents, gte } from "~/lib/infrastructure/db";
+import { and, db, desc, eq, gameEvents, gte } from "~/lib/infrastructure/db";
 
 const REPORT_WINDOW_DAYS = 45;
 const MAX_REPORT_EVENTS = 10_000;
@@ -16,7 +16,10 @@ export interface FunnelReportRow {
   matureStarts: number;
 }
 
-export async function loadFunnelReport(now = new Date()): Promise<FunnelReportRow[]> {
+export async function loadFunnelReport(
+  options: { topicSlug?: string; now?: Date } = {},
+): Promise<FunnelReportRow[]> {
+  const { topicSlug, now = new Date() } = options;
   const cutoff = new Date(now.getTime() - REPORT_WINDOW_DAYS * 24 * 60 * 60 * 1000);
   const events = await db
     .select({
@@ -29,7 +32,12 @@ export async function loadFunnelReport(now = new Date()): Promise<FunnelReportRo
       createdAt: gameEvents.createdAt,
     })
     .from(gameEvents)
-    .where(gte(gameEvents.createdAt, cutoff))
+    .where(
+      and(
+        gte(gameEvents.createdAt, cutoff),
+        topicSlug ? eq(gameEvents.topicSlug, topicSlug) : undefined,
+      ),
+    )
     .orderBy(desc(gameEvents.createdAt))
     .limit(MAX_REPORT_EVENTS);
 
