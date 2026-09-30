@@ -1,0 +1,1 @@
+DROP TABLE "labs"."covid_data" CASCADE;

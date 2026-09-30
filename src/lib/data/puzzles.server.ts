@@ -5,7 +5,7 @@
  * for their date and served directly.
  */
 
-import type { GamesTopic } from "@pontistudios/db";
+import type { GamesTopic } from "~/lib/infrastructure/db";
 import {
   and,
   articles,
@@ -18,7 +18,7 @@ import {
   inArray,
   lte,
   sql,
-} from "@pontistudios/db";
+} from "~/lib/infrastructure/db";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../puzzle/date";
 import type { PuzzleRecord } from "./types";
@@ -274,4 +274,4 @@ export async function backfillPuzzlePublishedAt(): Promise<number> {
   return result.length;
 }
 
-export type { GamesPuzzle } from "@pontistudios/db";
+export type { GamesPuzzle } from "~/lib/infrastructure/db";

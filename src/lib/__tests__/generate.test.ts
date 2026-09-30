@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { articles, db, gamesPuzzles, gamesTopics, generationRuns } from "@pontistudios/db";
+import { articles, db, gamesPuzzles, gamesTopics, generationRuns } from "~/lib/infrastructure/db";
 import { cleanAll } from "../../data/test-db";
 import {
   assertGenerateFeedUrl,

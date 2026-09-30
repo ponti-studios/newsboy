@@ -13,7 +13,7 @@
 import { randomUUID } from "node:crypto";
 import { parseArgs } from "node:util";
 
-import { db, sql } from "@pontistudios/db";
+import { db, sql } from "~/lib/infrastructure/db";
 import { addDaysToDateKey, getDateKey } from "../src/lib/puzzle/date";
 import { ensureGameCatalog } from "../src/lib/generation/ingest.server";
 import {

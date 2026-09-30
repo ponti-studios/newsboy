@@ -1,5 +1,5 @@
-import type { Article, GamesTopic } from "@pontistudios/db";
-import { and, articles, count, db, desc, eq, ilike, or, sql } from "@pontistudios/db";
+import type { Article, GamesTopic } from "~/lib/infrastructure/db";
+import { and, articles, count, db, desc, eq, ilike, or, sql } from "~/lib/infrastructure/db";
 
 import { getErrorMessage } from "../errors";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";

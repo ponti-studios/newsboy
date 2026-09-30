@@ -9,6 +9,9 @@ catalogs:
     '@mozilla/readability':
       specifier: ^0.6.0
       version: 0.6.0
+    '@openrouter/sdk':
+      specifier: ^1.3.27
+      version: 1.4.2
     '@ponti-studios/auth':
       specifier: ^0.2.0
       version: 0.2.0
@@ -107,21 +110,15 @@ importers:
       '@mozilla/readability':
         specifier: 'catalog:'
         version: 0.6.0
+      '@openrouter/sdk':
+        specifier: 'catalog:'
+        version: 1.4.2
       '@ponti-studios/auth':
         specifier: 'catalog:'
         version: 0.2.0
       '@ponti-studios/ui':
         specifier: 'catalog:'
         version: 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      '@pontistudios/ai':
-        specifier: https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/ai
-        version: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/ai
-      '@pontistudios/db':
-        specifier: https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/db
-        version: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/db
-      '@pontistudios/env':
-        specifier: https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/env
-        version: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/env
       '@react-router/node':
         specifier: 'catalog:'
         version: 8.4.0(react-router@8.4.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)
@@ -1889,18 +1886,6 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
-
-  '@pontistudios/ai@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/ai':
-    resolution: {gitHosted: true, integrity: sha512-Qr+5cksSs9+jw/mmRDu8TYdjlG2xsvSKEI5rAiewRqgi8ac/0Lw5a8YOfhAkEu8VJcCdff1T/c1ZxrNY4SMF3g==, path: /packages/ai, tarball: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158}
-    version: 0.0.0
-
-  '@pontistudios/db@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/db':
-    resolution: {gitHosted: true, integrity: sha512-Qr+5cksSs9+jw/mmRDu8TYdjlG2xsvSKEI5rAiewRqgi8ac/0Lw5a8YOfhAkEu8VJcCdff1T/c1ZxrNY4SMF3g==, path: /packages/db, tarball: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158}
-    version: 0.0.0
-
-  '@pontistudios/env@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/env':
-    resolution: {gitHosted: true, integrity: sha512-Qr+5cksSs9+jw/mmRDu8TYdjlG2xsvSKEI5rAiewRqgi8ac/0Lw5a8YOfhAkEu8VJcCdff1T/c1ZxrNY4SMF3g==, path: /packages/env, tarball: https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158}
-    version: 0.0.0
 
   '@radix-ui/colors@3.0.0':
     resolution: {integrity: sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg==}
@@ -6042,52 +6027,6 @@ snapshots:
       - '@date-fns/tz'
       - '@types/react'
       - date-fns
-
-  '@pontistudios/ai@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/ai':
-    dependencies:
-      '@openrouter/sdk': 1.4.2
-      zod: 4.6.5
-
-  '@pontistudios/db@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/db':
-    dependencies:
-      drizzle-orm: 0.45.3(postgres@3.4.9)
-      postgres: 3.4.9
-      zod: 4.6.5
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@libsql/client'
-      - '@libsql/client-wasm'
-      - '@neondatabase/serverless'
-      - '@netlify/db'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/sql.js'
-      - '@upstash/redis'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - better-sqlite3
-      - bun-types
-      - expo-sqlite
-      - gel
-      - knex
-      - kysely
-      - mysql2
-      - pg
-      - prisma
-      - sql.js
-      - sqlite3
-
-  '@pontistudios/env@https://codeload.github.com/ponti-studios/labs/tar.gz/cdaa9f62f18847ee368d1fa7e749f6f488b29158#path:/packages/env':
-    dependencies:
-      dotenv: 17.4.2
-      zod: 4.6.5
 
   '@radix-ui/colors@3.0.0': {}
 

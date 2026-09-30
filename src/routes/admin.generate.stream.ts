@@ -6,7 +6,7 @@ import {
   subscribeToGeneration,
   type GenerationStreamEvent,
 } from "~/lib/admin/generation-events.server";
-import { db, eq, generationRuns } from "@pontistudios/db";
+import { db, eq, generationRuns } from "~/lib/infrastructure/db";
 
 /**
  * Fallback safety net for the in-memory bus: if the process that started the

@@ -1,4 +1,4 @@
-import { db } from "@pontistudios/db";
+import { db } from "~/lib/infrastructure/db";
 
 export async function cleanAll() {
   await db.execute("DELETE FROM labs.game_admin_actions");

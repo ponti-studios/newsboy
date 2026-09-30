@@ -3,8 +3,8 @@
  * system prompt path, repeat window, etc).
  */
 
-import type { GamesTopic } from "@pontistudios/db";
-import { and, db, eq, gamesTopics, inArray, or } from "@pontistudios/db";
+import type { GamesTopic } from "~/lib/infrastructure/db";
+import { and, db, eq, gamesTopics, inArray, or } from "~/lib/infrastructure/db";
 
 export async function getGameBySlug(slug: string): Promise<GamesTopic | null> {
   const row = await db.query.gamesTopics.findFirst({ where: eq(gamesTopics.slug, slug) });

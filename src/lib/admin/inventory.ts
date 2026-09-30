@@ -2,7 +2,7 @@ import type {
   GenerationPromptSource,
   GenerationRunStatus,
   GenerationSourceMode,
-} from "@pontistudios/db";
+} from "~/lib/infrastructure/db";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../puzzle/date";
 import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ } from "../generation/generate-range";

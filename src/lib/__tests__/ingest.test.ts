@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { articles, db, eq, gamesPuzzles, gamesTopics } from "@pontistudios/db";
+import { articles, db, eq, gamesPuzzles, gamesTopics } from "~/lib/infrastructure/db";
 import { cleanAll } from "../../data/test-db";
 import { getArticlesNeedingText } from "../data/articles.server";
 import { GAME_CATALOG } from "../generation/catalog";

@@ -1,6 +1,5 @@
+import "dotenv/config";
 import { z } from "zod";
-
-export * from "@pontistudios/env";
 
 const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
 
@@ -60,3 +59,32 @@ export const NewsboyServerEnv = z.preprocess(
 );
 
 export type NewsboyServerEnv = z.infer<typeof NewsboyServerEnv>;
+
+const MIN_GAME_MAX_TOKENS = 200;
+const MAX_GAME_MAX_TOKENS = 16_000;
+
+export const NewsboyGenerationEnv = z
+  .object({
+    OPENROUTER_API_KEY: z.string(),
+    NEWSBOY_AI_MODEL: z.string().trim().min(1).optional(),
+    GAME_REASONING_EFFORT: z
+      .enum(["default", "none", "minimal", "low", "medium", "high"])
+      .optional(),
+    GAME_MAX_TOKENS: z
+      .string()
+      .regex(/^\d+$/, "GAME_MAX_TOKENS must be a decimal integer")
+      .transform(Number)
+      .pipe(z.number().int().min(MIN_GAME_MAX_TOKENS).max(MAX_GAME_MAX_TOKENS))
+      .optional(),
+  })
+  .transform((env) => ({
+    openRouterApiKey: env.OPENROUTER_API_KEY,
+    newsboyAiModel: env.NEWSBOY_AI_MODEL,
+    gameReasoningEffort: env.GAME_REASONING_EFFORT,
+    gameMaxTokens: env.GAME_MAX_TOKENS,
+  }));
+
+export type NewsboyGenerationEnv = z.infer<typeof NewsboyGenerationEnv>;
+
+export const DatabaseEnv = z.object({ DATABASE_URL: z.string().min(1) });
+export type DatabaseEnv = z.infer<typeof DatabaseEnv>;

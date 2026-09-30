@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { articles, db, gamesTopics } from "@pontistudios/db";
+import { articles, db, gamesTopics } from "~/lib/infrastructure/db";
 import { cleanAll } from "../../data/test-db";
 
 vi.mock("../generation/ingest.server", () => ({

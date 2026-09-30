@@ -1,6 +1,6 @@
-import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "@pontistudios/ai";
-import type { Article, GamesTopic } from "@pontistudios/db";
-import { and, db, eq, generationCandidates, generationRuns, lt } from "@pontistudios/db";
+import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "~/lib/infrastructure/ai";
+import type { Article, GamesTopic } from "~/lib/infrastructure/db";
+import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/infrastructure/db";
 import { countRecentGenerateActions, recordAdminAction } from "../data/admin-actions.server";
 import {
   getPendingArticlesByIds,

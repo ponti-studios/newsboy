@@ -2,8 +2,8 @@ import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./node_modules/@pontistudios/db/src/schema/*",
-  out: "./node_modules/@pontistudios/db/migrations",
+  schema: "./src/lib/infrastructure/db/schema/*",
+  out: "./migrations",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },

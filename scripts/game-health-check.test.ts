@@ -5,7 +5,7 @@ vi.mock("../src/lib/data/puzzles.server", () => ({
   countInventoryForRange: vi.fn(),
   loadPuzzleForDate: vi.fn(),
 }));
-vi.mock("@pontistudios/db", () => ({
+vi.mock("~/lib/infrastructure/db", () => ({
   closeDb: vi.fn(),
 }));
 

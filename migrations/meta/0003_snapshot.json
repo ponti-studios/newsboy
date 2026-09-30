@@ -1,0 +1,1085 @@
+{
+  "id": "73061316-0304-4c8e-8f9a-ffdaed22399f",
+  "prevId": "36fd5940-21ee-4697-8967-b62fe0ee30ae",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "labs.covid_data": {
+      "name": "covid_data",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "iso_code": {
+          "name": "iso_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "continent": {
+          "name": "continent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_cases": {
+          "name": "total_cases",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_cases": {
+          "name": "new_cases",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_cases_smoothed": {
+          "name": "new_cases_smoothed",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_deaths": {
+          "name": "total_deaths",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_deaths": {
+          "name": "new_deaths",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_deaths_smoothed": {
+          "name": "new_deaths_smoothed",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_cases_per_million": {
+          "name": "total_cases_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_cases_per_million": {
+          "name": "new_cases_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_cases_smoothed_per_million": {
+          "name": "new_cases_smoothed_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_deaths_per_million": {
+          "name": "total_deaths_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_deaths_per_million": {
+          "name": "new_deaths_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_deaths_smoothed_per_million": {
+          "name": "new_deaths_smoothed_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reproduction_rate": {
+          "name": "reproduction_rate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icu_patients": {
+          "name": "icu_patients",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icu_patients_per_million": {
+          "name": "icu_patients_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hosp_patients": {
+          "name": "hosp_patients",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hosp_patients_per_million": {
+          "name": "hosp_patients_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekly_icu_admissions": {
+          "name": "weekly_icu_admissions",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekly_icu_admissions_per_million": {
+          "name": "weekly_icu_admissions_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekly_hosp_admissions": {
+          "name": "weekly_hosp_admissions",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekly_hosp_admissions_per_million": {
+          "name": "weekly_hosp_admissions_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tests": {
+          "name": "total_tests",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_tests": {
+          "name": "new_tests",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_tests_per_thousand": {
+          "name": "total_tests_per_thousand",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_tests_per_thousand": {
+          "name": "new_tests_per_thousand",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_tests_smoothed": {
+          "name": "new_tests_smoothed",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_tests_smoothed_per_thousand": {
+          "name": "new_tests_smoothed_per_thousand",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "positive_rate": {
+          "name": "positive_rate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tests_per_case": {
+          "name": "tests_per_case",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tests_units": {
+          "name": "tests_units",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_vaccinations": {
+          "name": "total_vaccinations",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "people_vaccinated": {
+          "name": "people_vaccinated",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "people_fully_vaccinated": {
+          "name": "people_fully_vaccinated",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_boosters": {
+          "name": "total_boosters",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_vaccinations": {
+          "name": "new_vaccinations",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_vaccinations_smoothed": {
+          "name": "new_vaccinations_smoothed",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_vaccinations_per_hundred": {
+          "name": "total_vaccinations_per_hundred",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "people_vaccinated_per_hundred": {
+          "name": "people_vaccinated_per_hundred",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "people_fully_vaccinated_per_hundred": {
+          "name": "people_fully_vaccinated_per_hundred",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_boosters_per_hundred": {
+          "name": "total_boosters_per_hundred",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_vaccinations_smoothed_per_million": {
+          "name": "new_vaccinations_smoothed_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_people_vaccinated_smoothed": {
+          "name": "new_people_vaccinated_smoothed",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_people_vaccinated_smoothed_per_hundred": {
+          "name": "new_people_vaccinated_smoothed_per_hundred",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stringency_index": {
+          "name": "stringency_index",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "population_density": {
+          "name": "population_density",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "median_age": {
+          "name": "median_age",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aged_65_older": {
+          "name": "aged_65_older",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aged_70_older": {
+          "name": "aged_70_older",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gdp_per_capita": {
+          "name": "gdp_per_capita",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extreme_poverty": {
+          "name": "extreme_poverty",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cardiovasc_death_rate": {
+          "name": "cardiovasc_death_rate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "diabetes_prevalence": {
+          "name": "diabetes_prevalence",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "female_smokers": {
+          "name": "female_smokers",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "male_smokers": {
+          "name": "male_smokers",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "handwashing_facilities": {
+          "name": "handwashing_facilities",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hospital_beds_per_thousand": {
+          "name": "hospital_beds_per_thousand",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "life_expectancy": {
+          "name": "life_expectancy",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "human_development_index": {
+          "name": "human_development_index",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "population": {
+          "name": "population",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "excess_mortality_cumulative_absolute": {
+          "name": "excess_mortality_cumulative_absolute",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "excess_mortality_cumulative": {
+          "name": "excess_mortality_cumulative",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "excess_mortality": {
+          "name": "excess_mortality",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "excess_mortality_cumulative_per_million": {
+          "name": "excess_mortality_cumulative_per_million",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "labs.search_documents": {
+      "name": "search_documents",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subtitle": {
+          "name": "subtitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_url": {
+          "name": "source_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "featured": {
+          "name": "featured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "popularity": {
+          "name": "popularity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "search_text": {
+          "name": "search_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "search_vector": {
+          "name": "search_vector",
+          "type": "tsvector",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''::tsvector"
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "search_documents_kind_idx": {
+          "name": "search_documents_kind_idx",
+          "columns": [
+            {
+              "expression": "kind",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "search_documents_category_idx": {
+          "name": "search_documents_category_idx",
+          "columns": [
+            {
+              "expression": "category",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "search_documents_year_idx": {
+          "name": "search_documents_year_idx",
+          "columns": [
+            {
+              "expression": "year",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "search_documents_featured_idx": {
+          "name": "search_documents_featured_idx",
+          "columns": [
+            {
+              "expression": "featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "search_documents_search_vector_idx": {
+          "name": "search_documents_search_vector_idx",
+          "columns": [
+            {
+              "expression": "search_vector",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "labs.rhobh_daily_puzzles": {
+      "name": "rhobh_daily_puzzles",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date_utc": {
+          "name": "date_utc",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "answer": {
+          "name": "answer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer_type": {
+          "name": "answer_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "normalized_answer": {
+          "name": "normalized_answer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clue": {
+          "name": "clue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "detail": {
+          "name": "detail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sources": {
+          "name": "sources",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "normalized_answer_length": {
+          "name": "normalized_answer_length",
+          "value": "length(\"labs\".\"rhobh_daily_puzzles\".\"normalized_answer\") = 5"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "labs.case_updates": {
+      "name": "case_updates",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "case_id": {
+          "name": "case_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raw_content": {
+          "name": "raw_content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "neutral_content": {
+          "name": "neutral_content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "round": {
+          "name": "round",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "case_updates_case_id_idx": {
+          "name": "case_updates_case_id_idx",
+          "columns": [
+            {
+              "expression": "case_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "case_updates_case_id_relationship_cases_id_fk": {
+          "name": "case_updates_case_id_relationship_cases_id_fk",
+          "tableFrom": "case_updates",
+          "tableTo": "relationship_cases",
+          "schemaTo": "labs",
+          "columnsFrom": [
+            "case_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "labs.relationship_cases": {
+      "name": "relationship_cases",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_situation": {
+          "name": "raw_situation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "neutral_situation": {
+          "name": "neutral_situation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quorum_size": {
+          "name": "quorum_size",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'open'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "labs.relationship_verdicts": {
+      "name": "relationship_verdicts",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "case_id": {
+          "name": "case_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_round": {
+          "name": "update_round",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fingerprint": {
+          "name": "fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "relationship_verdicts_case_id_idx": {
+          "name": "relationship_verdicts_case_id_idx",
+          "columns": [
+            {
+              "expression": "case_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "relationship_verdicts_case_id_relationship_cases_id_fk": {
+          "name": "relationship_verdicts_case_id_relationship_cases_id_fk",
+          "tableFrom": "relationship_verdicts",
+          "tableTo": "relationship_cases",
+          "schemaTo": "labs",
+          "columnsFrom": [
+            "case_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "relationship_verdicts_update_id_case_updates_id_fk": {
+          "name": "relationship_verdicts_update_id_case_updates_id_fk",
+          "tableFrom": "relationship_verdicts",
+          "tableTo": "case_updates",
+          "schemaTo": "labs",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "labs.tfl_cameras": {
+      "name": "tfl_cameras",
+      "schema": "labs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tfl_id": {
+          "name": "tfl_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "common_name": {
+          "name": "common_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "available": {
+          "name": "available",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "video_url": {
+          "name": "video_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "view": {
+          "name": "view",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lat": {
+          "name": "lat",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lng": {
+          "name": "lng",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tfl_cameras_tfl_id_unique": {
+          "name": "tfl_cameras_tfl_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "tfl_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "labs": "labs"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

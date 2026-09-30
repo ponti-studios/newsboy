@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/infrastructure/db";
 
 import { getDateKey } from "../src/lib/puzzle/date";
 import { getErrorMessage } from "../src/lib/errors";
@@ -8,7 +8,7 @@ import { getActiveGames } from "../src/lib/data/games.server";
 import { countInventoryForRange, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { createLogger } from "../src/lib/logger.server";
 import { GAME_READY_INVENTORY_DAYS } from "../src/lib/generation/candidate-validation";
-import { LabsServerEnv } from "../src/lib/infrastructure/env";
+import { NewsboyGenerationEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 
@@ -40,7 +40,7 @@ export function computeHealthStatus(
 }
 
 async function main() {
-  LabsServerEnv.parse(process.env);
+  NewsboyGenerationEnv.parse(process.env);
 
   const startedAt = Date.now();
   const now = new Date();

@@ -31,7 +31,7 @@ instrumentation.
   - success/failure rate per day
   - circuit-breaker-open events (`game_admin_actions.kind =
     "generation_circuit_open"`, per `gameAdminActionKindValues` in
-    `packages/db/src/schema/game.ts`) plotted as markers alongside the
+    `src/lib/infrastructure/db/schema/game.ts`) plotted as markers alongside the
     trend, so operators can correlate a circuit trip with what the cost/
     failure trend was doing beforehand.
 - Add this to the existing `/admin/costs` page rather than a new route,

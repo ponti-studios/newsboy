@@ -27,6 +27,7 @@
     "newsboy:e2e": "tsx scripts/game-e2e.ts",
     "storybook": "storybook dev -p 6008",
     "typecheck": "react-router typegen && tsc -b",
+    "db:generate": "drizzle-kit generate",
     "db:migrate:test": "drizzle-kit migrate",
     "format:check": "oxfmt src --check"
   },
@@ -34,9 +35,7 @@
     "@mozilla/readability": "catalog:",
     "@ponti-studios/auth": "catalog:",
     "@ponti-studios/ui": "catalog:",
-    "@pontistudios/ai": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/ai",
-    "@pontistudios/db": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/db",
-    "@pontistudios/env": "https://github.com/ponti-studios/labs.git#cdaa9f62f18847ee368d1fa7e749f6f488b29158&path:/packages/env",
+    "@openrouter/sdk": "catalog:",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "cn": "^0.4.0",

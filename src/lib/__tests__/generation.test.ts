@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 
 const { chatCompletionMock } = vi.hoisted(() => ({ chatCompletionMock: vi.fn() }));
 
-vi.mock("@pontistudios/ai", async () => {
-  const actual = await vi.importActual<typeof import("@pontistudios/ai")>("@pontistudios/ai");
+vi.mock("~/lib/infrastructure/ai", async () => {
+  const actual =
+    await vi.importActual<typeof import("~/lib/infrastructure/ai")>("~/lib/infrastructure/ai");
   return { ...actual, chatCompletion: chatCompletionMock };
 });
 

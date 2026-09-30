@@ -1,6 +1,6 @@
-import { getConfiguredTextModel } from "@pontistudios/ai";
-import type { Article, GamesTopic, ReasoningEffort } from "@pontistudios/db";
-import { and, db, eq, gamesPuzzles, generationRuns } from "@pontistudios/db";
+import { getConfiguredTextModel } from "~/lib/infrastructure/ai";
+import type { Article, GamesTopic, ReasoningEffort } from "~/lib/infrastructure/db";
+import { and, db, eq, gamesPuzzles, generationRuns } from "~/lib/infrastructure/db";
 import { randomUUID } from "node:crypto";
 
 import { recordAdminAction } from "../data/admin-actions.server";

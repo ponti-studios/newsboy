@@ -1,0 +1,1 @@
+ALTER TABLE "labs"."realitea_admin_actions" DROP COLUMN "email";

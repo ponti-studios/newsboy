@@ -17,17 +17,14 @@ values before using database-backed routes or generation scripts.
 
 ## Database ownership
 
-The Drizzle schema and production migration chain remain in
-[`ponti-studios/labs`](https://github.com/ponti-studios/labs), under
-`packages/db`. This app pins the `ai`, `db`, and `env` source packages to one
-immutable Labs commit in `package.json`. Update those three pins together only
-after the Labs production migration workflow succeeds for that commit.
-
-The CI migration step applies that pinned migration set to its disposable test
-database. Production migrations run only in Labs CI. Railway runs
-`scripts/check-production-migration.mjs` as a pre-deploy check and refuses to
-activate Newsboy unless the latest migration in the pinned DB package is already
-recorded in production.
+Newsboy owns its AI client, database access, Drizzle schema, environment
+validation, and migration history in this repository. CI applies the local
+migrations to its disposable test database. The production database uses the
+same `labs` schema and migration hashes as Labs; production DDL remains gated by
+the Labs migration workflow. Railway runs
+`scripts/check-production-migration.mjs` before deploy and refuses to activate
+Newsboy unless its latest local migration is already recorded in production.
+Keep migration SQL, snapshots, and journal changes in sync with Labs.
 
 ## Workflows
 

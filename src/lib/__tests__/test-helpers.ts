@@ -1,4 +1,4 @@
-import { articles, db, gamesPuzzles, gamesTopics } from "@pontistudios/db";
+import { articles, db, gamesPuzzles, gamesTopics } from "~/lib/infrastructure/db";
 
 export async function seedGame(overrides: Partial<typeof gamesTopics.$inferInsert> = {}) {
   const [game] = await db
