@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import postgres from "postgres";
-import { DatabaseEnv } from "@pontistudios/env";
+import { z } from "zod";
 
 const dbPackagePath = new URL("../node_modules/@pontistudios/db/migrations/", import.meta.url);
 const journal = JSON.parse(await readFile(new URL("meta/_journal.json", dbPackagePath), "utf8"));
@@ -13,7 +13,9 @@ if (!latestMigration) {
 
 const migrationSql = await readFile(new URL(`${latestMigration.tag}.sql`, dbPackagePath));
 const migrationHash = createHash("sha256").update(migrationSql).digest("hex");
-const { DATABASE_URL } = DatabaseEnv.parse(process.env);
+const { DATABASE_URL } = z
+  .object({ DATABASE_URL: z.string().url() })
+  .parse(process.env);
 const sql = postgres(DATABASE_URL, { max: 1, connect_timeout: 10 });
 
 try {
