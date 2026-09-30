@@ -117,16 +117,17 @@ export async function refreshTopicArticles(
   topic: GamesTopic,
   userId: string,
 ): Promise<
-  {
-    ok: true;
-    inserted: number;
-    scanned: number;
-    updated: number;
-    extracted: number;
-    emptyBody: number;
-    failed: number;
-    expired: number;
-  } | { ok: false; error: string }
+  | {
+      ok: true;
+      inserted: number;
+      scanned: number;
+      updated: number;
+      extracted: number;
+      emptyBody: number;
+      failed: number;
+      expired: number;
+    }
+  | { ok: false; error: string }
 > {
   try {
     const result = await ingestFeed(topic, { forceRetry: true });

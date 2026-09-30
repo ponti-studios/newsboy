@@ -24,7 +24,7 @@ describe("fetchFeedItems", () => {
             `<rss><channel><item><title>Tea &amp; Drama</title><link>https://realityblurred.com/story</link><pubDate>not-a-date</pubDate><description><![CDATA[<p>Line one</p>\u000BLine two</b>]]></description></item></channel></rss>`,
             { status: 200 },
           ),
-        )
+        ),
     );
 
     await expect(fetchFeedItems("https://realityblurred.com/feed")).resolves.toEqual([
@@ -66,9 +66,13 @@ describe("fetchArticleText", () => {
   it("extracts readable article text", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response("<html><body><article><p>The complete story body is here.</p></article></body></html>"),
-      ),
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            "<html><body><article><p>The complete story body is here.</p></article></body></html>",
+          ),
+        ),
     );
     await expect(fetchArticleText("https://example.com/story")).resolves.toEqual({
       ok: true,
@@ -79,7 +83,11 @@ describe("fetchArticleText", () => {
 
   it.each([
     ["HTTP failures", new Response("blocked", { status: 403 }), "http_403"],
-    ["pages without readable content", new Response("<html><body><nav>Only nav</nav></body></html>"), "no_readable_content"],
+    [
+      "pages without readable content",
+      new Response("<html><body><nav>Only nav</nav></body></html>"),
+      "no_readable_content",
+    ],
   ])("reports %s", async (_label, response, error) => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
     await expect(fetchArticleText("https://example.com/story")).resolves.toMatchObject({
@@ -90,7 +98,10 @@ describe("fetchArticleText", () => {
   });
 
   it("classifies timeout and invalid URL failures", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new DOMException("Timed out", "TimeoutError")));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new DOMException("Timed out", "TimeoutError")),
+    );
     await expect(fetchArticleText("https://example.com/story")).resolves.toMatchObject({
       ok: false,
       error: "timeout",
@@ -235,17 +246,24 @@ describe("ingestFeed", () => {
       .returning();
     vi.stubGlobal(
       "fetch",
-      vi.fn()
+      vi
+        .fn()
         .mockResolvedValueOnce(
-          new Response('<rss><channel><item><title>Story</title><link>https://example.com/story</link><description>RSS excerpt</description></item></channel></rss>'),
+          new Response(
+            "<rss><channel><item><title>Story</title><link>https://example.com/story</link><description>RSS excerpt</description></item></channel></rss>",
+          ),
         )
         .mockResolvedValueOnce(
-          new Response("<html><body><article><p>Full article body from the page.</p></article></body></html>"),
+          new Response(
+            "<html><body><article><p>Full article body from the page.</p></article></body></html>",
+          ),
         ),
     );
 
     const summary = await ingestFeed(topic!);
-    const row = await db.query.articles.findFirst({ where: (table, { eq }) => eq(table.gamesTopicId, topic!.id) });
+    const row = await db.query.articles.findFirst({
+      where: (table, { eq }) => eq(table.gamesTopicId, topic!.id),
+    });
     expect(summary).toMatchObject({ inserted: 1, scanned: 1, extracted: 1, failed: 0 });
     expect(row).toMatchObject({
       description: "RSS excerpt",
@@ -268,20 +286,29 @@ describe("ingestFeed", () => {
       .returning();
     vi.stubGlobal(
       "fetch",
-      vi.fn()
+      vi
+        .fn()
         .mockResolvedValueOnce(
-          new Response('<rss><channel><item><title>Blocked</title><link>https://example.com/blocked</link></item><item><title>Readable</title><link>https://example.com/readable</link></item></channel></rss>'),
+          new Response(
+            "<rss><channel><item><title>Blocked</title><link>https://example.com/blocked</link></item><item><title>Readable</title><link>https://example.com/readable</link></item></channel></rss>",
+          ),
         )
         .mockResolvedValueOnce(new Response("blocked", { status: 403 }))
         .mockResolvedValueOnce(
-          new Response("<html><body><article><p>This page has readable story text.</p></article></body></html>"),
+          new Response(
+            "<html><body><article><p>This page has readable story text.</p></article></body></html>",
+          ),
         ),
     );
 
     const summary = await ingestFeed(topic!);
-    const rows = await db.query.articles.findMany({ where: (table, { eq }) => eq(table.gamesTopicId, topic!.id) });
+    const rows = await db.query.articles.findMany({
+      where: (table, { eq }) => eq(table.gamesTopicId, topic!.id),
+    });
     expect(summary).toMatchObject({ inserted: 2, scanned: 2, extracted: 1, failed: 1 });
-    expect(rows.map(({ articleTextStatus, articleTextError }) => [articleTextStatus, articleTextError])).toEqual([
+    expect(
+      rows.map(({ articleTextStatus, articleTextError }) => [articleTextStatus, articleTextError]),
+    ).toEqual([
       ["failed", "http_403"],
       ["succeeded", null],
     ]);
@@ -304,21 +331,34 @@ describe("ingestFeed", () => {
       .returning();
     await db
       .update(articles)
-      .set({ articleTextStatus: "failed", articleTextAttempts: 1, articleTextNextAttemptAt: new Date(Date.now() + 60_000) })
+      .set({
+        articleTextStatus: "failed",
+        articleTextAttempts: 1,
+        articleTextNextAttemptAt: new Date(Date.now() + 60_000),
+      })
       .where(eq(articles.id, legacy!.id));
 
     expect(await getArticlesNeedingText(topic!.id, new Date())).toEqual([]);
     expect(await getArticlesNeedingText(topic!.id, new Date(Date.now() + 61_000))).toHaveLength(1);
-    expect(await getArticlesNeedingText(topic!.id, new Date(), { forceRetry: true })).toHaveLength(1);
+    expect(await getArticlesNeedingText(topic!.id, new Date(), { forceRetry: true })).toHaveLength(
+      1,
+    );
 
     vi.stubGlobal(
       "fetch",
-      vi.fn()
+      vi
+        .fn()
         .mockResolvedValueOnce(new Response("<rss><channel /></rss>"))
-        .mockResolvedValueOnce(new Response("<html><body><article><p>Recovered legacy text.</p></article></body></html>")),
+        .mockResolvedValueOnce(
+          new Response(
+            "<html><body><article><p>Recovered legacy text.</p></article></body></html>",
+          ),
+        ),
     );
     const summary = await ingestFeed(topic!, { forceRetry: true });
-    const repaired = await db.query.articles.findFirst({ where: (table, { eq }) => eq(table.id, legacy!.id) });
+    const repaired = await db.query.articles.findFirst({
+      where: (table, { eq }) => eq(table.id, legacy!.id),
+    });
     expect(summary).toMatchObject({ scanned: 0, extracted: 1, updated: 1 });
     expect(repaired).toMatchObject({
       articleText: "Recovered legacy text.",

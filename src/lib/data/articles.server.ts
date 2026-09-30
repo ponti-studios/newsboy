@@ -7,7 +7,20 @@
  */
 
 import type { Article, GamesTopic } from "@pontistudios/db";
-import { and, articles, count, db, desc, eq, inArray, isNull, lte, lt, or, sql } from "@pontistudios/db";
+import {
+  and,
+  articles,
+  count,
+  db,
+  desc,
+  eq,
+  inArray,
+  isNull,
+  lte,
+  lt,
+  or,
+  sql,
+} from "@pontistudios/db";
 
 /**
  * Insert newly-seen articles for a feed, deduped on `(gamesTopicId, url)`.
@@ -54,10 +67,7 @@ export async function getArticlesNeedingText(
     filters.push(
       or(
         eq(articles.articleTextStatus, "pending"),
-        and(
-          eq(articles.articleTextStatus, "failed"),
-          lte(articles.articleTextNextAttemptAt, now),
-        )!,
+        and(eq(articles.articleTextStatus, "failed"), lte(articles.articleTextNextAttemptAt, now))!,
       )!,
     );
   }

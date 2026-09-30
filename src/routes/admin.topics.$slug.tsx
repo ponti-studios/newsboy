@@ -104,7 +104,9 @@ export default function GameAdminTopicArticles() {
 
       {data && "ok" in data && data.ok ? (
         <p className="text-muted-foreground text-sm">
-          Scanned {data.scanned} feed items · {data.inserted} new · {data.updated} repaired · {data.failed} fetch failures · {data.emptyBody} pages without readable text · {data.expired} expired.
+          Scanned {data.scanned} feed items · {data.inserted} new · {data.updated} repaired ·{" "}
+          {data.failed} fetch failures · {data.emptyBody} pages without readable text ·{" "}
+          {data.expired} expired.
         </p>
       ) : null}
       {data && "ok" in data && !data.ok ? (
@@ -182,7 +184,10 @@ export default function GameAdminTopicArticles() {
                 <TableCell className="text-muted-foreground whitespace-nowrap">
                   {formatPublishedAt(article.publishedAt)}
                 </TableCell>
-                <TableCell className="text-muted-foreground" title={article.articleTextError ?? undefined}>
+                <TableCell
+                  className="text-muted-foreground"
+                  title={article.articleTextError ?? undefined}
+                >
                   {article.articleTextLength > 0
                     ? `${article.articleTextLength} chars`
                     : `${article.articleTextStatus}${article.articleTextError ? ` · ${article.articleTextError}` : ""} · ${article.articleTextAttempts} attempts`}

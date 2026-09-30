@@ -49,7 +49,8 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   }
 
   const slug = params.slug;
-  if (!slug) return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });
+  if (!slug)
+    return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });
   const game = await resolveAdminGame(slug);
   if (!game)
     return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });

@@ -122,9 +122,13 @@ export async function getGenerationCostReport(
 ): Promise<GenerationCostReport> {
   const sinceDays = options.sinceDays ?? 30;
   const cutoff = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000);
-  const scope = options.topicId === undefined
-    ? gte(generationRuns.createdAt, cutoff)
-    : and(gte(generationRuns.createdAt, cutoff), eq(generationRuns.gamesTopicId, options.topicId));
+  const scope =
+    options.topicId === undefined
+      ? gte(generationRuns.createdAt, cutoff)
+      : and(
+          gte(generationRuns.createdAt, cutoff),
+          eq(generationRuns.gamesTopicId, options.topicId),
+        );
 
   const [totals] = await db
     .select({

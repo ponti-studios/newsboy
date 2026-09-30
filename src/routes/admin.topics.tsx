@@ -9,7 +9,14 @@ import {
 import { EmptyState } from "@ponti-studios/ui/feedback";
 import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
-import { Link, redirect, useFetcher, useLoaderData, type ActionFunctionArgs, type LoaderFunctionArgs } from "react-router";
+import {
+  Link,
+  redirect,
+  useFetcher,
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "react-router";
 
 import { loadAdminTopics, refreshTopicArticlesBySlug } from "~/lib/admin/articles.server";
 import { getGameAdminActor } from "~/lib/admin/auth";
@@ -65,7 +72,8 @@ function RefreshButton({ slug }: { slug: string }) {
       </fetcher.Form>
       {data && "ok" in data && data.ok && data.slug === slug ? (
         <p className="text-muted-foreground text-xs">
-          {data.inserted} new · {data.updated} repaired · {data.scanned} scanned · {data.failed} failed · {data.emptyBody} unreadable · {data.expired} expired
+          {data.inserted} new · {data.updated} repaired · {data.scanned} scanned · {data.failed}{" "}
+          failed · {data.emptyBody} unreadable · {data.expired} expired
         </p>
       ) : null}
       {data && "ok" in data && !data.ok ? (

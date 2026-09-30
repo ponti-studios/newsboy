@@ -80,11 +80,7 @@ export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
   const xml = await res.text();
   const parser = new XMLParser({ ignoreAttributes: false });
   const parsed = parser.parse(xml);
-  if (
-    !parsed?.rss ||
-    typeof parsed.rss !== "object" ||
-    !Object.hasOwn(parsed.rss, "channel")
-  ) {
+  if (!parsed?.rss || typeof parsed.rss !== "object" || !Object.hasOwn(parsed.rss, "channel")) {
     throw new Error("Invalid RSS feed: missing rss/channel");
   }
   const rawItems: unknown = parsed?.rss?.channel?.item ?? [];
@@ -115,7 +111,9 @@ export async function fetchArticleText(url: string): Promise<ArticleTextFetchRes
   try {
     const parsedUrl = new URL(url);
     if (!/^https?:$/.test(parsedUrl.protocol)) return fail("invalid_url", false);
-    const response = await fetch(parsedUrl, { signal: AbortSignal.timeout(ARTICLE_TEXT_TIMEOUT_MS) });
+    const response = await fetch(parsedUrl, {
+      signal: AbortSignal.timeout(ARTICLE_TEXT_TIMEOUT_MS),
+    });
     if (!response.ok) {
       return fail(`http_${response.status}`, response.status === 429 || response.status >= 500);
     }
@@ -206,7 +204,10 @@ export async function ingestFeed(
     await markExistingArticleTextSucceeded(topic.id);
     const outcomes = await processArticleText(topic.id, options, runStartedAt);
     const summary = { inserted, scanned: items.length, expired, ...outcomes };
-    childLogger.info({ event: "[FEED_INGESTED]", ...summary }, `ingested ${inserted} new article(s) from feed`);
+    childLogger.info(
+      { event: "[FEED_INGESTED]", ...summary },
+      `ingested ${inserted} new article(s) from feed`,
+    );
     return summary;
   } catch (err) {
     childLogger.error(
@@ -222,7 +223,9 @@ async function processArticleText(
   options: { forceRetry?: boolean },
   runStartedAt: Date,
 ): Promise<Pick<IngestSummary, "updated" | "extracted" | "emptyBody" | "failed">> {
-  const rows = await getArticlesNeedingText(topicId, new Date(), { forceRetry: options.forceRetry });
+  const rows = await getArticlesNeedingText(topicId, new Date(), {
+    forceRetry: options.forceRetry,
+  });
   let cursor = 0;
   let updated = 0;
   let extracted = 0;
@@ -234,9 +237,15 @@ async function processArticleText(
         const article = rows[cursor++];
         if (!article) continue;
         const attemptedAt = new Date();
-        const result = article.url ? await fetchArticleText(article.url) : {
-          ok: false as const, text: "" as const, status: "failed" as const, error: "missing_url", transient: false,
-        };
+        const result = article.url
+          ? await fetchArticleText(article.url)
+          : {
+              ok: false as const,
+              text: "" as const,
+              status: "failed" as const,
+              error: "missing_url",
+              transient: false,
+            };
         const attempts = article.articleTextAttempts + 1;
         let nextAttemptAt: Date | undefined;
         if (!result.ok && result.transient && attempts < MAX_AUTOMATIC_TEXT_ATTEMPTS) {
@@ -252,8 +261,7 @@ async function processArticleText(
         if (result.ok) {
           extracted++;
           if (article.fetchedAt < runStartedAt) updated++;
-        }
-        else if (result.error === "no_readable_content") emptyBody++;
+        } else if (result.error === "no_readable_content") emptyBody++;
         else failed++;
       }
     }),
@@ -271,7 +279,15 @@ export async function ingestAllActiveFeeds(): Promise<IngestSummary> {
       try {
         return await ingestFeed(topic);
       } catch {
-        return { inserted: 0, scanned: 0, updated: 0, extracted: 0, emptyBody: 0, failed: 1, expired: 0 };
+        return {
+          inserted: 0,
+          scanned: 0,
+          updated: 0,
+          extracted: 0,
+          emptyBody: 0,
+          failed: 1,
+          expired: 0,
+        };
       }
     }),
   );
