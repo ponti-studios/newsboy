@@ -33,6 +33,36 @@ describe("generate range", () => {
     });
   });
 
+  it("gap-fill starts at today and still covers daysAhead future days", () => {
+    expect(
+      resolveGenerateRange({
+        force: false,
+        daysAhead: 1,
+        todayKey: "2026-08-12",
+        now: new Date("2026-08-12T18:00:00Z"),
+      }),
+    ).toEqual({
+      ok: true,
+      fromKey: "2026-08-12",
+      toKey: "2026-08-13",
+      dateKeys: ["2026-08-12", "2026-08-13"],
+      force: false,
+      allowLiveDates: false,
+    });
+  });
+
+  it("allows gap-fill explicit ranges to include live dates", () => {
+    const result = resolveGenerateRange({
+      force: false,
+      daysAhead: 1,
+      from: "2026-08-12",
+      to: "2026-08-13",
+      todayKey: "2026-08-12",
+      now: new Date("2026-08-12T18:00:00Z"),
+    });
+    expect(result).toMatchObject({ ok: true, fromKey: "2026-08-12", force: false });
+  });
+
   it("requires explicit ranges to start after live dates", () => {
     const result = resolveGenerateRange({
       force: true,

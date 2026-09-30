@@ -85,7 +85,9 @@ export function resolveGenerateRange(input: GenerateRangeInput): GenerateRange {
     const liveKeys = [...live].sort();
     const latestLive = liveKeys[liveKeys.length - 1];
 
-    if (!input.allowLiveDates && from <= latestLive) {
+    // Gap-fill only inserts missing puzzles, so it may include live dates;
+    // --force can delete/regenerate them and must stay behind the guard.
+    if (input.force && !input.allowLiveDates && from <= latestLive) {
       const earliestFrom = addDaysToDateKey(latestLive, 1);
       return {
         ok: false,
@@ -114,10 +116,15 @@ export function resolveGenerateRange(input: GenerateRangeInput): GenerateRange {
     };
   }
 
-  const fromKey = addDaysToDateKey(input.todayKey, 1);
-  if (!fromKey) return { ok: false, error: "failed to compute tomorrow from todayKey" };
+  // Gap-fill starts at today so a missing live puzzle gets filled; --force
+  // starts tomorrow so it never regenerates a live one.
+  const fromKey = input.force ? addDaysToDateKey(input.todayKey, 1) : input.todayKey;
+  if (!fromKey) return { ok: false, error: "failed to compute start date from todayKey" };
 
-  const dateKeys = buildDateRange(fromKey, { daysAhead: input.daysAhead });
+  const dateKeys = buildDateRange(fromKey, {
+    // Starting at today adds one day so --days-ahead still counts future days.
+    daysAhead: input.force ? input.daysAhead : input.daysAhead + 1,
+  });
   const toKey = dateKeys[dateKeys.length - 1];
   if (!toKey) return { ok: false, error: "empty generate range" };
 
