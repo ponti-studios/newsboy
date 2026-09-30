@@ -2,6 +2,9 @@ name: newsboy - generate
 run-name: newsboy-${{ inputs.mode || 'schedule' }}-${{ inputs.requestId || github.run_id }}
 
 on:
+  schedule:
+    - cron: "0 22 * * *"
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       mode:
