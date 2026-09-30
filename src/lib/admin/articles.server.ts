@@ -1,15 +1,11 @@
 import type { Article, GamesTopic } from "@pontistudios/db";
+import { and, articles, count, db, desc, eq, ilike, or, sql } from "@pontistudios/db";
 
 import { getErrorMessage } from "../errors";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
-import { fetchFeedItems } from "../generation/ingest.server";
+import { ingestFeed } from "../generation/ingest.server";
 import { recordAdminAction } from "../data/admin-actions.server";
-import {
-  countArticlesByStatus,
-  expireStaleArticles,
-  listArticlesForTopic,
-  upsertArticles,
-} from "../data/articles.server";
+import { countArticlesByStatus } from "../data/articles.server";
 import { getActiveGames, getGameBySlug } from "../data/games.server";
 
 export type TopicArticleSummary = {
@@ -29,13 +25,11 @@ export type TopicArticleRow = {
   status: Article["status"];
   publishedAt: string | null;
   articleTextLength: number;
+  articleTextStatus: "pending" | "succeeded" | "failed";
+  articleTextAttempts: number;
+  articleTextError: string | null;
   rejectionCount: number;
 };
-
-function parsePubDate(pubDate: string): Date | undefined {
-  const date = new Date(pubDate);
-  return Number.isNaN(date.getTime()) ? undefined : date;
-}
 
 export async function loadAdminTopics(): Promise<TopicArticleSummary[]> {
   const topics = await getActiveGames();
@@ -54,14 +48,38 @@ export async function loadAdminTopics(): Promise<TopicArticleSummary[]> {
 
 export async function loadAdminTopicArticles(
   slug: string,
-  status?: Article["status"],
-): Promise<{ topic: TopicArticleSummary; articles: TopicArticleRow[] } | null> {
+  options: { status?: Article["status"]; query?: string; page?: number } = {},
+): Promise<{
+  topic: TopicArticleSummary;
+  articles: TopicArticleRow[];
+  total: number;
+  page: number;
+} | null> {
   const topic = await getGameBySlug(slug);
   if (!topic) return null;
-  const [counts, rows] = await Promise.all([
+  const requestedPage = Math.max(0, options.page ?? 0);
+  const query = options.query?.trim().slice(0, 100) ?? "";
+  const filters = [eq(articles.gamesTopicId, topic.id)];
+  if (options.status) filters.push(eq(articles.status, options.status));
+  if (query) {
+    const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
+    filters.push(or(ilike(articles.title, pattern), ilike(articles.url, pattern))!);
+  }
+  const where = and(...filters);
+  const pageSize = 50;
+  const [counts, [totalRow]] = await Promise.all([
     countArticlesByStatus(topic.id),
-    listArticlesForTopic(topic.id, { ...(status ? { status } : {}), limit: 100 }),
+    db.select({ value: count() }).from(articles).where(where),
   ]);
+  const total = totalRow?.value ?? 0;
+  const page = Math.min(requestedPage, Math.max(0, Math.ceil(total / pageSize) - 1));
+  const rows = await db
+    .select()
+    .from(articles)
+    .where(where)
+    .orderBy(sql`${articles.publishedAt} DESC NULLS LAST`, desc(articles.id))
+    .limit(pageSize)
+    .offset(page * pageSize);
   return {
     topic: {
       id: topic.id,
@@ -79,8 +97,13 @@ export async function loadAdminTopicArticles(
       status: article.status,
       publishedAt: article.publishedAt?.toISOString() ?? null,
       articleTextLength: article.articleText?.length ?? 0,
+      articleTextStatus: article.articleTextStatus,
+      articleTextAttempts: article.articleTextAttempts,
+      articleTextError: article.articleTextError,
       rejectionCount: article.rejectionCount,
     })),
+    total,
+    page,
   };
 }
 
@@ -94,32 +117,27 @@ export async function refreshTopicArticles(
   topic: GamesTopic,
   userId: string,
 ): Promise<
-  { ok: true; inserted: number; scanned: number; expired: number } | { ok: false; error: string }
+  {
+    ok: true;
+    inserted: number;
+    scanned: number;
+    updated: number;
+    extracted: number;
+    emptyBody: number;
+    failed: number;
+    expired: number;
+  } | { ok: false; error: string }
 > {
   try {
-    const expired = await expireStaleArticles(topic, new Date());
-    const items = await fetchFeedItems(topic.feedUrl);
-    const inserted = await upsertArticles(
-      topic.id,
-      items
-        .filter((item) => item.link)
-        .map((item) => ({
-          url: item.link,
-          title: item.title,
-          description: item.description || undefined,
-          articleText: item.articleText || undefined,
-          imageUrl: item.imageUrl,
-          publishedAt: parsePubDate(item.pubDate),
-        })),
-    );
+    const result = await ingestFeed(topic, { forceRetry: true });
     await recordAdminAction({
       hominemUserId: userId,
       kind: "ingest",
       gamesTopicId: topic.id,
       payload: { slug: topic.slug },
-      result: { inserted, scanned: items.length, expired },
+      result: { ...result },
     });
-    return { ok: true, inserted, scanned: items.length, expired };
+    return { ok: true, ...result };
   } catch (error) {
     await recordAdminAction({
       hominemUserId: userId,

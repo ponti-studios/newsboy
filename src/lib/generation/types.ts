@@ -17,6 +17,20 @@ export interface FeedItem {
   imageUrl?: string;
 }
 
+export type ArticleTextFetchResult =
+  | { ok: true; text: string; status: "succeeded" }
+  | { ok: false; text: ""; status: "failed"; error: string; transient: boolean };
+
+export interface IngestSummary {
+  inserted: number;
+  scanned: number;
+  updated: number;
+  extracted: number;
+  emptyBody: number;
+  failed: number;
+  expired: number;
+}
+
 export interface ScoredCandidate {
   candidate: {
     answer: string;

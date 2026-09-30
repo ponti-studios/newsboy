@@ -7,7 +7,7 @@
  */
 
 import type { Article, GamesTopic } from "@pontistudios/db";
-import { and, articles, count, db, desc, eq, inArray, lt, sql } from "@pontistudios/db";
+import { and, articles, count, db, desc, eq, inArray, isNull, lte, lt, or, sql } from "@pontistudios/db";
 
 /**
  * Insert newly-seen articles for a feed, deduped on `(gamesTopicId, url)`.
@@ -41,6 +41,84 @@ export async function upsertArticles(
     .onConflictDoNothing({ target: [articles.gamesTopicId, articles.url] })
     .returning({ id: articles.id });
   return inserted.length;
+}
+
+export async function getArticlesNeedingText(
+  topicId: number,
+  now: Date,
+  options: { forceRetry?: boolean; limit?: number } = {},
+): Promise<Article[]> {
+  const missingText = or(isNull(articles.articleText), eq(articles.articleText, ""))!;
+  const filters = [eq(articles.gamesTopicId, topicId), missingText];
+  if (!options.forceRetry) {
+    filters.push(
+      or(
+        eq(articles.articleTextStatus, "pending"),
+        and(
+          eq(articles.articleTextStatus, "failed"),
+          lte(articles.articleTextNextAttemptAt, now),
+        )!,
+      )!,
+    );
+  }
+  return db
+    .select()
+    .from(articles)
+    .where(and(...filters))
+    .orderBy(articles.id)
+    .limit(options.limit ?? 500);
+}
+
+export async function markExistingArticleTextSucceeded(topicId: number): Promise<number> {
+  const updated = await db
+    .update(articles)
+    .set({
+      articleTextStatus: "succeeded",
+      articleTextError: null,
+      articleTextNextAttemptAt: null,
+    })
+    .where(
+      and(
+        eq(articles.gamesTopicId, topicId),
+        eq(articles.articleTextStatus, "pending"),
+        sql`${articles.articleText} IS NOT NULL AND btrim(${articles.articleText}) <> ''`,
+      ),
+    )
+    .returning({ id: articles.id });
+  return updated.length;
+}
+
+export async function saveArticleTextAttempt(
+  articleId: number,
+  result: {
+    text: string;
+    status: "succeeded" | "failed";
+    error?: string;
+    attemptedAt: Date;
+    nextAttemptAt?: Date;
+  },
+): Promise<void> {
+  const row = await db.query.articles.findFirst({
+    where: eq(articles.id, articleId),
+    columns: { articleText: true, articleTextAttempts: true },
+  });
+  if (!row || row.articleText) return;
+  await db
+    .update(articles)
+    .set({
+      articleText: result.text || null,
+      articleTextStatus: result.status,
+      articleTextAttempts: row.articleTextAttempts + 1,
+      articleTextAttemptedAt: result.attemptedAt,
+      articleTextNextAttemptAt: result.nextAttemptAt ?? null,
+      articleTextError: result.error ?? null,
+    })
+    .where(
+      and(
+        eq(articles.id, articleId),
+        or(isNull(articles.articleText), eq(articles.articleText, "")),
+      ),
+    );
 }
 
 /**

@@ -10,15 +10,15 @@ async function main() {
   ingestLogger.info({ event: "ingest.run.started" }, "starting feed ingest run");
 
   await ensureGameCatalog();
-  const insertedCount = await ingestAllActiveFeeds();
+  const summary = await ingestAllActiveFeeds();
 
   ingestLogger.info(
     {
       event: "ingest.run.completed",
-      insertedCount,
+      ...summary,
       durationMs: Date.now() - startedAt,
     },
-    `ingest complete: ${insertedCount} new article(s)`,
+    `ingest complete: ${summary.inserted} new, ${summary.extracted} article text(s) extracted, ${summary.failed + summary.emptyBody} unresolved`,
   );
 }
 

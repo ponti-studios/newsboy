@@ -1,13 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { articles, db, gamesPuzzles, gamesTopics } from "@pontistudios/db";
+import { articles, db, eq, gamesPuzzles, gamesTopics } from "@pontistudios/db";
 import { cleanAll } from "../../data/test-db";
+import { getArticlesNeedingText } from "../data/articles.server";
 import { GAME_CATALOG } from "../generation/catalog";
-import { ensureGameCatalog, extractArticleText, fetchFeedItems } from "../generation/ingest.server";
+import {
+  ensureGameCatalog,
+  extractArticleText,
+  fetchArticleText,
+  fetchFeedItems,
+  ingestFeed,
+} from "../generation/ingest.server";
 import { getDateKey } from "../puzzle/date";
 
 describe("fetchFeedItems", () => {
-  it("normalizes RSS markup and control content while preserving safe fields", async () => {
+  it("normalizes RSS markup and keeps the feed summary separate from page extraction", async () => {
     vi.stubGlobal(
       "fetch",
       vi
@@ -18,9 +25,6 @@ describe("fetchFeedItems", () => {
             { status: 200 },
           ),
         )
-        .mockResolvedValueOnce(
-          new Response("<html><body><article><p>The full story text.</p></article></body></html>"),
-        ),
     );
 
     await expect(fetchFeedItems("https://realityblurred.com/feed")).resolves.toEqual([
@@ -29,7 +33,6 @@ describe("fetchFeedItems", () => {
         link: "https://realityblurred.com/story",
         pubDate: "not-a-date",
         description: "Line one Line two",
-        articleText: "The full story text.",
       },
     ]);
   });
@@ -38,6 +41,66 @@ describe("fetchFeedItems", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("<rss><channel /></rss>")));
 
     await expect(fetchFeedItems("https://realityblurred.com/feed")).resolves.toEqual([]);
+  });
+
+  it("raises a feed-level error when the RSS request fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("unavailable", { status: 502 })));
+    await expect(fetchFeedItems("https://realityblurred.com/feed")).rejects.toThrow(
+      "Failed to fetch RSS feed: 502",
+    );
+    vi.unstubAllGlobals();
+  });
+
+  it("raises a feed-level error when the response is not an RSS channel", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("<html>maintenance</html>")));
+    await expect(fetchFeedItems("https://realityblurred.com/feed")).rejects.toThrow(
+      "Invalid RSS feed: missing rss/channel",
+    );
+    vi.unstubAllGlobals();
+  });
+});
+
+describe("fetchArticleText", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("extracts readable article text", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response("<html><body><article><p>The complete story body is here.</p></article></body></html>"),
+      ),
+    );
+    await expect(fetchArticleText("https://example.com/story")).resolves.toEqual({
+      ok: true,
+      status: "succeeded",
+      text: "The complete story body is here.",
+    });
+  });
+
+  it.each([
+    ["HTTP failures", new Response("blocked", { status: 403 }), "http_403"],
+    ["pages without readable content", new Response("<html><body><nav>Only nav</nav></body></html>"), "no_readable_content"],
+  ])("reports %s", async (_label, response, error) => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
+    await expect(fetchArticleText("https://example.com/story")).resolves.toMatchObject({
+      ok: false,
+      status: "failed",
+      error,
+    });
+  });
+
+  it("classifies timeout and invalid URL failures", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new DOMException("Timed out", "TimeoutError")));
+    await expect(fetchArticleText("https://example.com/story")).resolves.toMatchObject({
+      ok: false,
+      error: "timeout",
+      transient: true,
+    });
+    await expect(fetchArticleText("file:///etc/passwd")).resolves.toMatchObject({
+      ok: false,
+      error: "invalid_url",
+      transient: false,
+    });
   });
 });
 
@@ -149,6 +212,120 @@ describe("ensureGameCatalog", () => {
     expect(updated?.slug).toBe(reality.slug);
     expect(updated?.name).toBe(reality.name);
     expect(updated?.active).toBe(true);
+  });
+});
+
+describe("ingestFeed", () => {
+  beforeEach(async () => cleanAll());
+  afterEach(async () => {
+    vi.unstubAllGlobals();
+    await cleanAll();
+  });
+
+  it("stores RSS description separately and persists extracted articleText", async () => {
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug: "bbc-world",
+        name: "BBC World",
+        feedUrl: "https://feeds.example.com/world.xml",
+        feedLabel: "BBC World",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn()
+        .mockResolvedValueOnce(
+          new Response('<rss><channel><item><title>Story</title><link>https://example.com/story</link><description>RSS excerpt</description></item></channel></rss>'),
+        )
+        .mockResolvedValueOnce(
+          new Response("<html><body><article><p>Full article body from the page.</p></article></body></html>"),
+        ),
+    );
+
+    const summary = await ingestFeed(topic!);
+    const row = await db.query.articles.findFirst({ where: (table, { eq }) => eq(table.gamesTopicId, topic!.id) });
+    expect(summary).toMatchObject({ inserted: 1, scanned: 1, extracted: 1, failed: 0 });
+    expect(row).toMatchObject({
+      description: "RSS excerpt",
+      articleText: "Full article body from the page.",
+      articleTextStatus: "succeeded",
+      articleTextAttempts: 1,
+    });
+  });
+
+  it("continues extracting other feed items when one article page fails", async () => {
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug: "partial-feed",
+        name: "Partial feed",
+        feedUrl: "https://feeds.example.com/partial.xml",
+        feedLabel: "Partial feed",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn()
+        .mockResolvedValueOnce(
+          new Response('<rss><channel><item><title>Blocked</title><link>https://example.com/blocked</link></item><item><title>Readable</title><link>https://example.com/readable</link></item></channel></rss>'),
+        )
+        .mockResolvedValueOnce(new Response("blocked", { status: 403 }))
+        .mockResolvedValueOnce(
+          new Response("<html><body><article><p>This page has readable story text.</p></article></body></html>"),
+        ),
+    );
+
+    const summary = await ingestFeed(topic!);
+    const rows = await db.query.articles.findMany({ where: (table, { eq }) => eq(table.gamesTopicId, topic!.id) });
+    expect(summary).toMatchObject({ inserted: 2, scanned: 2, extracted: 1, failed: 1 });
+    expect(rows.map(({ articleTextStatus, articleTextError }) => [articleTextStatus, articleTextError])).toEqual([
+      ["failed", "http_403"],
+      ["succeeded", null],
+    ]);
+  });
+
+  it("backfills legacy empty text, honors automatic retry dates, and lets manual refresh retry failures", async () => {
+    const [topic] = await db
+      .insert(gamesTopics)
+      .values({
+        slug: "backfill",
+        name: "Backfill",
+        feedUrl: "https://feeds.example.com/backfill.xml",
+        feedLabel: "Backfill",
+        systemPromptPath: "src/prompts/game-generation.md",
+      })
+      .returning();
+    const [legacy] = await db
+      .insert(articles)
+      .values({ gamesTopicId: topic!.id, url: "https://example.com/legacy", title: "Legacy" })
+      .returning();
+    await db
+      .update(articles)
+      .set({ articleTextStatus: "failed", articleTextAttempts: 1, articleTextNextAttemptAt: new Date(Date.now() + 60_000) })
+      .where(eq(articles.id, legacy!.id));
+
+    expect(await getArticlesNeedingText(topic!.id, new Date())).toEqual([]);
+    expect(await getArticlesNeedingText(topic!.id, new Date(Date.now() + 61_000))).toHaveLength(1);
+    expect(await getArticlesNeedingText(topic!.id, new Date(), { forceRetry: true })).toHaveLength(1);
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn()
+        .mockResolvedValueOnce(new Response("<rss><channel /></rss>"))
+        .mockResolvedValueOnce(new Response("<html><body><article><p>Recovered legacy text.</p></article></body></html>")),
+    );
+    const summary = await ingestFeed(topic!, { forceRetry: true });
+    const repaired = await db.query.articles.findFirst({ where: (table, { eq }) => eq(table.id, legacy!.id) });
+    expect(summary).toMatchObject({ scanned: 0, extracted: 1, updated: 1 });
+    expect(repaired).toMatchObject({
+      articleText: "Recovered legacy text.",
+      articleTextStatus: "succeeded",
+      articleTextAttempts: 2,
+      articleTextError: null,
+    });
   });
 });
 

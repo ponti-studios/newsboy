@@ -18,18 +18,27 @@ import { JSDOM } from "jsdom";
 import { getErrorMessage } from "../errors";
 import { createLogger } from "../logger.server";
 
-import { upsertArticles } from "../data/articles.server";
+import {
+  expireStaleArticles,
+  getArticlesNeedingText,
+  markExistingArticleTextSucceeded,
+  saveArticleTextAttempt,
+  upsertArticles,
+} from "../data/articles.server";
 import {
   MAX_ARTICLE_TEXT_LENGTH,
   MAX_FEED_DESCRIPTION_LENGTH,
   MAX_FEED_TITLE_LENGTH,
   sanitizeFeedText,
 } from "./feed-text";
-import type { FeedItem } from "./types";
+import type { ArticleTextFetchResult, FeedItem, IngestSummary } from "./types";
 import { GAME_CATALOG } from "./catalog";
 import { getDateKey } from "../puzzle/date";
 
 const logger = createLogger();
+const ARTICLE_TEXT_CONCURRENCY = 5;
+const ARTICLE_TEXT_TIMEOUT_MS = 8_000;
+const MAX_AUTOMATIC_TEXT_ATTEMPTS = 3;
 
 function extractUrlLikeNode(value: unknown): string | undefined {
   if (!value) return undefined;
@@ -71,6 +80,13 @@ export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
   const xml = await res.text();
   const parser = new XMLParser({ ignoreAttributes: false });
   const parsed = parser.parse(xml);
+  if (
+    !parsed?.rss ||
+    typeof parsed.rss !== "object" ||
+    !Object.hasOwn(parsed.rss, "channel")
+  ) {
+    throw new Error("Invalid RSS feed: missing rss/channel");
+  }
   const rawItems: unknown = parsed?.rss?.channel?.item ?? [];
   const items: unknown[] = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : [];
   const feedItems = items.map((item: unknown) => {
@@ -89,24 +105,25 @@ export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
     };
   });
 
-  return Promise.all(
-    feedItems.map(async (item) => ({
-      ...item,
-      articleText: item.link ? await fetchArticleText(item.link) : "",
-    })),
-  );
+  return feedItems;
 }
 
-/** Extract readable article text with Mozilla Readability; RSS metadata remains the fallback. */
-async function fetchArticleText(url: string): Promise<string> {
+/** Fetch and extract readable article text; keep the RSS excerpt separate. */
+export async function fetchArticleText(url: string): Promise<ArticleTextFetchResult> {
+  const fail = (error: string, transient: boolean): ArticleTextFetchResult =>
+    ({ ok: false, text: "", status: "failed", error, transient }) as const;
   try {
     const parsedUrl = new URL(url);
-    if (!/^https?:$/.test(parsedUrl.protocol)) return "";
-    const response = await fetch(parsedUrl, { signal: AbortSignal.timeout(8_000) });
-    if (!response.ok) return "";
-    return extractArticleText(await response.text(), url);
-  } catch {
-    return "";
+    if (!/^https?:$/.test(parsedUrl.protocol)) return fail("invalid_url", false);
+    const response = await fetch(parsedUrl, { signal: AbortSignal.timeout(ARTICLE_TEXT_TIMEOUT_MS) });
+    if (!response.ok) {
+      return fail(`http_${response.status}`, response.status === 429 || response.status >= 500);
+    }
+    const text = extractArticleText(await response.text(), url);
+    return text ? { ok: true, text, status: "succeeded" } : fail("no_readable_content", false);
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.name === "TimeoutError";
+    return fail(isTimeout ? "timeout" : "fetch_error", true);
   }
 }
 
@@ -161,7 +178,11 @@ function parsePubDate(pubDate: string): Date | undefined {
 }
 
 /** Fetch one feed and store any articles not already known by url. Returns the count newly inserted. */
-export async function ingestFeed(topic: GamesTopic): Promise<number> {
+export async function ingestFeed(
+  topic: GamesTopic,
+  options: { forceRetry?: boolean } = {},
+): Promise<IngestSummary> {
+  const runStartedAt = new Date();
   const childLogger = logger.child({
     operation: "ingestFeed",
     gamesTopicId: topic.id,
@@ -177,32 +198,95 @@ export async function ingestFeed(topic: GamesTopic): Promise<number> {
           url: item.link,
           title: item.title,
           description: item.description || undefined,
-          articleText: item.articleText || undefined,
           imageUrl: item.imageUrl,
           publishedAt: parsePubDate(item.pubDate),
         })),
     );
-    childLogger.info(
-      { event: "[FEED_INGESTED]", itemCount: items.length, insertedCount: inserted },
-      `ingested ${inserted} new article(s) from feed`,
-    );
-    return inserted;
+    const expired = await expireStaleArticles(topic, new Date());
+    await markExistingArticleTextSucceeded(topic.id);
+    const outcomes = await processArticleText(topic.id, options, runStartedAt);
+    const summary = { inserted, scanned: items.length, expired, ...outcomes };
+    childLogger.info({ event: "[FEED_INGESTED]", ...summary }, `ingested ${inserted} new article(s) from feed`);
+    return summary;
   } catch (err) {
     childLogger.error(
       { event: "[FEED_INGEST_ERROR]", error: getErrorMessage(err) },
       "failed to ingest feed",
     );
-    return 0;
+    throw err;
   }
 }
 
+async function processArticleText(
+  topicId: number,
+  options: { forceRetry?: boolean },
+  runStartedAt: Date,
+): Promise<Pick<IngestSummary, "updated" | "extracted" | "emptyBody" | "failed">> {
+  const rows = await getArticlesNeedingText(topicId, new Date(), { forceRetry: options.forceRetry });
+  let cursor = 0;
+  let updated = 0;
+  let extracted = 0;
+  let emptyBody = 0;
+  let failed = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(ARTICLE_TEXT_CONCURRENCY, rows.length) }, async () => {
+      while (cursor < rows.length) {
+        const article = rows[cursor++];
+        if (!article) continue;
+        const attemptedAt = new Date();
+        const result = article.url ? await fetchArticleText(article.url) : {
+          ok: false as const, text: "" as const, status: "failed" as const, error: "missing_url", transient: false,
+        };
+        const attempts = article.articleTextAttempts + 1;
+        let nextAttemptAt: Date | undefined;
+        if (!result.ok && result.transient && attempts < MAX_AUTOMATIC_TEXT_ATTEMPTS) {
+          nextAttemptAt = new Date(attemptedAt.getTime() + 60 * 60 * 1000 * 4 ** (attempts - 1));
+        }
+        await saveArticleTextAttempt(article.id, {
+          text: result.text,
+          status: result.status,
+          error: result.ok ? undefined : result.error,
+          attemptedAt,
+          nextAttemptAt,
+        });
+        if (result.ok) {
+          extracted++;
+          if (article.fetchedAt < runStartedAt) updated++;
+        }
+        else if (result.error === "no_readable_content") emptyBody++;
+        else failed++;
+      }
+    }),
+  );
+  return { updated, extracted, emptyBody, failed };
+}
+
 /** Ingest active and launch-pending feeds. Returns newly inserted article count. */
-export async function ingestAllActiveFeeds(): Promise<number> {
+export async function ingestAllActiveFeeds(): Promise<IngestSummary> {
   const topics = await db.query.gamesTopics.findMany({
     where: or(eq(gamesTopics.active, true), eq(gamesTopics.activationPending, true)),
   });
-  const results = await Promise.all(topics.map((topic) => ingestFeed(topic)));
-  return results.reduce((sum, n) => sum + n, 0);
+  const results = await Promise.all(
+    topics.map(async (topic) => {
+      try {
+        return await ingestFeed(topic);
+      } catch {
+        return { inserted: 0, scanned: 0, updated: 0, extracted: 0, emptyBody: 0, failed: 1, expired: 0 };
+      }
+    }),
+  );
+  return results.reduce(
+    (sum, result) => ({
+      inserted: sum.inserted + result.inserted,
+      scanned: sum.scanned + result.scanned,
+      updated: sum.updated + result.updated,
+      extracted: sum.extracted + result.extracted,
+      emptyBody: sum.emptyBody + result.emptyBody,
+      failed: sum.failed + result.failed,
+      expired: sum.expired + result.expired,
+    }),
+    { inserted: 0, scanned: 0, updated: 0, extracted: 0, emptyBody: 0, failed: 0, expired: 0 },
+  );
 }
 
 /**
