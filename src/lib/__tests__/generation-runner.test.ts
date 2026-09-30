@@ -83,4 +83,42 @@ describe("generation runner", () => {
     });
     expect(generatePuzzleForGameMock).not.toHaveBeenCalled();
   });
+
+  describe("live dates in gap-fill", () => {
+    const game = { id: 42, slug: "tech" } as Parameters<typeof runGenerateRange>[0];
+    const range = {
+      ok: true as const,
+      fromKey: "2026-08-12",
+      toKey: "2026-08-13",
+      dateKeys: ["2026-08-12", "2026-08-13"],
+      force: false,
+      allowLiveDates: false,
+    };
+
+    it("skips a live date that already has a puzzle and generates the missing one", async () => {
+      generatePuzzleForGameMock.mockReset().mockResolvedValue({ id: 1 });
+      getExistingDateKeysMock.mockResolvedValue(["2026-08-12"]);
+      getPendingArticlesForGameMock.mockResolvedValue([{ id: 1 }]);
+
+      await runGenerateRange(game, range);
+
+      expect(generatePuzzleForGameMock).toHaveBeenCalledTimes(1);
+      expect(generatePuzzleForGameMock).toHaveBeenCalledWith(game, "2026-08-13", {
+        actor: "system:generate",
+      });
+    });
+
+    it("generates a live date that is missing", async () => {
+      generatePuzzleForGameMock.mockReset().mockResolvedValue({ id: 1 });
+      getExistingDateKeysMock.mockResolvedValue(["2026-08-13"]);
+      getPendingArticlesForGameMock.mockResolvedValue([{ id: 1 }]);
+
+      await runGenerateRange(game, range);
+
+      expect(generatePuzzleForGameMock).toHaveBeenCalledTimes(1);
+      expect(generatePuzzleForGameMock).toHaveBeenCalledWith(game, "2026-08-12", {
+        actor: "system:generate",
+      });
+    });
+  });
 });

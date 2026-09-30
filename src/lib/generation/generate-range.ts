@@ -85,13 +85,24 @@ export function resolveGenerateRange(input: GenerateRangeInput): GenerateRange {
     const liveKeys = [...live].sort();
     const latestLive = liveKeys[liveKeys.length - 1];
 
-    // Gap-fill only inserts missing puzzles, so it may include live dates;
-    // --force can delete/regenerate them and must stay behind the guard.
+    const earliestLive = liveKeys[0];
+
+    // --force deletes and regenerates, so it must start after the live dates.
     if (input.force && !input.allowLiveDates && from <= latestLive) {
       const earliestFrom = addDaysToDateKey(latestLive, 1);
       return {
         ok: false,
         error: `range must start after the live dates (today: ${liveKeys.join(" / ")}); --from=${from} is too early — use --from=${earliestFrom} or later`,
+      };
+    }
+
+    // Gap-fill only inserts missing rows, so an explicit range may include live
+    // dates, but never history before them. Filling a live date replaces the
+    // fallback puzzle players are served while it is missing, so it is opt-in.
+    if (!input.force && !input.allowLiveDates && from < earliestLive) {
+      return {
+        ok: false,
+        error: `gap-fill range cannot start before the earliest live date (${earliestLive}); --from=${from} is too early`,
       };
     }
 
@@ -116,15 +127,10 @@ export function resolveGenerateRange(input: GenerateRangeInput): GenerateRange {
     };
   }
 
-  // Gap-fill starts at today so a missing live puzzle gets filled; --force
-  // starts tomorrow so it never regenerates a live one.
-  const fromKey = input.force ? addDaysToDateKey(input.todayKey, 1) : input.todayKey;
-  if (!fromKey) return { ok: false, error: "failed to compute start date from todayKey" };
+  const fromKey = addDaysToDateKey(input.todayKey, 1);
+  if (!fromKey) return { ok: false, error: "failed to compute tomorrow from todayKey" };
 
-  const dateKeys = buildDateRange(fromKey, {
-    // Starting at today adds one day so --days-ahead still counts future days.
-    daysAhead: input.force ? input.daysAhead : input.daysAhead + 1,
-  });
+  const dateKeys = buildDateRange(fromKey, { daysAhead: input.daysAhead });
   const toKey = dateKeys[dateKeys.length - 1];
   if (!toKey) return { ok: false, error: "empty generate range" };
 

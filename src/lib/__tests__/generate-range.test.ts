@@ -33,7 +33,7 @@ describe("generate range", () => {
     });
   });
 
-  it("gap-fill starts at today and still covers daysAhead future days", () => {
+  it("keeps the default gap-fill range tomorrow-only", () => {
     expect(
       resolveGenerateRange({
         force: false,
@@ -43,15 +43,28 @@ describe("generate range", () => {
       }),
     ).toEqual({
       ok: true,
-      fromKey: "2026-08-12",
+      fromKey: "2026-08-13",
       toKey: "2026-08-13",
-      dateKeys: ["2026-08-12", "2026-08-13"],
+      dateKeys: ["2026-08-13"],
       force: false,
       allowLiveDates: false,
     });
   });
 
-  it("allows gap-fill explicit ranges to include live dates", () => {
+  it("applies the span cap to --days-ahead the same way as explicit ranges", () => {
+    const at = (daysAhead: number) =>
+      resolveGenerateRange({
+        force: false,
+        daysAhead,
+        todayKey: "2026-08-12",
+        now: new Date("2026-08-12T18:00:00Z"),
+      });
+
+    expect(at(14)).toMatchObject({ ok: true });
+    expect(at(15)).toMatchObject({ ok: false });
+  });
+
+  it("lets explicit gap-fill ranges include live dates", () => {
     const result = resolveGenerateRange({
       force: false,
       daysAhead: 1,
@@ -61,6 +74,25 @@ describe("generate range", () => {
       now: new Date("2026-08-12T18:00:00Z"),
     });
     expect(result).toMatchObject({ ok: true, fromKey: "2026-08-12", force: false });
+  });
+
+  it("includes the earlier Pacific live date across UTC midnight but rejects history", () => {
+    const now = new Date("2026-08-13T06:00:00Z");
+    const range = (from: string) =>
+      resolveGenerateRange({
+        force: false,
+        daysAhead: 1,
+        from,
+        to: "2026-08-13",
+        todayKey: "2026-08-13",
+        now,
+      });
+
+    expect(range("2026-08-12")).toMatchObject({ ok: true, fromKey: "2026-08-12" });
+    expect(range("2026-08-11")).toMatchObject({
+      ok: false,
+      error: expect.stringContaining("earliest live date (2026-08-12)"),
+    });
   });
 
   it("requires explicit ranges to start after live dates", () => {

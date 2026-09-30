@@ -49,6 +49,9 @@ describe("LabsServerEnv", () => {
     { GAME_MAX_TOKENS: "0" },
     { GAME_MAX_TOKENS: "16001" },
     { GAME_MAX_TOKENS: "1.5" },
+    { GAME_MAX_TOKENS: "2e2" },
+    { GAME_MAX_TOKENS: "0x2000" },
+    { GAME_MAX_TOKENS: " 8000" },
   ])("rejects malformed generation tuning %o", (override) => {
     expect(LabsServerEnv.safeParse({ ...baseEnv, ...override }).success).toBe(false);
   });
