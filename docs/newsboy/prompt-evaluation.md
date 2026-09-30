@@ -14,11 +14,9 @@ updated: 2026-09-10
 The prompt benchmark compares prompt files against the same fixed article
 fixtures (`src/lib/values/sources/*.json`) and curated cases
 (`src/lib/values/prompt-test-cases.ts`). It is intentionally opt-in because it
-makes live OpenRouter calls. Run from `packages/newsboy`:
+makes live OpenRouter calls. Run from this repository root:
 
 ```bash
-cd packages/newsboy
-
 # Built-in comparison (curated cases + source fixtures)
 pnpm newsboy:prompt-test
 

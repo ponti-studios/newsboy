@@ -12,7 +12,7 @@ updated: 2026-09-23
 # Candidate Generation
 
 This is the per-date, per-game loop `generatePuzzleForGame`
-(`packages/newsboy/src/lib/generation/puzzle-generator.server.ts`) runs.
+(`src/lib/generation/puzzle-generator.server.ts`) runs.
 `runGenerateRange` (`generation-runner.ts`) calls it once per missing date,
 per active game — see [Newsboy Architecture](./architecture.md) for scheduling
 and circuit-breaking.

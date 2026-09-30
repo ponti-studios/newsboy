@@ -12,12 +12,9 @@ updated: 2026-09-10
 # Source Fixtures
 
 Capture real feed snapshots once, offline, and reuse them for prompt
-benchmarking. Commands run from `packages/newsboy` (they are not exposed at the
-repo root):
+benchmarking. Run the commands from this repository root:
 
 ```bash
-cd packages/newsboy
-
 # Capture all four fixture feeds (20 items each by default)
 pnpm game:capture-fixtures
 

@@ -12,7 +12,7 @@ updated: 2026-09-29
 # Newsboy feature task backlog
 
 Each file here is one proposed feature, scoped against the current
-implementation (`packages/newsboy`) and checked against
+implementation in this repository and checked against
 [launch-plan.md](../launch-plan.md)'s guardrail against building public
 custom feeds, embeds, subscriptions, or white-label tooling before partner
 demand is shown. Each file's own `status` frontmatter is the source of

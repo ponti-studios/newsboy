@@ -16,9 +16,14 @@ tomorrow's puzzles ready. This page is the map for that whole setup.
 
 ## Package layout
 
-Newsboy lives in `packages/newsboy` (`newsboy`) on the [labs monorepo](../../README.md) alongside Labs (`packages/labs`). Shared code is in workspace packages: `@pontistudios/db` (Drizzle schema + migrations in `packages/db/src/schema/`), `@pontistudios/ai` (OpenRouter client), `@pontistudios/env` (shared env schemas). The database schema is a fixed Postgres schema named `labs`; generation tables are defined in `packages/db/src/schema/game.ts`.
+This repository is the standalone Newsboy application. Shared code is pinned to
+an immutable Labs commit: `@pontistudios/db` owns the Drizzle schema and
+migrations, `@pontistudios/ai` the OpenRouter client, and `@pontistudios/env`
+shared env schemas. The database schema is a fixed Postgres schema named `labs`;
+generation tables are defined in the pinned Labs package at
+`packages/db/src/schema/game.ts`.
 
-The pipeline lives in `packages/newsboy/src/lib/`:
+The pipeline lives in `src/lib/`:
 
 - The feed catalog is in `lib/generation/catalog.ts`; ingest is in
   `lib/generation/ingest.server.ts`.
@@ -31,7 +36,7 @@ The pipeline lives in `packages/newsboy/src/lib/`:
   `lib/data/puzzle.server.ts`; the operator UI lives in `src/routes/admin.*`
   and `lib/admin/*`.
 
-Entry-point scripts live in `packages/newsboy/scripts/` (`game-ingest.ts`,
+Entry-point scripts live in `scripts/` (`game-ingest.ts`,
 `game-generate.ts`, `game-health-check.ts`) and run as `pnpm newsboy:ingest`,
 `pnpm newsboy:generate`, `pnpm newsboy:health-check` from the repo root.
 Generation accepts repeated `--topic <slug>` options to target active or
@@ -86,7 +91,7 @@ uses `src/prompts/game-generation.md`.
 
 ### Ingest builds the article inventory
 
-`pnpm newsboy:ingest` runs `packages/newsboy/scripts/game-ingest.ts`. It polls every
+`pnpm newsboy:ingest` runs `scripts/game-ingest.ts`. It polls every
 active feed in parallel, parses RSS with `fast-xml-parser`, fetches each item,
 and tries Mozilla Readability to pull out article text. When extraction cannot
 help, the title and description are still useful fallback material.
