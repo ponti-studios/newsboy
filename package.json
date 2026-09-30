@@ -66,18 +66,19 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "catalog:",
+    "drizzle-kit": "^0.31.10",
+    "oxfmt": "0.70.0",
     "oxlint": "catalog:",
     "playwright": "catalog:",
+    "portless": "0.15.6",
+    "railway": "3.12.0",
     "storybook": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "catalog:",
-    "workbox-window": "^7.4.1",
-    "drizzle-kit": "^0.31.10",
-    "portless": "0.15.6",
-    "oxfmt": "0.70.0"
+    "workbox-window": "^7.4.1"
   },
   "portless": {
     "name": "newsboy",

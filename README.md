@@ -39,3 +39,5 @@ recorded in production.
 The `realitea-production` environment needs `DATABASE_URL` and
 `OPENROUTER_API_KEY` for generation and prompt evaluation. Railway owns app
 deployments through its GitHub source integration.
+Railway service settings live in `.railway/railway.ts`; review changes with
+`railway config plan` and apply them with `railway config apply`.

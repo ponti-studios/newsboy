@@ -14,6 +14,7 @@ COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json .
 RUN pnpm install --frozen-lockfile --config.minimum-release-age=0
 COPY . .
 RUN pnpm build
+RUN pnpm prune --prod
 
 FROM node:${NODE_VERSION} AS runner
 
