@@ -20,10 +20,10 @@
 }
 
 .clue {
-  border: 1px solid var(--color-game-present-border);
+  border: 1px solid var(--color-feedback-present-border);
   border-radius: var(--radius-md);
-  background: var(--color-game-present-bg);
-  color: var(--color-game-present-text);
+  background: var(--color-feedback-present-bg);
+  color: var(--color-feedback-present-text);
   padding: calc(var(--spacing) * 3);
   font-size: var(--text-sm);
   line-height: 1.25rem;
@@ -44,7 +44,7 @@
 
 .card {
   width: 100%;
-  border-color: var(--color-game-present-border);
+  border-color: var(--color-feedback-present-border);
 }
 
 .cardContent {

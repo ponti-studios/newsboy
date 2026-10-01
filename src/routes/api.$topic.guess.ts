@@ -1,8 +1,11 @@
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
+import { createLogger } from "../lib/logger.server";
 import { getGameUser } from "../server/auth";
 import { evaluateGuessServer } from "../lib/data/puzzle.server";
+
+const logger = createLogger({ route: "api.guess" });
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),
@@ -22,13 +25,47 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const gameSlug = params.topic!;
 
-  let parsed: z.infer<typeof payloadSchema>;
+  let body: unknown;
   try {
-    const body = (await request.json()) as unknown;
-    parsed = payloadSchema.parse(body);
+    body = await request.json();
   } catch {
+    logger.warn(
+      {
+        event: "guess.payload.parse_failed",
+        contentType: request.headers.get("content-type"),
+        contentLength: request.headers.get("content-length"),
+      },
+      "Guess request body could not be parsed as JSON",
+    );
     return Response.json({ error: "Invalid guess payload" }, { status: 400 });
   }
+
+  const parsedPayload = payloadSchema.safeParse(body);
+  if (!parsedPayload.success) {
+    const bodyRecord: Record<string, unknown> | null =
+      typeof body === "object" && body !== null && !Array.isArray(body)
+        ? (body as Record<string, unknown>)
+        : null;
+    const bodyKeys = bodyRecord ? Object.keys(bodyRecord) : [];
+    const previousGuesses = bodyRecord?.previousGuesses;
+    logger.warn(
+      {
+        event: "guess.payload.validation_failed",
+        bodyType: Array.isArray(body) ? "array" : body === null ? "null" : typeof body,
+        fieldPresence: {
+          dateKey: bodyKeys.includes("dateKey"),
+          previousGuesses: bodyKeys.includes("previousGuesses"),
+          word: bodyKeys.includes("word"),
+        },
+        previousGuessesType: Array.isArray(previousGuesses) ? "array" : typeof previousGuesses,
+        previousGuessesCount: Array.isArray(previousGuesses) ? previousGuesses.length : null,
+        issues: parsedPayload.error.issues.map(({ code, path }) => ({ code, path: path.join(".") })),
+      },
+      "Guess request payload failed validation",
+    );
+    return Response.json({ error: "Invalid guess payload" }, { status: 400 });
+  }
+  const parsed = parsedPayload.data;
 
   const user = await getGameUser(request);
   const result = await evaluateGuessServer(

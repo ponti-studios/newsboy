@@ -49,19 +49,19 @@
   position: absolute;
   inset: -1px;
   border-radius: 999px;
-  background: var(--color-game-correct-bg);
+  background: var(--color-feedback-correct-bg);
   animation: dot-ping 1.8s var(--game-ease-out) infinite;
 }
 
 /* Browsers without backdrop-filter get a solid surface instead of frost. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .promptSolid {
-    background: var(--color-game-paper) !important;
+    background: var(--color-surface-card) !important;
   }
 
   @media (prefers-color-scheme: dark) {
     .promptSolid {
-      background: var(--color-game-bg) !important;
+      background: var(--color-surface-page) !important;
     }
   }
 }

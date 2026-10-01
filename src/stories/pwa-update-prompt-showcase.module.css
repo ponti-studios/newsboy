@@ -22,7 +22,7 @@
   height: 55vmax;
   left: -14vmax;
   top: -12vmax;
-  background: var(--color-game-correct-bg);
+  background: var(--color-feedback-correct-bg);
   animation: blob-pink 14s ease-in-out infinite alternate;
 }
 
@@ -31,7 +31,7 @@
   height: 50vmax;
   right: -13vmax;
   bottom: -15vmax;
-  background: var(--color-game-present-bg);
+  background: var(--color-feedback-present-bg);
   animation: blob-gold 18s ease-in-out infinite alternate;
 }
 

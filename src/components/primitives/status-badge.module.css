@@ -10,22 +10,22 @@
 }
 
 .default {
-  background: color-mix(in srgb, var(--color-game-correct-bg) 16%, var(--color-game-paper));
-  color: var(--color-game-correct-accent);
+  background: color-mix(in srgb, var(--color-feedback-correct-bg) 16%, var(--color-surface-card));
+  color: var(--color-feedback-correct-accent);
 }
 
 .destructive {
-  background: color-mix(in srgb, var(--color-game-error-border) 16%, var(--color-game-paper));
-  color: var(--color-game-error-border);
+  background: color-mix(in srgb, var(--color-feedback-error-border) 16%, var(--color-surface-card));
+  color: var(--color-feedback-error-border);
 }
 
 .outline {
   background: transparent;
-  border-color: var(--color-game-paper-border);
-  color: var(--color-game-ink-muted);
+  border-color: var(--color-border-subtle);
+  color: var(--text-secondary);
 }
 
 .secondary {
-  background: var(--color-game-bg);
-  color: var(--color-game-ink-muted);
+  background: var(--color-surface-page);
+  color: var(--text-secondary);
 }

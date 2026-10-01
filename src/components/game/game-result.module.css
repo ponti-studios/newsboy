@@ -12,11 +12,11 @@
 }
 
 .verdict[data-solved="true"] {
-  color: var(--color-game-correct-accent);
+  color: var(--color-feedback-correct-accent);
 }
 
 .verdict[data-solved="false"] {
-  color: var(--color-game-ink);
+  color: var(--text-primary);
 }
 
 .verdictLabel {
@@ -54,9 +54,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--color-game-paper-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--game-radius);
-  background-color: var(--color-game-paper);
+  background-color: var(--color-surface-card);
   padding: calc(var(--spacing) * 6);
   box-shadow: var(--shadow-lg);
   animation: game-result-card-in 420ms var(--game-ease-out) both;
@@ -67,14 +67,14 @@
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   margin: 0;
 }
 
 .resultBody {
   font-size: var(--text-sm);
   line-height: 1.5;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   animation: game-result-fade-in 350ms ease 600ms both;
   > :not(:first-child) {
     margin-block-start: calc(var(--spacing) * 5);
@@ -91,7 +91,7 @@
   gap: calc(var(--spacing) * 1.5);
   margin-top: 1rem;
   padding-top: 0.6rem;
-  border-top: 1px dashed var(--color-game-paper-border);
+  border-top: 1px dashed var(--color-border-subtle);
 }
 
 .resultAction {
@@ -100,10 +100,10 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border: 1px solid var(--color-game-paper-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   background: transparent;
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   animation: game-result-action-in 280ms var(--game-ease-out)
     calc(850ms + var(--action-i, 0) * 90ms) both;
   transition:
@@ -113,13 +113,13 @@
 }
 
 .resultAction:hover {
-  border-color: var(--color-game-link-text);
-  background: color-mix(in srgb, var(--color-game-link-text) 8%, transparent);
-  color: var(--color-game-link-text);
+  border-color: var(--text-link);
+  background: color-mix(in srgb, var(--text-link) 8%, transparent);
+  color: var(--text-link);
 }
 
 .resultAction:focus-visible {
-  outline: 2px solid var(--color-game-link-text);
+  outline: 2px solid var(--text-link);
   outline-offset: 2px;
 }
 

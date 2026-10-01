@@ -17,14 +17,18 @@ export interface OnscreenKeyboardProps {
 const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 
 function keyClass(kind: "letter" | "action", state: LetterState | "action" | "inactive") {
-  const stateClass =
-    state === "correct"
-      ? styles.keyCorrect
-      : state === "present"
-        ? styles.keyPresent
-        : state === "absent"
-          ? styles.keyAbsent
-          : undefined;
+  let stateClass: string | undefined;
+
+  if (state === "correct") {
+    stateClass = styles.keyCorrect;
+  } else if (state === "present") {
+    stateClass = styles.keyPresent;
+  } else if (state === "absent") {
+    stateClass = styles.keyAbsent;
+  } else if (state === "inactive") {
+    stateClass = styles.keyInactive;
+  }
+
   return cn(styles.key, stateClass, kind === "letter" ? styles.keyLetter : styles.keyAction);
 }
 

@@ -3,7 +3,7 @@
    ancestor context (e.g. history's mini rows override tile size + font). */
 
 .tile {
-  --game-tile-letter: var(--color-game-ink);
+  --game-tile-letter: var(--text-primary);
 
   position: relative;
   display: grid;
@@ -13,8 +13,8 @@
   isolation: isolate;
   overflow: visible;
   border-radius: var(--game-radius);
-  background: var(--color-game-paper);
-  border: 2px solid var(--color-game-paper-border);
+  background: var(--color-surface-card);
+  border: 2px solid var(--color-border-subtle);
   color: var(--game-tile-letter);
   font-size: var(--game-tile-font-size, clamp(1.1rem, calc(var(--game-tile-size) * 0.42), 1.5rem));
   font-weight: 800;
@@ -35,36 +35,36 @@
 }
 
 .tile[data-state="correct"] {
-  --game-tile-letter: var(--color-game-correct-text);
+  --game-tile-letter: var(--color-feedback-correct-text);
   border-color: transparent;
-  background: var(--color-game-correct-bg);
+  background: var(--color-feedback-correct-bg);
 }
 
 .tile[data-state="correct"] .tileLetter {
   font-size: 1.08em;
   font-weight: 900;
   text-shadow:
-    -0.5px -0.5px 0 var(--color-game-correct-shadow),
-    0.5px -0.5px 0 var(--color-game-correct-shadow),
-    -0.5px 0.5px 0 var(--color-game-correct-shadow),
-    0.5px 0.5px 0 var(--color-game-correct-shadow);
+    -0.5px -0.5px 0 var(--color-feedback-correct-shadow),
+    0.5px -0.5px 0 var(--color-feedback-correct-shadow),
+    -0.5px 0.5px 0 var(--color-feedback-correct-shadow),
+    0.5px 0.5px 0 var(--color-feedback-correct-shadow);
 }
 
 .tile[data-state="present"] {
-  --game-tile-letter: var(--color-game-present-text);
+  --game-tile-letter: var(--color-feedback-present-text);
   border-color: transparent;
-  background: var(--color-game-present-bg);
+  background: var(--color-feedback-present-bg);
 }
 
 .tile[data-state="absent"] {
   /* Keep board feedback identical to the keyboard's absent state. */
-  --game-tile-letter: var(--color-game-absent-text);
-  border-color: var(--color-game-absent-border);
-  background: var(--color-absent);
+  --game-tile-letter: var(--color-feedback-absent-text);
+  border-color: var(--color-feedback-absent-border);
+  background: var(--color-feedback-absent-bg);
 }
 
 .tile[data-state="typed"] {
-  border-color: var(--color-game-ink);
+  border-color: var(--text-primary);
   animation: type-pop 160ms var(--game-ease-out);
 }
 
@@ -80,13 +80,13 @@
 }
 
 .error {
-  --game-tile-letter: var(--color-game-error-text);
-  border-color: var(--color-game-error-border);
+  --game-tile-letter: var(--color-feedback-error-text);
+  border-color: var(--color-feedback-error-border);
 }
 
 .pending {
-  background-color: var(--color-game-paper);
-  border-color: var(--color-game-paper-border);
+  background-color: var(--color-surface-card);
+  border-color: var(--color-border-subtle);
   opacity: 0.75;
   animation: tile-flash 1000ms var(--game-ease-in-out) infinite;
   animation-delay: calc(var(--game-tile-i, 0) * 150ms);
@@ -99,8 +99,8 @@
 }
 
 .skeleton {
-  background: var(--color-game-skeleton-bg);
-  border: 2px solid var(--color-game-paper-border);
+  background: var(--color-surface-skeleton);
+  border: 2px solid var(--color-border-subtle);
   box-shadow: none;
   animation: skeleton-fade 3s ease-in-out infinite both;
 }
@@ -139,13 +139,13 @@
 @keyframes tile-flash {
   0%,
   100% {
-    background-color: var(--color-game-paper);
-    border-color: var(--color-game-paper-border);
+    background-color: var(--color-surface-card);
+    border-color: var(--color-border-subtle);
   }
   50% {
-    background-color: var(--color-game-pending-bg);
-    border-color: var(--color-game-pending-border);
-    color: var(--color-game-pending-text);
+    background-color: var(--color-feedback-pending-bg);
+    border-color: var(--color-feedback-pending-border);
+    color: var(--color-feedback-pending-text);
   }
 }
 

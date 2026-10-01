@@ -3,7 +3,7 @@
   gap: calc(var(--spacing) * 3);
   padding-bottom: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing) * 3);
-  border-bottom: 1px dashed var(--color-game-paper-border);
+  border-bottom: 1px dashed var(--color-border-subtle);
 }
 
 .streakStat {
@@ -17,13 +17,13 @@
   font-size: clamp(2rem, 8vw, 2.5rem);
   font-weight: 900;
   line-height: 1;
-  color: var(--color-game-correct-accent);
+  color: var(--color-feedback-correct-accent);
 }
 
 .streakLabel {
   margin-top: calc(var(--spacing) * 1);
   font-size: var(--text-sm);
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   text-align: center;
 }
 
@@ -43,13 +43,13 @@
 .summaryValue {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
 }
 
 .summaryLabel {
   margin-top: calc(var(--spacing) * 0.5);
   font-size: var(--text-sm);
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
 }
 
 .distribution {
@@ -68,7 +68,7 @@
   width: 1rem;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   text-align: right;
 }
 
@@ -84,12 +84,12 @@
   min-width: 1.5rem;
   padding-inline: calc(var(--spacing) * 1.5);
   border-radius: var(--radius-lg);
-  background: var(--color-game-correct-accent);
+  background: var(--color-feedback-correct-accent);
   transition: width 220ms var(--game-ease-out, ease);
 }
 
 .distributionValue {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-game-paper);
+  color: var(--color-surface-card);
 }

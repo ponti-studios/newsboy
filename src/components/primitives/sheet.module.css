@@ -13,11 +13,11 @@
   width: calc(100vw - 1.5rem);
   max-width: 26rem;
   max-height: min(75dvh, 34rem);
-  border: 1px solid var(--color-game-paper-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-2xl);
   padding: 1.5rem;
-  background: var(--color-game-paper);
-  color: var(--color-game-ink);
+  background: var(--color-surface-card);
+  color: var(--text-primary);
   box-shadow: var(--shadow-lg);
   animation: wl-sheet-in 220ms var(--game-ease-out, ease);
 }
@@ -30,7 +30,7 @@
 }
 
 .dialog::backdrop {
-  background: var(--color-game-scrim);
+  background: var(--color-surface-scrim);
 }
 
 .header {

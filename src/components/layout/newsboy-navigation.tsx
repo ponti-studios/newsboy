@@ -1,5 +1,13 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@ponti-studios/ui/overlays";
-import { LucideChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@ponti-studios/ui/overlays";
+import { LucideChevronDown, Menu as MenuIcon } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
@@ -43,7 +51,7 @@ export function NewsboyNavigation({
     >
       <nav
         aria-label={`${BRAND_NAME} navigation`}
-        className="bg-game-ink text-game-paper mx-auto flex min-h-15 max-w-5xl items-center gap-3 rounded-2xl px-3.5 py-2.5 shadow-lg"
+        className="bg-surface-navigation text-navigation mx-auto flex min-h-15 max-w-5xl items-center gap-3 rounded-2xl px-3.5 py-2.5 shadow-lg"
       >
         <Link to="/" aria-label={`${BRAND_NAME} home`}>
           <img className="h-8 w-auto" src="/newsboy-logo.png" alt="" />
@@ -55,7 +63,7 @@ export function NewsboyNavigation({
               <Link
                 to={`/${games[0].slug}`}
                 aria-current={currentGame?.slug === games[0].slug ? "page" : undefined}
-                className="text-game-paper/65 hover:bg-game-paper/12 hover:text-game-paper aria-[current=page]:bg-game-paper/12 aria-[current=page]:text-game-paper rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                className="text-navigation-muted hover:bg-navigation/12 hover:text-navigation aria-[current=page]:bg-navigation/12 aria-[current=page]:text-navigation rounded-lg px-3 py-2 text-sm font-medium transition-colors"
               >
                 Play
               </Link>
@@ -64,7 +72,7 @@ export function NewsboyNavigation({
         ) : games.length > 1 ? (
           <Popover open={isGameMenuOpen} onOpenChange={setIsGameMenuOpen}>
             <PopoverTrigger
-              className="border-game-paper/18 bg-game-paper/10 text-game-paper hover:bg-game-paper/18 inline-flex min-h-9 items-center gap-2 rounded-xl border px-2.5 py-2 text-sm leading-none font-semibold"
+              className="border-navigation/18 bg-navigation/10 text-navigation hover:bg-navigation/18 inline-flex min-h-9 items-center gap-2 rounded-xl border px-2.5 py-2 text-sm leading-none font-semibold"
               aria-label={hasSelectedGame ? `Current game: ${currentGame?.name}` : "Choose a game"}
             >
               <span>{currentGame?.name ?? "Games"}</span>
@@ -96,12 +104,12 @@ export function NewsboyNavigation({
           </Popover>
         ) : null}
 
-        <ul className="ml-auto flex items-center gap-2">
+        <ul className="ml-auto hidden items-center gap-2 sm:flex">
           <li>
             <Link
               to="/history"
               aria-current={isHistory ? "page" : undefined}
-              className="text-game-paper/65 hover:bg-game-paper/12 hover:text-game-paper aria-[current=page]:bg-game-paper/12 aria-[current=page]:text-game-paper rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              className="text-navigation-muted hover:bg-navigation/12 hover:text-navigation aria-[current=page]:bg-navigation/12 aria-[current=page]:text-navigation rounded-lg px-3 py-2 text-sm font-medium transition-colors"
             >
               History
             </Link>
@@ -111,7 +119,7 @@ export function NewsboyNavigation({
               <Link
                 to="/admin"
                 aria-current={isAdmin ? "page" : undefined}
-                className="text-game-paper/65 hover:bg-game-paper/12 hover:text-game-paper aria-[current=page]:bg-game-paper/12 aria-[current=page]:text-game-paper rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                className="text-navigation-muted hover:bg-navigation/12 hover:text-navigation aria-[current=page]:bg-navigation/12 aria-[current=page]:text-navigation rounded-lg px-3 py-2 text-sm font-medium transition-colors"
               >
                 Admin
               </Link>
@@ -122,11 +130,31 @@ export function NewsboyNavigation({
         {!signedIn && (
           <a
             href={loginUrl}
-            className="border-game-paper/18 bg-game-paper/10 text-game-paper hover:bg-game-paper/18 rounded-lg border px-3 py-2 text-sm font-medium transition-colors"
+            className="border-navigation/18 bg-navigation/10 text-navigation hover:bg-navigation/18 hidden shrink-0 rounded-lg border px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors sm:inline-flex"
           >
             Sign in
           </a>
         )}
+
+        <div className="ml-auto sm:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="border-navigation/18 bg-navigation/10 text-navigation hover:bg-navigation/18 inline-flex size-11 items-center justify-center rounded-xl border"
+              aria-label="Open navigation menu"
+            >
+              <MenuIcon aria-hidden="true" className="size-5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-2">
+              <DropdownMenuItem render={<Link to="/history" />}>History</DropdownMenuItem>
+              {canAccessAdmin && (
+                <DropdownMenuItem render={<Link to="/admin" />}>Admin</DropdownMenuItem>
+              )}
+              {!signedIn && (
+                <DropdownMenuItem render={<a href={loginUrl} />}>Sign in</DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </nav>
     </header>
   );

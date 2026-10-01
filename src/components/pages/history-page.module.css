@@ -13,7 +13,7 @@
 
 .guestDescription {
   margin: calc(var(--spacing) * 2) 0 0;
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-sm);
   line-height: 1.5;
 }
@@ -30,12 +30,12 @@
 }
 
 a.guestPuzzle:hover {
-  background: var(--color-game-paper);
+  background: var(--color-surface-card);
 }
 
 .guestPlay {
   margin-left: auto;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   font-size: var(--text-sm);
   font-weight: 700;
   white-space: nowrap;
@@ -46,7 +46,7 @@ a.guestPuzzle:hover {
   max-height: 21rem;
   min-height: 12rem;
   overflow: hidden;
-  border: 1px solid var(--color-game-paper-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
 }
 
@@ -65,13 +65,13 @@ a.guestPuzzle:hover {
   justify-content: center;
   gap: calc(var(--spacing) * 2);
   padding: calc(var(--spacing) * 4);
-  background: color-mix(in srgb, var(--color-game-paper) 72%, transparent);
+  background: color-mix(in srgb, var(--color-surface-card) 72%, transparent);
   text-align: center;
 }
 
 .historyGate p {
   margin: 0;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   font-size: var(--text-base);
   font-weight: 800;
 }
@@ -85,7 +85,7 @@ a.guestPuzzle:hover {
 }
 
 .eyebrow {
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
   font-weight: 500;
   text-transform: uppercase;
@@ -96,7 +96,7 @@ a.guestPuzzle:hover {
 .title {
   font-size: clamp(1.75rem, 5vw, 2.25rem);
   font-weight: 800;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   margin: 0.125rem 0 0;
 }
 
@@ -109,7 +109,7 @@ a.guestPuzzle:hover {
 }
 
 .rowList > li {
-  border-bottom: 1px solid var(--color-game-paper-border);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 .rowList > li:last-child {
   border-bottom: none;
@@ -129,7 +129,7 @@ a.guestPuzzle:hover {
 }
 
 .row:hover {
-  background: var(--color-game-paper);
+  background: var(--color-surface-card);
 }
 
 .rowTop,
@@ -165,19 +165,19 @@ a.guestPuzzle:hover {
 
 .rowGame {
   flex-shrink: 0;
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border: 1px solid var(--color-game-paper-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 999px;
   padding: 0.0625rem 0.5rem;
 }
 
 .rowClue {
   min-width: 0;
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
   margin: 0;
   overflow: hidden;
@@ -192,7 +192,7 @@ a.guestPuzzle:hover {
 }
 
 .pageLabel {
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
 }
 
@@ -206,7 +206,7 @@ a.guestPuzzle:hover {
 }
 
 .unplayedList > li {
-  border-bottom: 1px solid var(--color-game-paper-border);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 .unplayedList > li:last-child {
   border-bottom: none;
@@ -225,7 +225,7 @@ a.guestPuzzle:hover {
 }
 
 .unplayedLink:hover {
-  background: var(--color-game-paper);
+  background: var(--color-surface-card);
 }
 
 .unplayedFooter {
@@ -236,7 +236,7 @@ a.guestPuzzle:hover {
 }
 
 .unplayedCount {
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
 }
 
@@ -247,7 +247,7 @@ a.guestPuzzle:hover {
 }
 
 .triggerLabelSub {
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: 0.6875rem;
   font-weight: 400;
 }

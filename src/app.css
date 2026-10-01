@@ -5,52 +5,48 @@
 @source "./routes";
 @source "./components";
 
-/* Game palette as Tailwind colors. `@theme inline` keeps the `var(--game-*)`
-   indirection into this app's palette, which is the single source of truth and owns the
-   dark-mode overrides — utilities like `bg-game-glass` resolve correctly in
-   both themes, and the Tailwind LSP picks every token up for autocomplete. */
+/* Semantic app colors mapped into Tailwind utilities. */
 @theme inline {
-  --color-game-bg: var(--game-bg);
-  --color-game-paper: var(--game-paper);
-  --color-game-paper-border: var(--game-paper-border);
-  --color-game-ink: var(--game-ink);
-  --color-game-ink-muted: var(--game-ink-muted);
-  --color-game-correct-bg: var(--game-correct-bg);
-  --color-game-correct-text: var(--game-correct-text);
-  --color-game-correct-border: var(--game-correct-border);
-  --color-game-correct-accent: var(--game-correct-accent);
-  --color-game-correct-shadow: var(--game-correct-shadow);
-  --color-game-correct-key-text: var(--game-correct-key-text);
-  --color-game-present-bg: var(--game-present-bg);
-  --color-game-present-text: var(--game-present-text);
-  --color-game-present-border: var(--game-present-border);
-  --color-game-present-accent: var(--game-present-accent);
-  --color-game-absent-bg: var(--game-absent-bg);
-  --color-absent: var(--game-absent-bg);
-  --color-game-absent-text: var(--game-absent-text);
-  --color-game-absent-border: var(--game-absent-border);
-  --color-game-error-border: var(--game-error-border);
-  --color-game-error-text: var(--game-error-text);
-  --color-game-skeleton-bg: var(--game-skeleton-bg);
-  --color-game-pending-bg: var(--game-pending-bg);
-  --color-game-pending-border: var(--game-pending-border);
-  --color-game-pending-text: var(--game-pending-text);
-  --color-game-silver-solid: var(--game-silver-solid);
-  --color-game-share-bg: var(--game-share-bg);
-  --color-game-share-bg-hover: var(--game-share-bg-hover);
-  --color-game-share-text: var(--game-share-text);
-  --color-game-link-text: var(--game-link-text);
-  --color-game-blush: var(--game-blush);
-  --color-game-glass: var(--game-glass);
-  --color-game-glass-border: var(--game-glass-border);
-  --color-game-glass-ghost: var(--game-glass-ghost);
-  --color-game-glass-ghost-hover: var(--game-glass-ghost-hover);
-  --color-game-glass-ghost-border: var(--game-glass-ghost-border);
-  --color-game-glass-ghost-border-hover: var(--game-glass-ghost-border-hover);
-  --color-game-scrim: var(--game-scrim);
+  --color-surface-page: var(--surface-page);
+  --color-surface-card: var(--surface-card);
+  --color-border-subtle: var(--border-subtle);
+  --color-surface-navigation: var(--surface-navigation);
+  --color-navigation: var(--text-navigation);
+  --color-navigation-muted: var(--text-navigation-muted);
+  --color-feedback-correct-bg: var(--feedback-correct-bg);
+  --color-feedback-correct-text: var(--feedback-correct-text);
+  --color-feedback-correct-border: var(--feedback-correct-border);
+  --color-feedback-correct-accent: var(--feedback-correct-accent);
+  --color-feedback-correct-shadow: var(--feedback-correct-shadow);
+  --color-feedback-present-bg: var(--feedback-present-bg);
+  --color-feedback-present-text: var(--feedback-present-text);
+  --color-feedback-present-border: var(--feedback-present-border);
+  --color-feedback-present-accent: var(--feedback-present-accent);
+  --color-feedback-absent-bg: var(--feedback-absent-bg);
+  --color-feedback-absent-text: var(--feedback-absent-text);
+  --color-feedback-absent-border: var(--feedback-absent-border);
+  --color-feedback-error-border: var(--feedback-error-border);
+  --color-feedback-error-text: var(--feedback-error-text);
+  --color-surface-skeleton: var(--surface-skeleton);
+  --color-feedback-pending-bg: var(--feedback-pending-bg);
+  --color-feedback-pending-border: var(--feedback-pending-border);
+  --color-feedback-pending-text: var(--feedback-pending-text);
+  --color-silver-solid: var(--silver-solid);
+  --color-action-share-bg: var(--action-share-bg);
+  --color-action-share-bg-hover: var(--action-share-bg-hover);
+  --color-action-share-text: var(--action-share-text);
+  --color-link: var(--text-link);
+  --color-feedback-blend: var(--feedback-blend);
+  --color-surface-glass: var(--surface-glass);
+  --color-surface-glass-border: var(--surface-glass-border);
+  --color-surface-glass-ghost: var(--surface-glass-ghost);
+  --color-surface-glass-ghost-hover: var(--surface-glass-ghost-hover);
+  --color-surface-glass-ghost-border: var(--surface-glass-ghost-border);
+  --color-surface-glass-ghost-border-hover: var(--surface-glass-ghost-border-hover);
+  --color-surface-scrim: var(--surface-scrim);
 }
 
-/* Game UI custom utilities. */
+/* App custom utilities. */
 @utility icon-button {
   display: inline-flex;
   align-items: center;
@@ -62,12 +58,12 @@
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--color-game-link-text);
+    outline: 2px solid var(--text-link);
     outline-offset: 2px;
   }
 }
 
-/* The game's product expression: newsstand masthead — cream newsprint, ink
+/* The product expression: newsstand masthead — cream newsprint, ink
    black, gossip-column pink, and a wink of gold for the near-misses. */
 
 *,
@@ -87,8 +83,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--color-game-bg);
-  color: var(--color-game-ink);
+  background: var(--color-surface-page);
+  color: var(--text-primary);
   font-family: var(
     --font-sans,
     system-ui,
@@ -128,63 +124,68 @@ svg {
   --game-radius: clamp(9px, 2.6vw, 15px);
 
   /* Palette — page + paper */
-  --game-bg: rgba(247, 241, 226, 1);
-  --game-paper: rgba(255, 253, 247, 1);
-  --game-paper-border: rgba(23, 19, 13, 0.14);
-  --game-ink: rgba(23, 19, 13, 1);
-  --game-ink-muted: rgba(23, 19, 13, 0.62);
+  --surface-page: rgba(247, 241, 226, 1);
+  --surface-card: rgba(255, 253, 247, 1);
+  --border-subtle: rgba(23, 19, 13, 0.14);
+  --surface-navigation: var(--text-primary);
+  --text-navigation: var(--surface-card);
+  --text-navigation-muted: color-mix(in srgb, var(--surface-card) 65%, transparent);
+  --surface-key: var(--surface-card);
+  --surface-key-inactive: var(--surface-key);
+  --key-absent-bg: var(--feedback-absent-bg);
+  --key-absent-text: var(--feedback-absent-text);
+  --key-absent-border: var(--feedback-absent-border);
   /* Palette — tile states (also used flat, unmodified, on keyboard keys) */
-  --game-absent-bg: rgba(20, 20, 20, 1);
-  --game-absent-text: rgba(245, 241, 230, 1);
-  --game-absent-border: transparent;
+  --feedback-absent-bg: rgba(20, 20, 20, 1);
+  --feedback-absent-text: rgba(245, 241, 230, 1);
+  --feedback-absent-border: transparent;
 
-  --game-present-bg: rgba(231, 167, 58, 1);
-  --game-present-text: rgba(32, 20, 4, 1);
-  --game-present-border: rgba(178, 122, 22, 0.55);
-  --game-present-accent: rgba(156, 102, 18, 1);
+  --feedback-present-bg: rgba(231, 167, 58, 1);
+  --feedback-present-text: rgba(32, 20, 4, 1);
+  --feedback-present-border: rgba(178, 122, 22, 0.55);
+  --feedback-present-accent: rgba(156, 102, 18, 1);
 
-  --game-correct-bg: rgba(236, 33, 102, 1);
-  --game-correct-text: rgba(255, 255, 255, 1);
-  --game-correct-border: rgba(168, 15, 66, 0.5);
-  --game-correct-accent: rgba(214, 17, 91, 1);
-  --game-correct-shadow: rgba(23, 19, 13, 0.4);
-  --game-correct-key-text: var(--color-game-ink);
+  --feedback-correct-bg: rgba(236, 33, 102, 1);
+  --feedback-correct-text: rgba(255, 255, 255, 1);
+  --feedback-correct-border: rgba(168, 15, 66, 0.5);
+  --feedback-correct-accent: rgba(214, 17, 91, 1);
+  --feedback-correct-shadow: rgba(23, 19, 13, 0.4);
 
-  --game-error-border: rgba(217, 45, 32, 1);
-  --game-error-text: rgba(181, 32, 22, 1);
+  --feedback-error-border: rgba(217, 45, 32, 1);
+  --feedback-error-text: rgba(181, 32, 22, 1);
 
-  --game-silver-solid: rgba(78, 78, 81, 1);
-  --game-silver-gradient: linear-gradient(
+  --silver-solid: rgba(78, 78, 81, 1);
+  --silver-gradient: linear-gradient(
     135deg,
     rgba(255, 255, 255, 1) 0%,
     rgba(150, 150, 153, 1) 14%,
-    var(--color-game-silver-solid) 28%,
-    var(--color-game-silver-solid) 100%
+    var(--color-silver-solid) 28%,
+    var(--color-silver-solid) 100%
   );
 
-  --game-skeleton-bg: rgba(233, 225, 205, 1);
-  --game-pending-bg: color-mix(in srgb, var(--color-game-correct-bg) 5%, transparent);
-  --game-pending-border: color-mix(in srgb, var(--color-game-correct-accent) 25%, transparent);
-  --game-pending-text: var(--color-game-correct-accent);
+  --surface-skeleton: rgba(233, 225, 205, 1);
+  --feedback-pending-bg: color-mix(in srgb, var(--color-feedback-correct-bg) 5%, transparent);
+  --feedback-pending-border: color-mix(in srgb, var(--color-feedback-correct-accent) 25%, transparent);
+  --feedback-pending-text: var(--color-feedback-correct-accent);
 
   /* Accents */
-  --game-share-bg: rgba(240, 28, 91, 1);
-  --game-share-bg-hover: rgba(199, 19, 80, 1);
-  --game-share-text: rgba(23, 4, 12, 1);
-  --game-link-text: rgba(52, 78, 217, 1);
+  --action-share-bg: rgba(240, 28, 91, 1);
+  --action-share-bg-hover: rgba(199, 19, 80, 1);
+  --action-share-text: rgba(23, 4, 12, 1);
+  --text-link: rgba(52, 78, 217, 1);
 
   /* Glass tints — translucency resolved from the palette at computed-value
      time, so the values flip automatically with the dark theme. */
-  --game-glass: color-mix(in srgb, var(--color-game-paper) 42%, transparent);
-  --game-glass-border: color-mix(in srgb, var(--color-game-paper-border) 60%, transparent);
-  --game-glass-ghost: color-mix(in srgb, var(--color-game-paper) 34%, transparent);
-  --game-glass-ghost-hover: color-mix(in srgb, var(--color-game-paper) 72%, transparent);
-  --game-glass-ghost-border: color-mix(in srgb, var(--color-game-ink) 26%, transparent);
-  --game-glass-ghost-border-hover: color-mix(in srgb, var(--color-game-ink) 45%, transparent);
-  --game-blush: color-mix(in srgb, var(--color-game-correct-bg) 52%, var(--color-game-present-bg));
+  --surface-glass: color-mix(in srgb, var(--color-surface-card) 42%, transparent);
+  --surface-glass-border: color-mix(in srgb, var(--color-border-subtle) 60%, transparent);
+  --surface-glass-ghost: color-mix(in srgb, var(--color-surface-card) 34%, transparent);
+  --surface-glass-ghost-hover: color-mix(in srgb, var(--color-surface-card) 72%, transparent);
+  --surface-glass-ghost-border: color-mix(in srgb, var(--text-primary) 26%, transparent);
+  --surface-glass-ghost-border-hover: color-mix(in srgb, var(--text-primary) 45%, transparent);
+  --feedback-blend: color-mix(in srgb, var(--color-feedback-correct-bg) 52%, var(--color-feedback-present-bg));
 
   /* Modal backdrop scrim. */
-  --game-scrim: rgba(0, 0, 0, 0.4);
+  --surface-scrim: rgba(0, 0, 0, 0.4);
 
   /* Safe-area insets — raw device values (0 outside notched devices). */
   --game-safe-top: env(safe-area-inset-top);
@@ -207,26 +208,32 @@ svg {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --game-bg: rgba(28, 25, 22, 1);
-    --game-paper: rgba(42, 38, 33, 1);
-    --game-paper-border: rgba(245, 241, 230, 0.18);
-    --game-ink: rgba(245, 241, 230, 1);
-    --game-ink-muted: rgba(245, 241, 230, 0.68);
-    --game-skeleton-bg: rgba(67, 59, 49, 1);
-    --game-pending-bg: color-mix(in srgb, var(--color-game-correct-bg) 30%, transparent);
-    --game-pending-border: color-mix(in srgb, var(--color-game-correct-accent) 30%, transparent);
-    --game-pending-text: var(--color-game-correct-text);
-    --game-error-text: rgba(255, 112, 96, 1);
-    --game-present-accent: rgba(246, 190, 78, 1);
-    --game-link-text: rgba(143, 166, 255, 1);
-    --game-absent-border: rgba(245, 241, 230, 0.18);
+    --surface-page: var(--background);
+    --surface-card: var(--secondary);
+    --border-subtle: color-mix(in srgb, var(--border-default) 65%, var(--tertiary));
+    --surface-navigation: var(--card);
+    --text-navigation: var(--text-primary);
+    --text-navigation-muted: var(--text-secondary);
+    --surface-key: var(--secondary);
+    --surface-key-inactive: color-mix(in srgb, var(--secondary) 78%, var(--tertiary));
+    --key-absent-bg: var(--surface-page);
+    --key-absent-text: var(--text-secondary);
+    --key-absent-border: var(--border-default);
+    --surface-skeleton: var(--muted);
+    --feedback-pending-bg: color-mix(in srgb, var(--color-feedback-correct-bg) 30%, transparent);
+    --feedback-pending-border: color-mix(in srgb, var(--color-feedback-correct-accent) 30%, transparent);
+    --feedback-pending-text: var(--color-feedback-correct-text);
+    --feedback-error-text: rgba(255, 112, 96, 1);
+    --feedback-present-accent: rgba(246, 190, 78, 1);
+    --text-link: rgba(143, 166, 255, 1);
+    --feedback-absent-border: var(--border-subtle);
 
     /* Glass tints — dark theme: dark pane, lighter ghost surfaces. */
-    --game-glass: color-mix(in srgb, var(--color-game-bg) 38%, transparent);
-    --game-glass-border: color-mix(in srgb, var(--color-game-paper) 20%, transparent);
-    --game-glass-ghost: color-mix(in srgb, var(--color-game-paper) 8%, transparent);
-    --game-glass-ghost-hover: color-mix(in srgb, var(--color-game-paper) 18%, transparent);
-    --game-glass-ghost-border: color-mix(in srgb, var(--color-game-paper) 26%, transparent);
-    --game-glass-ghost-border-hover: color-mix(in srgb, var(--color-game-paper) 45%, transparent);
+    --surface-glass: color-mix(in srgb, var(--color-surface-page) 38%, transparent);
+    --surface-glass-border: color-mix(in srgb, var(--color-surface-card) 20%, transparent);
+    --surface-glass-ghost: color-mix(in srgb, var(--color-surface-card) 8%, transparent);
+    --surface-glass-ghost-hover: color-mix(in srgb, var(--color-surface-card) 18%, transparent);
+    --surface-glass-ghost-border: color-mix(in srgb, var(--color-surface-card) 26%, transparent);
+    --surface-glass-ghost-border-hover: color-mix(in srgb, var(--color-surface-card) 45%, transparent);
   }
 }

@@ -10,12 +10,12 @@
 .title {
   font-weight: 600;
   font-size: var(--text-lg);
-  color: var(--color-game-ink);
+  color: var(--text-primary);
   margin: 0;
 }
 
 .description {
-  color: var(--color-game-ink-muted);
+  color: var(--text-secondary);
   font-size: var(--text-base);
   margin: 0;
   max-width: 32ch;

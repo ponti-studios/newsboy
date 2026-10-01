@@ -33,9 +33,9 @@
 
 .offlineBanner {
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-game-error-border);
-  background: var(--color-game-paper);
-  color: var(--color-game-ink);
+  border: 1px solid var(--color-feedback-error-border);
+  background: var(--color-surface-card);
+  color: var(--text-primary);
   padding-block: 0.5rem;
   padding-left: 0.75rem;
   text-align: center;
@@ -43,14 +43,14 @@
 }
 
 .clue {
-  border: 1px solid var(--color-game-present-border);
+  border: 1px solid var(--color-feedback-present-border);
   border-radius: var(--radius-md);
-  background: var(--color-game-present-bg);
+  background: var(--color-feedback-present-bg);
   padding-block: calc(var(--spacing) * 3);
   padding-left: calc(var(--spacing) * 3);
   font-size: var(--text-sm);
   line-height: 1.25rem;
-  color: var(--color-game-present-text);
+  color: var(--color-feedback-present-text);
 }
 
 .clueLabel {

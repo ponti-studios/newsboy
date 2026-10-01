@@ -9,9 +9,9 @@
   z-index: 50;
   min-width: 12rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-game-paper-border);
-  background: var(--color-game-paper);
-  color: var(--color-game-ink);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-card);
+  color: var(--text-primary);
   box-shadow: var(--shadow-md);
   padding: calc(var(--spacing) * 3);
   animation: wl-popover-in 120ms ease;

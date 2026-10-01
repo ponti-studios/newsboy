@@ -18,7 +18,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--color-game-correct-accent);
+  outline: 2px solid var(--color-feedback-correct-accent);
   outline-offset: 2px;
 }
 
@@ -28,36 +28,36 @@
 }
 
 .default {
-  background: var(--color-game-ink);
-  color: var(--color-game-paper);
+  background: var(--text-primary);
+  color: var(--color-surface-card);
 }
 .default:hover {
-  background: color-mix(in srgb, var(--color-game-ink) 85%, var(--color-game-paper));
+  background: color-mix(in srgb, var(--text-primary) 85%, var(--color-surface-card));
 }
 
 .outline {
   background: transparent;
-  border-color: var(--color-game-paper-border);
-  color: var(--color-game-ink);
+  border-color: var(--color-border-subtle);
+  color: var(--text-primary);
 }
 .outline:hover {
-  background: var(--color-game-bg);
+  background: var(--color-surface-page);
 }
 
 .ghost {
   background: transparent;
-  color: var(--color-game-ink);
+  color: var(--text-primary);
 }
 .ghost:hover {
-  background: var(--color-game-bg);
+  background: var(--color-surface-page);
 }
 
 .destructive {
-  background: var(--color-game-error-border);
-  color: var(--color-game-paper);
+  background: var(--color-feedback-error-border);
+  color: var(--color-surface-card);
 }
 .destructive:hover {
-  background: color-mix(in srgb, var(--color-game-error-border) 85%, var(--color-game-ink));
+  background: color-mix(in srgb, var(--color-feedback-error-border) 85%, var(--text-primary));
 }
 
 .sizeDefault {
