@@ -10,6 +10,9 @@ RUN corepack enable
 
 FROM base AS build
 
+ARG NEWSBOY_APP_URL
+ENV NEWSBOY_APP_URL=$NEWSBOY_APP_URL
+
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 RUN pnpm install --frozen-lockfile --config.minimum-release-age=0
 COPY . .
