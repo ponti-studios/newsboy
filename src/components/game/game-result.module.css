@@ -7,47 +7,41 @@
 .verdict {
   display: flex;
   align-items: center;
-  gap: calc(var(--spacing) * 2);
+  gap: 0.35rem;
+  flex: none;
   animation: game-result-verdict-in 360ms var(--game-ease-out) 420ms both;
 }
 
 .verdict[data-solved="true"] {
-  color: var(--color-feedback-correct-accent);
+  color: var(--text-primary);
 }
 
 .verdict[data-solved="false"] {
   color: var(--text-primary);
 }
 
-.verdictLabel {
-  font-size: var(--text-sm);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding-bottom: 0.15rem;
-  border-bottom: 2px solid currentColor;
-}
-
-.verdictDots {
+.resultEyebrow {
   display: flex;
-  gap: calc(var(--spacing) * 1.2);
-  margin-left: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .verdictDot {
+  display: block;
   width: 0.5rem;
   height: 0.5rem;
+  flex: none;
   border-radius: 50%;
-  border: 1.5px solid currentColor;
-  background: transparent;
+  background: var(--color-feedback-absent-bg);
 }
 
-.verdictDot[data-filled="true"] {
-  background: currentColor;
+.verdictDot[data-state="present"] {
+  background: var(--color-feedback-present-bg);
 }
 
-.verdictDot[data-filled="false"] {
-  opacity: 0.35;
+.verdictDot[data-state="correct"] {
+  background: var(--color-feedback-correct-bg);
 }
 
 .resultCard {
@@ -63,12 +57,22 @@
 }
 
 .resultHeading {
-  font-size: clamp(1.5rem, 5vw, 1.9rem);
-  font-weight: 900;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--text-primary);
   margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.resultHeadline {
+  margin: calc(var(--spacing) * 5) 0 0;
+  color: var(--text-primary);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.4rem, 5vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
 }
 
 .resultBody {
@@ -76,13 +80,14 @@
   line-height: 1.5;
   color: var(--text-primary);
   animation: game-result-fade-in 350ms ease 600ms both;
-  > :not(:first-child) {
-    margin-block-start: calc(var(--spacing) * 5);
-  }
 }
 
 .resultBody p {
-  margin-top: calc(var(--spacing) * 2);
+  margin: calc(var(--spacing) * 3) 0 0;
+  color: var(--text-secondary);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: var(--text-sm);
+  line-height: 1.55;
 }
 
 .resultActions {

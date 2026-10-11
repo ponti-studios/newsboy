@@ -59,7 +59,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
         },
         previousGuessesType: Array.isArray(previousGuesses) ? "array" : typeof previousGuesses,
         previousGuessesCount: Array.isArray(previousGuesses) ? previousGuesses.length : null,
-        issues: parsedPayload.error.issues.map(({ code, path }) => ({ code, path: path.join(".") })),
+        issues: parsedPayload.error.issues.map(({ code, path }) => ({
+          code,
+          path: path.join("."),
+        })),
       },
       "Guess request payload failed validation",
     );

@@ -165,7 +165,11 @@ svg {
 
   --surface-skeleton: rgba(233, 225, 205, 1);
   --feedback-pending-bg: color-mix(in srgb, var(--color-feedback-correct-bg) 5%, transparent);
-  --feedback-pending-border: color-mix(in srgb, var(--color-feedback-correct-accent) 25%, transparent);
+  --feedback-pending-border: color-mix(
+    in srgb,
+    var(--color-feedback-correct-accent) 25%,
+    transparent
+  );
   --feedback-pending-text: var(--color-feedback-correct-accent);
 
   /* Accents */
@@ -182,7 +186,11 @@ svg {
   --surface-glass-ghost-hover: color-mix(in srgb, var(--color-surface-card) 72%, transparent);
   --surface-glass-ghost-border: color-mix(in srgb, var(--text-primary) 26%, transparent);
   --surface-glass-ghost-border-hover: color-mix(in srgb, var(--text-primary) 45%, transparent);
-  --feedback-blend: color-mix(in srgb, var(--color-feedback-correct-bg) 52%, var(--color-feedback-present-bg));
+  --feedback-blend: color-mix(
+    in srgb,
+    var(--color-feedback-correct-bg) 52%,
+    var(--color-feedback-present-bg)
+  );
 
   /* Modal backdrop scrim. */
   --surface-scrim: rgba(0, 0, 0, 0.4);
@@ -221,7 +229,11 @@ svg {
     --key-absent-border: var(--border-default);
     --surface-skeleton: var(--muted);
     --feedback-pending-bg: color-mix(in srgb, var(--color-feedback-correct-bg) 30%, transparent);
-    --feedback-pending-border: color-mix(in srgb, var(--color-feedback-correct-accent) 30%, transparent);
+    --feedback-pending-border: color-mix(
+      in srgb,
+      var(--color-feedback-correct-accent) 30%,
+      transparent
+    );
     --feedback-pending-text: var(--color-feedback-correct-text);
     --feedback-error-text: rgba(255, 112, 96, 1);
     --feedback-present-accent: rgba(246, 190, 78, 1);
@@ -234,6 +246,10 @@ svg {
     --surface-glass-ghost: color-mix(in srgb, var(--color-surface-card) 8%, transparent);
     --surface-glass-ghost-hover: color-mix(in srgb, var(--color-surface-card) 18%, transparent);
     --surface-glass-ghost-border: color-mix(in srgb, var(--color-surface-card) 26%, transparent);
-    --surface-glass-ghost-border-hover: color-mix(in srgb, var(--color-surface-card) 45%, transparent);
+    --surface-glass-ghost-border-hover: color-mix(
+      in srgb,
+      var(--color-surface-card) 45%,
+      transparent
+    );
   }
 }
