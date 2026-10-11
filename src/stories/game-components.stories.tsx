@@ -243,7 +243,7 @@ function ResultStory({ game }: { game: typeof solvedGame }) {
     <GameResult
       game={game}
       puzzle={puzzle}
-      detail={game.detail}
+      detail={game.detail || puzzle.detail}
       onShare={fn()}
       onCopy={fn()}
       stats={stats}
@@ -260,7 +260,7 @@ export const ResultActions: Story = {
       <GameResult
         game={solvedGame}
         puzzle={puzzle}
-        detail={solvedGame.detail}
+        detail={solvedGame.detail || puzzle.detail}
         onShare={share}
         onCopy={copy}
         stats={stats}

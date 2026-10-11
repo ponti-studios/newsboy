@@ -1,4 +1,4 @@
-import { CheckCircle2, Copy, ExternalLink, Share2, XCircle } from "lucide-react";
+import { Copy, ExternalLink, Share2 } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import type { PublicGamesPuzzle } from "../../lib/puzzle";
@@ -20,28 +20,46 @@ interface GameResultProps {
 export function GameResult({ game, puzzle, detail, onShare, onCopy, stats }: GameResultProps) {
   if (!game.isGameOver) return null;
 
+  const guessLabel = `${game.guesses.length} ${game.guesses.length === 1 ? "guess" : "guesses"}`;
+  const verdictLabel = game.isSolved
+    ? `Solved in ${guessLabel}`
+    : `Out of guesses after ${guessLabel}`;
+  const source = puzzle.sources[0];
+  const headline = source?.title?.trim();
+
   return (
     <div className={styles.result} data-testid="game-result">
       <div className={styles.resultCard} data-testid="game-receipt">
         <div className={styles.resultBody}>
-          <div className="flex items-center justify-between">
-            <h2 className={styles.resultHeading}>Story</h2>
+          <div className={styles.resultEyebrow}>
+            <h2 className={styles.resultHeading}>The Proof</h2>
             <div
+              aria-label={verdictLabel}
               className={styles.verdict}
               data-testid="game-result-badge"
               data-solved={game.isSolved ? "true" : "false"}
               data-guesses={game.guesses.length}
+              role="img"
             >
-              {game.isSolved ? (
-                <CheckCircle2 aria-hidden="true" size={18} strokeWidth={2.5} />
-              ) : (
-                <XCircle aria-hidden="true" size={18} strokeWidth={2.5} />
-              )}
-              <span className={styles.verdictLabel}>
-                {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
-              </span>
+              {game.guesses.map((guess, index) => {
+                const state = guess.states.every((letter) => letter === "correct")
+                  ? "correct"
+                  : guess.states.includes("present")
+                    ? "present"
+                    : "absent";
+
+                return (
+                  <span
+                    aria-hidden="true"
+                    className={styles.verdictDot}
+                    data-state={state}
+                    key={`${guess.word}-${index}`}
+                  />
+                );
+              })}
             </div>
           </div>
+          {headline && <h3 className={styles.resultHeadline}>{headline}</h3>}
           <p>{detail}</p>
         </div>
         <div className={styles.resultActions}>
@@ -68,15 +86,15 @@ export function GameResult({ game, puzzle, detail, onShare, onCopy, stats }: Gam
             <Copy aria-hidden="true" size={18} strokeWidth={2.25} />
           </button>
           <StatsSheet stats={stats} actionIndex={2} />
-          {puzzle.sources.length > 0 && (
+          {source && (
             <a
               aria-label="Read the source article"
               className={styles.resultAction}
-              href={puzzle.sources[0].url}
+              href={source.url}
               rel="noopener noreferrer"
               style={{ "--action-i": 3 } as CSSProperties}
               target="_blank"
-              title={puzzle.sources[0].title ?? "Read the source article"}
+              title={source.title || "Read the source article"}
             >
               <ExternalLink aria-hidden="true" size={18} strokeWidth={2.25} />
             </a>
