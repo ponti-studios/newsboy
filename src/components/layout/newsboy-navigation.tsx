@@ -40,6 +40,7 @@ export function NewsboyNavigation({
   const navigate = useNavigate();
   const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
   const currentGame = getCurrentGame(location.pathname, games);
+  const isAbout = location.pathname === "/about";
   const isHistory = location.pathname === "/history";
   const isAdmin = location.pathname === "/admin" || location.pathname.startsWith("/admin/");
   const hasSelectedGame = currentGame !== null;
@@ -107,6 +108,15 @@ export function NewsboyNavigation({
         <ul className="ml-auto hidden items-center gap-2 sm:flex">
           <li>
             <Link
+              to="/about"
+              aria-current={isAbout ? "page" : undefined}
+              className="text-navigation-muted hover:bg-navigation/12 hover:text-navigation aria-[current=page]:bg-navigation/12 aria-[current=page]:text-navigation rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/history"
               aria-current={isHistory ? "page" : undefined}
               className="text-navigation-muted hover:bg-navigation/12 hover:text-navigation aria-[current=page]:bg-navigation/12 aria-[current=page]:text-navigation rounded-lg px-3 py-2 text-sm font-medium transition-colors"
@@ -145,6 +155,7 @@ export function NewsboyNavigation({
               <MenuIcon aria-hidden="true" className="size-5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="p-2">
+              <DropdownMenuItem render={<Link to="/about" />}>About</DropdownMenuItem>
               <DropdownMenuItem render={<Link to="/history" />}>History</DropdownMenuItem>
               {canAccessAdmin && (
                 <DropdownMenuItem render={<Link to="/admin" />}>Admin</DropdownMenuItem>
