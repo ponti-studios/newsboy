@@ -36,6 +36,7 @@ export default [
       route("preview/events", "routes/admin.preview.events.ts"),
       route("*", "routes/admin.legacy.ts"),
     ]),
+    route("/about", "routes/about.tsx"),
     route("/history", "routes/history.tsx"),
     route("/:topic", "routes/topic.tsx"),
     route("/:topic/:dateKey", "routes/topic.$dateKey.tsx"),

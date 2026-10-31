@@ -1,5 +1,6 @@
 import { isRouteErrorResponse, Outlet, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
+import { NewsboyFooter } from "~/components/layout/newsboy-footer";
 import { NewsboyNavigation } from "~/components/layout/newsboy-navigation";
 import { ErrorPage } from "~/components/pages/error-page";
 import { canAccessGameAdmin } from "~/lib/admin/auth";
@@ -29,6 +30,7 @@ export default function AppLayout() {
     <>
       <NewsboyNavigation {...navigation} />
       <Outlet />
+      <NewsboyFooter />
     </>
   );
 }
@@ -46,6 +48,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     <>
       <NewsboyNavigation {...navigation} />
       <ErrorPage status={status} message={status === 404 ? undefined : message} />
+      <NewsboyFooter />
     </>
   );
 }

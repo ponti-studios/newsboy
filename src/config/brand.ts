@@ -5,6 +5,10 @@
 export const BRAND_NAME = "Newsboy";
 export const BRAND_TAGLINE = "Wordplay, fresh off the press.";
 
+/** The studio that makes Newsboy. */
+export const STUDIO_NAME = "Ponti Studios";
+export const STUDIO_URL = "https://ponti.io";
+
 /** Browser/OS chrome colors — SVG/JSON surface, so they live here, not in CSS. */
 export const BRAND_THEME_COLOR = "#f5b400";
 export const BRAND_BACKGROUND_COLOR = "#f7f2e8";
