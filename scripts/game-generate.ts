@@ -58,7 +58,9 @@ async function main() {
 
   const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());
-  const allowLiveDates = isDisposableDatabase();
+  // GitHub Actions tunnels production through localhost, so the loopback URL
+  // does not make that remote database disposable.
+  const allowLiveDates = isDisposableDatabase() && process.env.GITHUB_ACTIONS !== "true";
   const range = resolveGenerateRange({
     force: args.force,
     daysAhead: args.daysAhead,

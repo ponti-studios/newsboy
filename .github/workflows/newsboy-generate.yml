@@ -63,14 +63,21 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@fc53c09e1bc3be6f54706524e3b82c4f462f77be # 1.5
 
-      # The production database lives on Fly's private network, so tunnel to it.
-      # DATABASE_URL points at localhost:15432.
+      # The production database lives on Fly's private network. Resolve an
+      # active machine's region so the tunnel targets the database after it
+      # moves between Fly regions. DATABASE_URL points at localhost:15432.
       - name: open-database-tunnel
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
-          flyctl proxy 15432:5432 -a hominem-db >/tmp/fly-proxy.log 2>&1 &
+          DB_REGION="$(flyctl machine list -a hominem-db --json | jq -r '[.[] | select(.state == "started")][0].region // empty')"
+          if [[ -z "$DB_REGION" ]]; then
+            echo 'No started machine found for hominem-db'
+            exit 1
+          fi
+          echo "Tunneling to hominem-db in Fly region $DB_REGION"
+          flyctl proxy 15432:5432 "$DB_REGION.hominem-db.internal" -a hominem-db >/tmp/fly-proxy.log 2>&1 &
           for _ in $(seq 1 30); do
             (echo > /dev/tcp/127.0.0.1/15432) 2>/dev/null && exit 0
             sleep 1
