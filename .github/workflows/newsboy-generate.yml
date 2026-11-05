@@ -71,13 +71,14 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
-          DB_REGION="$(flyctl machine list -a hominem-db --json | jq -r '[.[] | select(.state == "started")][0].region // empty')"
+          DB_APP="hominem-db-eu"
+          DB_REGION="$(flyctl machine list -a "$DB_APP" --json | jq -r '[.[] | select(.state == "started")][0].region // empty')"
           if [[ -z "$DB_REGION" ]]; then
-            echo 'No started machine found for hominem-db'
+            echo "No started machine found for $DB_APP"
             exit 1
           fi
-          echo "Tunneling to hominem-db in Fly region $DB_REGION"
-          flyctl proxy 15432:5432 "$DB_REGION.hominem-db.internal" -a hominem-db >/tmp/fly-proxy.log 2>&1 &
+          echo "Tunneling to $DB_APP in Fly region $DB_REGION"
+          flyctl proxy 15432:5432 "$DB_REGION.$DB_APP.internal" -a "$DB_APP" >/tmp/fly-proxy.log 2>&1 &
           for _ in $(seq 1 30); do
             (echo > /dev/tcp/127.0.0.1/15432) 2>/dev/null && exit 0
             sleep 1
