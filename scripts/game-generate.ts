@@ -54,13 +54,13 @@ function parseGenerateArgs(): {
 }
 
 async function main() {
-  NewsboyGenerationEnv.parse(process.env);
+  const generationEnv = NewsboyGenerationEnv.parse(process.env);
 
   const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());
   // GitHub Actions tunnels production through localhost, so the loopback URL
   // does not make that remote database disposable.
-  const allowLiveDates = isDisposableDatabase() && process.env.GITHUB_ACTIONS !== "true";
+  const allowLiveDates = isDisposableDatabase() && !generationEnv.isGitHubActions;
   const range = resolveGenerateRange({
     force: args.force,
     daysAhead: args.daysAhead,

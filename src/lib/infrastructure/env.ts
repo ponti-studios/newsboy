@@ -66,6 +66,7 @@ const MAX_GAME_MAX_TOKENS = 16_000;
 export const NewsboyGenerationEnv = z
   .object({
     OPENROUTER_API_KEY: z.string(),
+    GITHUB_ACTIONS: z.enum(["true", "false"]).optional(),
     NEWSBOY_AI_MODEL: z.string().trim().min(1).optional(),
     GAME_REASONING_EFFORT: z
       .enum(["default", "none", "minimal", "low", "medium", "high"])
@@ -79,6 +80,7 @@ export const NewsboyGenerationEnv = z
   })
   .transform((env) => ({
     openRouterApiKey: env.OPENROUTER_API_KEY,
+    isGitHubActions: env.GITHUB_ACTIONS === "true",
     newsboyAiModel: env.NEWSBOY_AI_MODEL,
     gameReasoningEffort: env.GAME_REASONING_EFFORT,
     gameMaxTokens: env.GAME_MAX_TOKENS,
