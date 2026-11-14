@@ -16,8 +16,8 @@ catalogs:
       specifier: ^0.2.0
       version: 0.2.0
     '@ponti-studios/ui':
-      specifier: 1.8.0
-      version: 1.8.0
+      specifier: 3.0.1
+      version: 3.0.1
     '@react-router/dev':
       specifier: ^8.4.0
       version: 8.4.0
@@ -118,7 +118,7 @@ importers:
         version: 0.2.0
       '@ponti-studios/ui':
         specifier: 'catalog:'
-        version: 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 3.0.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@react-router/node':
         specifier: 'catalog:'
         version: 8.4.0(react-router@8.4.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)
@@ -1878,13 +1878,17 @@ packages:
   '@ponti-studios/auth@0.2.0':
     resolution: {integrity: sha512-7Jn2HoFUAhfCgc2RlR3aqBOjlVFelgGNuCuJ3BFdS7DkgTMT1HvlhJMrBN+njzWODG+brZR3gYVxGTBENs7pyg==}
 
-  '@ponti-studios/ui@1.8.0':
-    resolution: {integrity: sha512-1CgxQPeEqg4XjLXNzfHY7xHcbejs4plMcNgq8NJHRediXhsj8g45J57ZIWaKa3g6PRb0gFslrpSl4WYySameiw==}
+  '@ponti-studios/ui@3.0.1':
+    resolution: {integrity: sha512-L9wMQ3/MmAnUWoshUrgStXXs5qlKeKzRdoumLEY8zXu/I43CVgH+nAt6G7Wifx2px1UTdFOICfRASombwQzNLg==}
+    hasBin: true
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
+      react-native: '>=0.80'
     peerDependenciesMeta:
       react-dom:
+        optional: true
+      react-native:
         optional: true
 
   '@radix-ui/colors@3.0.0':
@@ -6012,8 +6016,9 @@ snapshots:
 
   '@ponti-studios/auth@0.2.0': {}
 
-  '@ponti-studios/ui@1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@ponti-studios/ui@3.0.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
+      '@babel/runtime': 7.29.7
       '@base-ui/react': 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@radix-ui/colors': 3.0.0
       class-variance-authority: 0.7.1
