@@ -48,6 +48,12 @@ jobs:
         with:
           node-version: "24.14.1"
           cache: pnpm
+      - name: authenticate-github-packages
+        env:
+          GH_PACKAGES_TOKEN: ${{ github.token }}
+        run: |
+          echo "@ponti-studios:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc
       - run: pnpm install --frozen-lockfile
       - name: Migrate test database
         run: pnpm db:migrate:test

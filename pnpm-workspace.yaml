@@ -3,8 +3,8 @@ packages: []
 catalog:
   "@mozilla/readability": ^0.6.0
   "@openrouter/sdk": ^1.3.27
-  "@ponti-studios/auth": ^0.2.0
-  "@ponti-studios/ui": 1.8.0
+  "@ponti-studios/auth": "gh:@ponti-studios/auth@^0.2.0"
+  "@ponti-studios/ui": "gh:@ponti-studios/ui@1.8.0"
   "@react-router/dev": ^8.4.0
   "@react-router/node": ^8.4.0
   "@react-router/serve": ^8.2.0
@@ -41,6 +41,9 @@ allowBuilds:
   esbuild: true
 
 minimumReleaseAgeExclude:
+  # org packages come from GitHub Packages; backfilled versions carry fresh
+  # publish timestamps and the registry serves no reliable ones
+  - "@ponti-studios/*"
   - "@openrouter/sdk@1.2.6"
   - "@oxfmt/binding-android-arm-eabi@0.62.0 || 0.67.0"
   - "@oxfmt/binding-android-arm64@0.62.0 || 0.67.0"

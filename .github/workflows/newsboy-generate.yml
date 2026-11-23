@@ -35,6 +35,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
   group: newsboy-generate
